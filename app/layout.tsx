@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { SkeletonTheme } from "react-loading-skeleton";
 import Providers from "@/components/app/providers";
-import ThemeSelector from "@/components/app/theme-selector";
 import AnimationWrapper from "@/components/app/animation-wrapper";
+import Navbar from "@/components/app/navbar";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -33,7 +33,7 @@ export default function RootLayout({
         >
           <Providers>
             <AnimationWrapper>
-              <ThemeSelector />
+              <Navbar />
               {children}
             </AnimationWrapper>
           </Providers>

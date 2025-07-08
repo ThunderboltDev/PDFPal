@@ -1,20 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { LuMonitor, LuSun, LuMoon } from "react-icons/lu";
+
+import { ReactNode, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
-  SelectValue,
 } from "@/components/ui/select";
 
-const themes = ["system", "light", "dark"] as const;
-type Theme = (typeof themes)[number];
+const themeIcons: Record<Theme, ReactNode> = {
+  system: <LuMonitor className="size-4.5" />,
+  light: <LuSun className="size-4.5" />,
+  dark: <LuMoon className="size-4.5" />,
+};
+
+type Theme = "system" | "light" | "dark";
+const themes: Theme[] = ["system", "light", "dark"];
 
 export default function ThemeSelector() {
-  const { setTheme, theme: currentTheme } = useTheme();
+  const { setTheme, theme: currentTheme } = useTheme() as {
+    setTheme: (theme: Theme) => void;
+    theme: Theme;
+  };
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,25 +34,26 @@ export default function ThemeSelector() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed top-12 left-1/2 -translate-x-1/2">
-      <Select
-        value={currentTheme}
-        onValueChange={(val) => setTheme(val as Theme)}
+    <Select
+      value={currentTheme}
+      onValueChange={(val) => setTheme(val as Theme)}
+    >
+      <SelectTrigger
+        showArrow={false}
+        className="border-none bg-transparent shadow-none transition-colors duration-300 ease-in mt-1 pl-2.25 min-h-9 w-9"
       >
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {themes.map((theme) => (
-            <SelectItem
-              key={theme}
-              value={theme}
-            >
-              {theme[0].toUpperCase() + theme.slice(1)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+        {themeIcons[currentTheme]}
+      </SelectTrigger>
+      <SelectContent>
+        {themes.map((theme) => (
+          <SelectItem
+            key={theme}
+            value={theme}
+          >
+            {themeIcons[theme]} {theme[0].toUpperCase() + theme.slice(1)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

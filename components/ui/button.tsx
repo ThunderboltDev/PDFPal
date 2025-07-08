@@ -14,19 +14,19 @@ const buttonVariants = cva(
         default: "bg-bg-300 hover:bg-bg-400 text-text-100",
         light: "bg-bg-500 hover:bg-bg-600 text-text-100",
         outline: "border border-bg-500 bg-bg-300 hover:bg-bg-400",
-        ghost: "bg-transparent bg-bg-300",
+        ghost: "bg-transparent hover:bg-bg-900/25 shadow-none",
         link: "text-primary-500 underline-offset-4 hover:underline",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
       },
-      type: {
+      size: {
         default: "px-4 py-2",
         icon: "size-9 aspect-square",
       },
     },
     defaultVariants: {
       variant: "default",
-      type: "default",
+      size: "default",
     },
   }
 );
@@ -34,7 +34,7 @@ const buttonVariants = cva(
 function Button({
   className,
   variant,
-  type,
+  size,
   asChild = false,
   ...props
 }: ComponentProps<"button"> &
@@ -42,12 +42,12 @@ function Button({
     asChild?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
-  const Tag = motion(Comp as ElementType);
+  const Tag = motion.create(Comp as ElementType);
 
   return (
     <Tag
       data-slot="button"
-      className={cn(buttonVariants({ variant, type, className }))}
+      className={cn(buttonVariants({ variant, size, className }))}
       whileTap={{
         opacity: 0.7,
       }}
