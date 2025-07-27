@@ -5,6 +5,8 @@ import Providers from "@/components/app/providers";
 import AnimationWrapper from "@/components/app/animation-wrapper";
 import Navbar from "@/components/app/navbar";
 import "./globals.css";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app/sidebar";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -33,8 +35,11 @@ export default function RootLayout({
         >
           <Providers>
             <AnimationWrapper>
-              <Navbar />
-              {children}
+              <SidebarProvider>
+                <AppSidebar />
+                <Navbar />
+                {children}
+              </SidebarProvider>
             </AnimationWrapper>
           </Providers>
         </SkeletonTheme>

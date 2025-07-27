@@ -13,7 +13,7 @@ interface ProfileProps {
 
 function Profile({ userData }: ProfileProps) {
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto pt-18">
       <h2>Profile</h2>
       <div className="space-y-2">
         <div>
