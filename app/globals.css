@@ -75,6 +75,17 @@
   [data-slot="select-item"] {
     @apply cursor-pointer;
   }
+
+  /* Forms */
+
+  [contenteditable][data-placeholder]:empty::before {
+    @apply text-fg-500 pointer-events-none block;
+    content: attr(data-placeholder);
+  }
+
+  /* [contenteditable][data-placeholder]:focus::before {
+    content: "\feff";
+  } */
 }
 
 :root {

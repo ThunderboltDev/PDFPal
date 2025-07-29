@@ -27,8 +27,7 @@ import { FaBarsStaggered } from "react-icons/fa6";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "16rem";
-const SIDEBAR_WIDTH_MOBILE = "12rem";
+const SIDEBAR_WIDTH = "12rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
@@ -139,7 +138,7 @@ function SidebarProvider({
             } as React.CSSProperties
           }
           className={cn(
-            "group/sidebar-wrapper has-data-[variant=inset]:bg-bg-300 min-h-full min-w-full",
+            "group/sidebar-wrapper has-data-[variant=inset]:bg-bg-300 min-h-full min-w-full max-w-48",
             className
           )}
           {...props}
@@ -170,7 +169,7 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          "bg-bg-200 text-fg-100 flex h-full w-(--sidebar-width) flex-col",
+          "bg-bg-200 text-fg-100 flex h-full w-48 flex-col",
           className
         )}
         {...props}
@@ -191,12 +190,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-bg-200 text-fg-100 w-(--sidebar-width) p-0 [&>button]:hidden"
-          style={
-            {
-              "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-            } as React.CSSProperties
-          }
+          className="bg-bg-200 text-fg-100 max-w-48 p-0 [&>button]:hidden"
           side={side}
         >
           <SheetHeader className="sr-only">
@@ -390,7 +384,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        "bg-transparent flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "bg-transparent flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden max-w-48",
         className
       )}
       {...props}

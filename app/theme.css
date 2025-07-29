@@ -63,7 +63,7 @@
   --accent: theme("colors.violet.600");
   --primary: theme("colors.purple.600");
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.577 0.22 27.325);
 
   --bg-100: oklch(0.98 0 0);
   --bg-200: oklch(0.97 0 0);
@@ -108,7 +108,7 @@
   --fg-400: oklch(0.8 0 0);
   --fg-500: oklch(0.75 0 0);
 
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.65 0.25 27.216);
 
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);

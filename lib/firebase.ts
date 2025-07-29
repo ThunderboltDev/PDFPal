@@ -23,3 +23,4 @@ export const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence).then();
 
 export const usersCollection = collection(db, "users");
+export const formsCollection = collection(db, "forms");

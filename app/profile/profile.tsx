@@ -23,14 +23,13 @@ function Profile({ userData }: ProfileProps) {
               alt="User Avatar"
               width={64}
               height={64}
-              className="rounded-full mt-1"
+              className="mt-1 rounded-full"
               loading="eager"
             />
           ) : (
             <Skeleton
               width={64}
               height={64}
-              className="rounded-full"
             />
           )}
         </div>
