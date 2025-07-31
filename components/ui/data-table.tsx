@@ -32,7 +32,10 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((hg) => (
-            <TableRow key={hg.id}>
+            <TableRow
+              key={hg.id}
+              className="bg-bg-300"
+            >
               {hg.headers.map((h) => (
                 <TableHead key={h.id}>
                   {h.isPlaceholder
@@ -45,8 +48,11 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+            table.getRowModel().rows.map((row, index) => (
+              <TableRow
+                key={row.id}
+                className={index % 2 === 0 ? "bg-bg-200" : "bg-bg-300"}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -58,7 +64,7 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
             <TableRow>
               <TableCell
                 colSpan={columns.length}
-                className="h-24 text-center"
+                className="h-16 text-center"
               >
                 No results.
               </TableCell>

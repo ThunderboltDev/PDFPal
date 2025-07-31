@@ -57,7 +57,7 @@ export default function Navbar() {
             </div>
           </TooltipTrigger>
           <TooltipContent
-            side="left"
+            side="bottom"
             sideOffset={-5}
           >
             <span>Profile</span>

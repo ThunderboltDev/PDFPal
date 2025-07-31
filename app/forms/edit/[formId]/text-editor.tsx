@@ -15,10 +15,7 @@ export default function TextEditor<E extends ElementType>({
   onChange,
   ...props
 }: TextEditorProps & ComponentProps<E>) {
-  const defaultValue = useRef(value);
   const ref = useRef<HTMLElement>(null);
-  const initial = useRef(value);
-
   const Tag = (as || "p") as ElementType;
 
   const handleInput = () => {
@@ -37,7 +34,6 @@ export default function TextEditor<E extends ElementType>({
   useEffect(() => {
     if (ref.current && document.activeElement !== ref.current) {
       ref.current.innerText = value;
-      initial.current = value;
     }
   }, [value]);
 
@@ -49,7 +45,6 @@ export default function TextEditor<E extends ElementType>({
       onInput={handleInput}
       onBlur={handleBlur}
       style={{ outline: "none", cursor: "text" }}
-      dangerouslySetInnerHTML={{ __html: defaultValue.current }}
       tabIndex={0}
       data-placeholder={placeholder}
       {...props}

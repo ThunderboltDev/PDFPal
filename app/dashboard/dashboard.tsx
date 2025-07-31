@@ -6,12 +6,17 @@ import { useRouter } from "next/navigation";
 import { useLocalStorage } from "react-use";
 
 import type { UserData, Form, LocalForm } from "@/firebase/types";
-import { deleteFormById, fetchFormsByUserId } from "@/firebase/forms";
+import {
+  deleteFormById,
+  fetchFormsByUserId,
+  publishForm,
+} from "@/firebase/forms";
 
 import { Button } from "@/components/ui/button";
 import withAuth from "@/hoc/with-auth";
 import FormsTable from "./form-table";
 import DraftFormsTable from "./draft-table";
+import OverlayLoader from "@/components/ui/overlay-loader";
 
 interface DashboardProps {
   userData: UserData;
@@ -42,7 +47,7 @@ function Dashboard({ userData }: DashboardProps) {
         if (raw) {
           try {
             const form = JSON.parse(raw) as LocalForm;
-            if (form.isDraft) results.push(form);
+            if (form && form.title) results.push(form);
           } catch {}
         }
       }
@@ -69,39 +74,50 @@ function Dashboard({ userData }: DashboardProps) {
       title: "Form Title",
       description: "A very cool description!",
       fields: [],
-      isDraft: true,
     };
 
     setNewForm(defaultForm);
     router.push(`forms/edit/${newFormId}`);
   };
 
-  const handleFormEdit = (formId: string) => {
-    router.push(`/forms/edit/${formId}`);
+  const handleFormEdit = (form: Form) => {
+    router.push(`/forms/edit/${form.id}`);
   };
 
-  const handleFormDelete = async (formId: string) => {
-    await deleteFormById(formId, userData.uid);
-    if (forms) setForms(forms.filter((form) => form.id !== formId));
+  const handleFormDelete = async (form: Form) => {
+    await deleteFormById(form.id, userData.uid);
+
+    // window.location.reload();
   };
 
-  const handleDraftEdit = (formId: string) => {};
-  const handleDraftDelete = (formId: string) => {};
-  const handleDraftPublish = (formId: string) => {};
+  const handleDraftEdit = (form: LocalForm) => {
+    router.push(`/forms/edit/${form.id}`);
+  };
+
+  const handleDraftDelete = (form: LocalForm) => {
+    const key = `draft-form-${form.id}`;
+    localStorage.removeItem(key);
+
+    window.location.reload();
+  };
+
+  const handleDraftPublish = async (form: LocalForm) => {
+    await publishForm(form, userData.uid);
+    handleDraftDelete(form);
+
+    const key = `draft-form-${form.id}`;
+    localStorage.removeItem(key);
+
+    router.push(`/forms/published/${form.id}`);
+  };
 
   return (
     <div className="pt-18 px-6 max-w-2xl mx-auto space-y-4">
+      <OverlayLoader loading={forms === null || draftForms === null} />
       <h2>Dashboard</h2>
-      <div className="grid place-items-center">
-        <Button
-          onClick={() => handleCreateNewForm()}
-          variant="accent"
-          size="small"
-        >
-          <Plus />
-          Create New Form
-        </Button>
-      </div>
+      {draftForms?.length === 0 && forms?.length === 0 && (
+        <p className="text-center">No forms created!</p>
+      )}
       <FormsTable
         forms={forms}
         onEdit={handleFormEdit}
@@ -113,6 +129,17 @@ function Dashboard({ userData }: DashboardProps) {
         onDelete={handleDraftDelete}
         onPublish={handleDraftPublish}
       />
+      <div className="grid place-items-center">
+        <Button
+          onClick={() => handleCreateNewForm()}
+          disabled={(userData?.formsCreated || 0) >= 5}
+          variant="accent"
+          size="small"
+        >
+          <Plus />
+          Create New Form
+        </Button>
+      </div>
     </div>
   );
 }

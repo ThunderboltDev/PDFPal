@@ -1,23 +1,26 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useLocalStorage } from "react-use";
+import { useLocalStorage, useMount } from "react-use";
 import { useState } from "react";
 
-import type { Field, Form } from "@/firebase/types";
+import type { Field, FieldType, LocalForm } from "@/firebase/types";
 
-import TextEditor from "@/components/forms/textEditor";
+import TextEditor from "@/app/forms/edit/[formId]/text-editor";
 import OverlayLoader from "@/components/ui/overlay-loader";
-import { Button } from "@/components/ui/button";
+import { DynamicFormEditorRenderer } from "./editor-renderer";
 
 export default function EditFormPage() {
   const { formId } = useParams();
-  const [draftForm, setDraftForm] = useLocalStorage<Form | null>(
+  const [mounted, setMounted] = useState(false);
+  const [draftForm, setDraftForm] = useLocalStorage<LocalForm | null>(
     `draft-form-${formId}`,
     null
   );
 
-  const insetNewField = (position: number, type: string) => {
+  useMount(() => setMounted(true));
+
+  const insertNewField = (position: number, type: FieldType) => {
     const newField: Field = {
       id: crypto.randomUUID(),
       type: type,
@@ -27,12 +30,12 @@ export default function EditFormPage() {
       order: position,
     };
 
-    setDraftForm(() => {
-      if (!draftForm) return null;
-      const before = draftForm.fields.slice(0, position + 1);
-      const after = draftForm.fields.slice(position + 1);
+    setDraftForm((prev) => {
+      if (!prev) return null;
+      const before = prev.fields.slice(0, position + 1);
+      const after = prev.fields.slice(position + 1);
       return {
-        ...draftForm,
+        ...prev,
         fields: [...before, newField, ...after].map((fld, idx) => ({
           ...fld,
           order: idx,
@@ -41,8 +44,8 @@ export default function EditFormPage() {
     });
   };
 
-  if (!draftForm) {
-    return <OverlayLoader loading={true} />;
+  if (!draftForm || !mounted) {
+    return <OverlayLoader loading />;
   }
 
   return (
@@ -51,7 +54,10 @@ export default function EditFormPage() {
         as="h1"
         value={draftForm.title}
         onChange={(val: string) => {
-          setDraftForm((prev) => prev && { ...prev, title: val });
+          setDraftForm({
+            ...draftForm,
+            title: val,
+          });
         }}
         placeholder="Enter title..."
         className="text-left"
@@ -60,10 +66,17 @@ export default function EditFormPage() {
         as="p"
         value={draftForm.description}
         onChange={(val: string) => {
-          setDraftForm((prev) => prev && { ...prev, description: val });
+          setDraftForm({
+            ...draftForm,
+            description: val,
+          });
         }}
         placeholder="Enter description..."
         className="text-left"
+      />
+      <DynamicFormEditorRenderer
+        draftForm={draftForm}
+        setDraftForm={setDraftForm}
       />
     </div>
   );

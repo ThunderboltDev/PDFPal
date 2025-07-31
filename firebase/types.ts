@@ -14,14 +14,22 @@ export type UserData = {
   formsCreated?: number;
 };
 
+export type FieldType =
+  | "text"
+  | "email"
+  | "textarea"
+  | "select"
+  | "toggle"
+  | "number";
+
 export type Field = {
   id: string;
-  type: string;
+  type: FieldType;
   label: string;
   placeholder: string;
-  options?: { id: string; label: string }[];
   required?: boolean;
   order: number;
+  options?: { value: string; label: string }[];
 };
 
 export type Form = {
@@ -35,11 +43,9 @@ export type Form = {
   settings?: { themeColor?: string; isPublic?: boolean };
 };
 
-export type LocalForm = Omit<Form, "createdBy" | "createdAt" | "updatedAt"> & {
-  isDraft: boolean;
-};
+export type LocalForm = Omit<Form, "createdBy" | "createdAt" | "updatedAt">;
 
-export type Response = {
+export type FormResponse = {
   id: string;
   respondentId?: string;
   submittedAt: Timestamp;

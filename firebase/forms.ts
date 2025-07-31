@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 
 import { db, formsCollection } from "@/lib/firebase";
-import type { Form } from "@/firebase/types";
+import type { Form, LocalForm } from "@/firebase/types";
 
 export async function fetchFormById(formId: string): Promise<Form | null> {
   const docRef = doc(db, "forms", formId);
@@ -36,14 +36,18 @@ export async function fetchFormsByUserId(
   })) as Form[];
 }
 
-export async function createNewForm(userId: string, form: Partial<Form>) {
+export async function publishForm(
+  form: LocalForm,
+  userId: string
+): Promise<string> {
   const formRef = doc(formsCollection);
   const userRef = doc(db, "users", userId);
 
   const now = Timestamp.now();
 
-  const newForm: Partial<Form> = {
+  const newForm: Form = {
     ...form,
+    id: formRef.id,
     createdBy: userId,
     createdAt: now,
     updatedAt: now,
@@ -57,6 +61,8 @@ export async function createNewForm(userId: string, form: Partial<Form>) {
   });
 
   await batch.commit();
+
+  return formRef.id;
 }
 
 export async function updateForm(form: Form) {
@@ -69,11 +75,19 @@ export async function updateForm(form: Form) {
 }
 
 export async function deleteFormById(formId: string, userId: string) {
-  const formRef = doc(db, "forms", formId);
   const userRef = doc(db, "users", userId);
+  const formRef = doc(db, "forms", formId);
+  const responsesRef = collection(db, "forms", formId, "responses");
 
+  console.log("formref path: ", formRef.path);
+
+  const responsesSnap = await getDocs(responsesRef);
   const batch = writeBatch(db);
+
+  responsesSnap.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+
   batch.delete(formRef);
   batch.update(userRef, { formsCreated: increment(-1) });
-  await batch.commit();
 }

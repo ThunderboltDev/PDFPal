@@ -6,7 +6,6 @@ export interface WithConfettiProps {
   triggerConfetti: () => void;
 }
 
-// Extracted style to a constant
 const CANVAS_STYLE: React.CSSProperties = {
   position: "fixed",
   pointerEvents: "none",
@@ -22,12 +21,10 @@ function withConfetti<T extends object>(
   WrappedComponent: ComponentType<T & WithConfettiProps>
 ) {
   const ConfettiComponent: FC<T> = (props) => {
-    // Use the proper ConfettiOptions type
     const confettiRef = useRef<
       ((opts: TCanvasConfettiAnimationOptions) => void) | null
     >(null);
 
-    // Memoize options so they're not recreated on every trigger
     const defaultOptions = useMemo<TCanvasConfettiAnimationOptions>(
       () => ({
         particleCount: 200,
@@ -46,7 +43,6 @@ function withConfetti<T extends object>(
       confettiRef.current(defaultOptions);
     }, [defaultOptions]);
 
-    // Guard for SSR
     const renderConfetti = () => (
       <ReactCanvasConfetti
         onInit={({
@@ -71,7 +67,6 @@ function withConfetti<T extends object>(
     );
   };
 
-  // Set a clear display name for DevTools
   ConfettiComponent.displayName = `withConfetti(${
     WrappedComponent.displayName ?? WrappedComponent.name ?? "Component"
   })`;
