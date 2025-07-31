@@ -2,8 +2,7 @@ import { ChangeEvent } from "react";
 import { Field } from "@/firebase/types";
 import TextEditor from "./text-editor";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Asterisk } from "lucide-react";
+import { RequiredToggle } from "./required-toggle";
 
 interface FieldEditorProps {
   field: Field;
@@ -25,18 +24,17 @@ export function FieldEditor({ field, index, update, sync }: FieldEditorProps) {
             sync();
           }}
         />
-        <Checkbox
+        <RequiredToggle
           id={`field-required-${field.id}`}
           title="Toggle Required"
           aria-label="Toggle Required"
           checked={Boolean(field.required)}
+          className="translate-x-1"
           onCheckedChange={() => {
             update(index, { ...field, required: !field.required });
             sync();
           }}
-        >
-          <Asterisk />
-        </Checkbox>
+        />
       </div>
       <Input
         id={field.id}
