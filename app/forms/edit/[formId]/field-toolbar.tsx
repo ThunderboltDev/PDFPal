@@ -3,6 +3,7 @@ import { useFloating, offset, flip, shift } from "@floating-ui/react";
 import { Button } from "../../../../components/ui/button";
 import { Field } from "@/firebase/types";
 import { FieldEditor } from "./field-editor";
+import { ArrowDown, ArrowUp, Plus, Trash } from "lucide-react";
 
 interface FieldEditorProps {
   field: Field;
@@ -27,7 +28,7 @@ export function FieldWithToolbar({
 }: FieldEditorProps) {
   const [hovered, setHovered] = useState(false);
   const { x, y, refs, strategy } = useFloating({
-    placement: "top-end",
+    placement: "bottom-start",
     middleware: [offset(8), flip(), shift()],
   });
 
@@ -48,18 +49,17 @@ export function FieldWithToolbar({
       {hovered && (
         <div
           ref={refs.setFloating}
+          className="z-1000 p-0 m-0 -mt-2 bg-bg-300 border-1 border-bg-500 rounded-md"
           style={{
             position: strategy,
             top: y ?? 0,
             left: x ?? 0,
-            background: "white",
-            border: "1px solid #ccc",
-            padding: 4,
-            borderRadius: 4,
-            zIndex: 1000,
           }}
         >
           <Button
+            size="icon"
+            variant="ghost"
+            className="text-accent-600"
             onClick={() => {
               insert(index + 1, {
                 id: crypto.randomUUID(),
@@ -72,33 +72,40 @@ export function FieldWithToolbar({
               sync();
             }}
           >
-            Insert
+            <Plus />
           </Button>
           <Button
+            size="icon"
+            variant="ghost"
+            className="text-destructive"
             onClick={() => {
               remove(index);
               sync();
             }}
           >
-            Delete
+            <Trash />
           </Button>
           <Button
+            size="icon"
+            variant="ghost"
+            disabled={index === 0}
             onClick={() => {
               move(index, index - 1);
               sync();
             }}
-            disabled={index === 0}
           >
-            ↑
+            <ArrowUp />
           </Button>
           <Button
+            size="icon"
+            variant="ghost"
+            disabled={index === total - 1}
             onClick={() => {
               move(index, index + 1);
               sync();
             }}
-            disabled={index === total - 1}
           >
-            ↓
+            <ArrowDown />
           </Button>
         </div>
       )}

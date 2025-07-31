@@ -6,7 +6,7 @@ import { FieldWithToolbar } from "./field-toolbar";
 import type { LocalForm, Field } from "@/firebase/types";
 import { Plus } from "lucide-react";
 
-type EditorProps = {
+type FormEditorRendererForm = {
   draftForm: LocalForm;
   setDraftForm: (form: LocalForm) => void;
 };
@@ -14,7 +14,7 @@ type EditorProps = {
 export function DynamicFormEditorRenderer({
   draftForm,
   setDraftForm,
-}: EditorProps) {
+}: FormEditorRendererForm) {
   const { control, getValues } = useForm<{ fields: Field[] }>({
     defaultValues: { fields: draftForm.fields },
   });
