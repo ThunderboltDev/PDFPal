@@ -29,7 +29,7 @@ export default function RootLayout({
     >
       <body className={`${outfit.className} antialiased`}>
         <SkeletonTheme
-          baseColor="var(--bg-600)"
+          baseColor="var(--bg-300)"
           customHighlightBackground="var(--base-color)"
           duration={2}
         >

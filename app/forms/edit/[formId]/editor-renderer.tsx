@@ -1,10 +1,11 @@
 "use client";
 
-import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FieldWithToolbar } from "./field-toolbar";
-import type { LocalForm, Field } from "@/firebase/types";
+import type { LocalForm, Field, FieldType } from "@/firebase/types";
 import { Plus } from "lucide-react";
+import { useState } from "react";
+import { InsertInputSelection } from "./input-selection";
 
 type FormEditorRendererForm = {
   draftForm: LocalForm;
@@ -15,59 +16,89 @@ export function DynamicFormEditorRenderer({
   draftForm,
   setDraftForm,
 }: FormEditorRendererForm) {
-  const { control, getValues } = useForm<{ fields: Field[] }>({
-    defaultValues: { fields: draftForm.fields },
-  });
+  const [insertOrder, setInsertOrder] = useState<number | null>(null);
 
-  const { fields, insert, remove, move, update } = useFieldArray({
-    control,
-    name: "fields",
-  });
+  const insert = (order: number) => setInsertOrder(order);
 
-  const sync = () => {
-    const syncedFields = getValues("fields").map((f, i) => ({
-      ...f,
-      order: i,
-    }));
-    setDraftForm({ ...draftForm, fields: syncedFields });
-  };
-
-  const addInitialField = () => {
+  const insertField = (fieldType: FieldType) => {
     const newField: Field = {
       id: crypto.randomUUID(),
-      type: "text",
-      label: "",
-      placeholder: "",
+      type: fieldType,
+      label: "Label",
+      placeholder: "Placeholder...",
       required: false,
-      order: 0,
+      order: insertOrder! + 1,
     };
-    insert(0, newField);
-    sync();
+
+    const fields = draftForm.fields;
+    const start = fields.slice(0, insertOrder!);
+    const end = fields.slice(insertOrder!, fields.length).map((field) => {
+      return {
+        ...field,
+        order: field.order + 1,
+      };
+    });
+
+    setDraftForm({
+      ...draftForm,
+      fields: [...start, newField, ...end],
+    });
+
+    setInsertOrder(null);
+  };
+
+  const updateField = (order: number, newField: Field) => {
+    draftForm.fields[order] = newField;
+    setDraftForm(draftForm);
+  };
+
+  const deleteField = (order: number) => {
+    setDraftForm({
+      ...draftForm,
+      fields: draftForm.fields.filter((field) => field.order !== order),
+    });
+  };
+
+  const moveField = (from: number, to: number) => {
+    const fields = draftForm.fields;
+
+    const temp = fields[from];
+    fields[from] = fields[to];
+    fields[to] = temp;
+
+    setDraftForm({
+      ...draftForm,
+      fields: fields,
+    });
   };
 
   return (
     <div className="space-y-4">
-      {fields.length === 0 ? (
+      <InsertInputSelection
+        open={insertOrder !== null}
+        insertField={insertField}
+        onOpenChange={() => setInsertOrder(null)}
+      />
+      {draftForm.fields.length === 0 ? (
         <Button
           variant="default"
           size="small"
-          onClick={addInitialField}
+          onClick={() => insert(0)}
         >
           <Plus />
           Add First Field
         </Button>
       ) : (
-        fields.map((field, index) => (
+        draftForm.fields.map((field, index) => (
           <FieldWithToolbar
             key={field.id}
             field={field}
             index={index}
-            total={fields.length}
+            total={draftForm.fields.length}
             insert={insert}
-            remove={remove}
-            move={move}
-            update={update}
-            sync={sync}
+            remove={deleteField}
+            update={updateField}
+            move={moveField}
           />
         ))
       )}

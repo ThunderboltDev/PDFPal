@@ -14,13 +14,16 @@ export type UserData = {
   formsCreated?: number;
 };
 
-export type FieldType =
-  | "text"
-  | "email"
-  | "textarea"
-  | "select"
-  | "toggle"
-  | "number";
+export const allFieldTypes = [
+  "text",
+  "textarea",
+  "email",
+  "select",
+  "switch",
+  "number",
+] as const;
+
+export type FieldType = (typeof allFieldTypes)[number];
 
 export type Field = {
   id: string;

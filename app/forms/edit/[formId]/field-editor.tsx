@@ -8,12 +8,11 @@ interface FieldEditorProps {
   field: Field;
   index: number;
   update: (index: number, field: Field) => void;
-  sync: () => void;
 }
 
-export function FieldEditor({ field, index, update, sync }: FieldEditorProps) {
+export function FieldEditor({ field, index, update }: FieldEditorProps) {
   return (
-    <div style={{ padding: 4 }}>
+    <div>
       <div className="flex flex-row translate-x-1">
         <TextEditor
           as="span"
@@ -21,7 +20,6 @@ export function FieldEditor({ field, index, update, sync }: FieldEditorProps) {
           placeholder="Label"
           onChange={(text: string) => {
             update(index, { ...field, label: text });
-            sync();
           }}
         />
         <RequiredToggle
@@ -32,7 +30,6 @@ export function FieldEditor({ field, index, update, sync }: FieldEditorProps) {
           className="translate-x-1"
           onCheckedChange={() => {
             update(index, { ...field, required: !field.required });
-            sync();
           }}
         />
       </div>
@@ -42,9 +39,9 @@ export function FieldEditor({ field, index, update, sync }: FieldEditorProps) {
         type="text"
         value={field.placeholder || ""}
         placeholder="Placeholder"
+        className="text-fg-500"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           update(index, { ...field, placeholder: e?.target?.value ?? "" });
-          sync();
         }}
       />
     </div>

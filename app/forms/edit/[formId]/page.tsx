@@ -25,7 +25,7 @@ export default function EditFormPage() {
   }
 
   return (
-    <div className="pt-18 max-w-sm mx-auto">
+    <div className="container-sm mt-18">
       <TextEditor
         as="h1"
         value={draftForm.title}
@@ -36,7 +36,7 @@ export default function EditFormPage() {
           });
         }}
         placeholder="Enter title..."
-        className="text-left"
+        className="text-center"
       />
       <TextEditor
         as="p"
@@ -48,7 +48,7 @@ export default function EditFormPage() {
           });
         }}
         placeholder="Enter description..."
-        className="text-left"
+        className="text-left mt-4"
       />
       <DynamicFormEditorRenderer
         draftForm={draftForm}

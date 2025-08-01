@@ -14,7 +14,7 @@ function RequiredToggle({
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        'peer text-fg-100 data-[state="checked"]:text-bg-100 border-none rounded-full bg-bg-300 data-[state="checked"]:bg-primary-600 focus-visible:ring-bg-300/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 size-4 shrink-0 shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+        'peer text-fg-100 border-none rounded-full bg-bg-300 data-[state="checked"]:bg-accent/50 focus-visible:ring-bg-300/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 size-4 shrink-0 shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       {...props}

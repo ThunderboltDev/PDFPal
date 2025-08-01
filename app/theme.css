@@ -6,16 +6,15 @@
   --color-bg-300: var(--bg-300);
   --color-bg-400: var(--bg-400);
   --color-bg-500: var(--bg-500);
-  --color-bg-600: var(--bg-600);
-  --color-bg-700: var(--bg-700);
-  --color-bg-800: var(--bg-800);
-  --color-bg-900: var(--bg-900);
 
   --color-fg-100: var(--fg-100);
   --color-fg-200: var(--fg-200);
   --color-fg-300: var(--fg-300);
   --color-fg-400: var(--fg-400);
   --color-fg-500: var(--fg-500);
+
+  --color-accent: theme("colors.violet.600");
+  --color-primary: theme("colors.purple.600");
 
   --color-accent-50: theme("colors.violet.50");
   --color-accent-100: theme("colors.violet.100");
@@ -55,25 +54,23 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --container-width-sm: 30rem;
+  --container-width-md: 40rem;
+  --container-width-lg: 50rem;
+  --container-width-xl: 60rem;
 }
 
 :root {
   --radius: 0.5rem;
 
-  --accent: theme("colors.violet.600");
-  --primary: theme("colors.purple.600");
-
   --destructive: oklch(0.577 0.22 27.325);
 
-  --bg-100: oklch(0.98 0 0);
-  --bg-200: oklch(0.97 0 0);
-  --bg-300: oklch(0.95 0 0);
-  --bg-400: oklch(0.93 0 0);
-  --bg-500: oklch(0.91 0 0);
-  --bg-600: oklch(0.89 0 0);
-  --bg-700: oklch(0.87 0 0);
-  --bg-800: oklch(0.85 0 0);
-  --bg-900: oklch(0.83 0 0);
+  --bg-100: oklch(0.975 0 0);
+  --bg-200: oklch(0.95 0 0);
+  --bg-300: oklch(0.925 0 0);
+  --bg-400: oklch(0.9 0 0);
+  --bg-500: oklch(0.875 0 0);
 
   --fg-100: oklch(0.15 0 0);
   --fg-200: oklch(0.2 0 0);
@@ -93,14 +90,10 @@
   --primary: theme("colors.purple.400");
 
   --bg-100: oklch(0.15 0 0);
-  --bg-200: oklch(0.175 0 0);
-  --bg-300: oklch(0.2 0 0);
-  --bg-400: oklch(0.225 0 0);
-  --bg-500: oklch(0.25 0 0);
-  --bg-600: oklch(0.275 0 0);
-  --bg-700: oklch(0.3 0 0);
-  --bg-800: oklch(0.325 0 0);
-  --bg-900: oklch(0.35 0 0);
+  --bg-200: oklch(0.2 0 0);
+  --bg-300: oklch(0.25 0 0);
+  --bg-400: oklch(0.3 0 0);
+  --bg-500: oklch(0.35 0 0);
 
   --fg-100: oklch(0.95 0 0);
   --fg-200: oklch(0.9 0 0);
@@ -115,4 +108,10 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+}
+
+@utility container-* {
+  margin-inline: auto;
+  width: calc(100vw - 4rem);
+  max-width: --value(--container-width- *, integer);
 }
