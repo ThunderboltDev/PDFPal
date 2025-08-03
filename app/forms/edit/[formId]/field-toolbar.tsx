@@ -1,7 +1,16 @@
 import { ArrowDown, ArrowUp, Plus, Trash } from "lucide-react";
 
 import { useState } from "react";
-import { useFloating, offset, flip, shift } from "@floating-ui/react";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  useHover,
+  useDismiss,
+  useInteractions,
+  safePolygon,
+} from "@floating-ui/react";
 import { Button } from "../../../../components/ui/button";
 import { FieldEditor } from "./field-editor";
 import type { Field } from "@/firebase/types";
@@ -25,18 +34,33 @@ export function FieldWithToolbar({
   move,
   update,
 }: FieldEditorProps) {
-  const [hovered, setHovered] = useState(false);
-  const { x, y, refs, strategy } = useFloating({
+  const [open, setOpen] = useState(false);
+  const { refs, floatingStyles, context } = useFloating({
+    open,
+    onOpenChange: setOpen,
     placement: "bottom-start",
     middleware: [offset(8), flip(), shift()],
   });
 
+  const hover = useHover(context, {
+    restMs: 100,
+    delay: { open: 100, close: 75 },
+    handleClose: safePolygon(),
+    mouseOnly: true,
+  });
+
+  const dismiss = useDismiss(context);
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    hover,
+    dismiss,
+  ]);
+
   return (
     <div
       ref={refs.setReference}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ position: "relative", marginBottom: "1rem" }}
+      {...getReferenceProps()}
+      className="relative mb-4"
     >
       <FieldEditor
         field={field}
@@ -44,15 +68,12 @@ export function FieldWithToolbar({
         update={update}
       />
 
-      {hovered && (
+      {open && (
         <div
           ref={refs.setFloating}
+          style={floatingStyles}
+          {...getFloatingProps()}
           className="z-10 p-0 m-0 -mt-2 bg-bg-200 border-1 border-bg-500 rounded-md"
-          style={{
-            position: strategy,
-            top: y ?? 0,
-            left: x ?? 0,
-          }}
         >
           <Button
             size="icon"
@@ -63,6 +84,7 @@ export function FieldWithToolbar({
             }}
           >
             <Plus className="size-5" />
+            <span className="sr-only">Insert New Field</span>
           </Button>
           <Button
             size="icon"
@@ -73,6 +95,7 @@ export function FieldWithToolbar({
             }}
           >
             <Trash className="size-5" />
+            <span className="sr-only">Delete Current Field</span>
           </Button>
           <Button
             size="icon"
@@ -83,6 +106,7 @@ export function FieldWithToolbar({
             }}
           >
             <ArrowUp className="size-5" />
+            <span className="sr-only">Move Selected Field Up</span>
           </Button>
           <Button
             size="icon"
@@ -93,6 +117,7 @@ export function FieldWithToolbar({
             }}
           >
             <ArrowDown className="size-5" />
+            <span className="sr-only">Move Selected Field Down</span>
           </Button>
         </div>
       )}

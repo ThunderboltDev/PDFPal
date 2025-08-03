@@ -27,21 +27,25 @@ export function DynamicFormEditorRenderer({
       label: "Label",
       placeholder: "Placeholder...",
       required: false,
-      order: insertOrder! + 1,
+      order: insertOrder!,
     };
 
     const fields = draftForm.fields;
-    const start = fields.slice(0, insertOrder!);
-    const end = fields.slice(insertOrder!, fields.length).map((field) => {
-      return {
-        ...field,
-        order: field.order + 1,
-      };
-    });
+
+    const newFields = [
+      ...fields.slice(0, insertOrder!),
+      newField,
+      ...fields.slice(insertOrder!, fields.length).map((field) => {
+        return {
+          ...field,
+          order: field.order + 1,
+        };
+      }),
+    ];
 
     setDraftForm({
       ...draftForm,
-      fields: [...start, newField, ...end],
+      fields: newFields,
     });
 
     setInsertOrder(null);
@@ -55,7 +59,9 @@ export function DynamicFormEditorRenderer({
   const deleteField = (order: number) => {
     setDraftForm({
       ...draftForm,
-      fields: draftForm.fields.filter((field) => field.order !== order),
+      fields: draftForm.fields
+        .filter((field) => field.order !== order)
+        .map((field, index) => ({ ...field, order: index })),
     });
   };
 

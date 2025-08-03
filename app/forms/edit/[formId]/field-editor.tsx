@@ -1,8 +1,8 @@
-import { ChangeEvent } from "react";
 import { Field } from "@/firebase/types";
-import TextEditor from "./text-editor";
-import { Input } from "@/components/ui/input";
+import { fieldTypeToLabel } from "@/components/forms/field-config";
 import { RequiredToggle } from "./required-toggle";
+import TextEditor from "./text-editor";
+import RenderInput from "./render-input";
 
 interface FieldEditorProps {
   field: Field;
@@ -17,10 +17,11 @@ export function FieldEditor({ field, index, update }: FieldEditorProps) {
         <TextEditor
           as="span"
           value={field.label}
-          placeholder="Label"
+          placeholder={fieldTypeToLabel[field.type]}
           onChange={(text: string) => {
             update(index, { ...field, label: text });
           }}
+          className="mb-0.5 md:text-sm"
         />
         <RequiredToggle
           id={`field-required-${field.id}`}
@@ -33,16 +34,9 @@ export function FieldEditor({ field, index, update }: FieldEditorProps) {
           }}
         />
       </div>
-      <Input
-        id={field.id}
-        name={field.id}
-        type="text"
-        value={field.placeholder || ""}
-        placeholder="Placeholder"
-        className="text-fg-500"
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          update(index, { ...field, placeholder: e?.target?.value ?? "" });
-        }}
+      <RenderInput
+        field={field}
+        update={update}
       />
     </div>
   );

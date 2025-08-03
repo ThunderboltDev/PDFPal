@@ -34,7 +34,7 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
           {table.getHeaderGroups().map((hg) => (
             <TableRow
               key={hg.id}
-              className="bg-bg-300"
+              className="bg-bg-200"
             >
               {hg.headers.map((h) => (
                 <TableHead key={h.id}>
@@ -51,7 +51,7 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
             table.getRowModel().rows.map((row, index) => (
               <TableRow
                 key={row.id}
-                className={index % 2 === 0 ? "bg-bg-200" : "bg-bg-300"}
+                className={index % 2 === 0 ? "bg-bg-200/50" : "bg-bg-200"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

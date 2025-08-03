@@ -1,3 +1,4 @@
+import { allFieldTypes } from "@/components/forms/field-config";
 import type { User as FirebaseUser } from "firebase/auth";
 import type { Timestamp } from "firebase/firestore";
 
@@ -14,15 +15,6 @@ export type UserData = {
   formsCreated?: number;
 };
 
-export const allFieldTypes = [
-  "text",
-  "textarea",
-  "email",
-  "select",
-  "switch",
-  "number",
-] as const;
-
 export type FieldType = (typeof allFieldTypes)[number];
 
 export type Field = {
@@ -32,7 +24,8 @@ export type Field = {
   placeholder: string;
   required?: boolean;
   order: number;
-  options?: { value: string; label: string }[];
+  options?: { name: string; value: string }[];
+  settings: Record<string, unknown>;
 };
 
 export type Form = {
