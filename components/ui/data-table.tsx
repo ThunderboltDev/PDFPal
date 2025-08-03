@@ -37,7 +37,10 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
               className="bg-bg-200"
             >
               {hg.headers.map((h) => (
-                <TableHead key={h.id}>
+                <TableHead
+                  key={h.id}
+                  className="text-center"
+                >
                   {h.isPlaceholder
                     ? null
                     : flexRender(h.column.columnDef.header, h.getContext())}

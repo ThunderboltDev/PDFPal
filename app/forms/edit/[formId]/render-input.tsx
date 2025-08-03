@@ -113,9 +113,9 @@ export default function RenderInput({ field, update }: InputRedererProps) {
         <Slider
           className="mt-2"
           defaultValue={[Number(field.placeholder) ?? 0]}
-          min={Number(field.settings?.min ?? 0)}
-          max={Number(field.settings?.max ?? 100)}
-          step={Number(field.settings?.step ?? 1)}
+          min={Number(field?.settings?.min ?? 0)}
+          max={Number(field?.settings?.max ?? 100)}
+          step={Number(field?.settings?.step ?? 1)}
           onValueChange={(values) => {
             update(field.order, {
               ...field,

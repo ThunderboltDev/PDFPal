@@ -4,9 +4,9 @@ import {
   getDefaultClassNames,
 } from "react-day-picker";
 import { ComponentProps, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button, buttonVariants } from "./ui/button";
-import { Input } from "./ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { Button, buttonVariants } from "./button";
+import { Input } from "./input";
 import { cn } from "@/lib/utils";
 
 const defaultClassNames = getDefaultClassNames();

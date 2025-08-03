@@ -87,11 +87,15 @@ function Dashboard({ userData }: DashboardProps) {
   const handleFormDelete = async (form: Form) => {
     await deleteFormById(form.id, userData.uid);
 
-    // window.location.reload();
+    window.location.reload();
   };
 
   const handleDraftEdit = (form: LocalForm) => {
     router.push(`/forms/edit/${form.id}`);
+  };
+
+  const handleDraftPreview = (form: LocalForm) => {
+    router.push(`/forms/preview/${form.id}`);
   };
 
   const handleDraftDelete = (form: LocalForm) => {
@@ -102,13 +106,12 @@ function Dashboard({ userData }: DashboardProps) {
   };
 
   const handleDraftPublish = async (form: LocalForm) => {
-    await publishForm(form, userData.uid);
-    handleDraftDelete(form);
+    const formId = await publishForm(form, userData.uid);
 
     const key = `draft-form-${form.id}`;
     localStorage.removeItem(key);
 
-    router.push(`/forms/published/${form.id}`);
+    router.push(`/forms/published/${formId}`);
   };
 
   return (
@@ -127,6 +130,7 @@ function Dashboard({ userData }: DashboardProps) {
         forms={draftForms}
         onEdit={handleDraftEdit}
         onDelete={handleDraftDelete}
+        onPreview={handleDraftPreview}
         onPublish={handleDraftPublish}
       />
       <div className="grid place-items-center">

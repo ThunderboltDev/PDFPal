@@ -434,12 +434,12 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-base md:text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-bg-300 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-bg-300 data-[active=true]:font-medium data-[state=open]:hover:bg-bg-300 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 md:[&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button text-fg-100 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-base md:text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-bg-300 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-bg-300 data-[active=true]:font-medium data-[state=open]:hover:bg-bg-300 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 md:[&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "hover:bg-bg-300",
-        active: "bg-accent/25 hover:bg-accent/35",
+        default: "hover:bg-bg-200",
+        active: "bg-accent/35 text-fg-100 hover:bg-accent/45",
         outline:
           "bg-bg-100 shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-bg-300 hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },

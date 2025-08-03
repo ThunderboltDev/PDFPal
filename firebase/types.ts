@@ -25,7 +25,7 @@ export type Field = {
   required?: boolean;
   order: number;
   options?: { name: string; value: string }[];
-  settings: Record<string, unknown>;
+  settings?: Record<string, unknown>;
 };
 
 export type Form = {

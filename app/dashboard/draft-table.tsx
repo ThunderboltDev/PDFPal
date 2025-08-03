@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Upload, Trash } from "lucide-react";
+import { Pencil, Upload, Trash, ExternalLink } from "lucide-react";
 
 import { useState, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -15,11 +15,13 @@ export default function DraftFormsTable({
   forms,
   onEdit,
   onDelete,
+  onPreview,
   onPublish,
 }: {
   forms: LocalForm[] | null;
   onEdit: (form: LocalForm) => void;
   onDelete: (form: LocalForm) => void;
+  onPreview: (form: LocalForm) => void;
   onPublish: (form: LocalForm) => void;
 }) {
   const [modal, setModal] = useState<{
@@ -61,34 +63,49 @@ export default function DraftFormsTable({
         cell: ({ row }) => {
           const form = row.original!;
           return (
-            <div className="flex space-x-1">
+            <div className="flex justify-center">
               <Button
                 size="icon"
-                variant="light"
+                variant="ghost"
+                className="mx-0 text-fg-500 hover:text-fg-100"
                 onClick={() => onEdit(form)}
               >
-                <Pencil />
+                <Pencil className="size-4.5" />
+                <span className="sr-only">Edit Form</span>
               </Button>
               <Button
                 size="icon"
-                variant="accent"
+                variant="ghost"
+                className="mx-0 text-fg-500 hover:text-blue-600"
+                onClick={() => onPreview(form)}
+              >
+                <ExternalLink className="size-4.5" />
+                <span className="sr-only">Preview Form</span>
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="mx-0 text-fg-500 hover:text-accent"
                 onClick={() => setModal({ type: "publish", form: form })}
               >
-                <Upload />
+                <Upload className="size-4.5" />
+                <span className="sr-only">Publish Form</span>
               </Button>
               <Button
                 size="icon"
-                variant="destructive"
+                variant="ghost"
+                className="mx-0 text-fg-500 hover:text-destructive"
                 onClick={() => setModal({ type: "delete", form: form })}
               >
-                <Trash />
+                <Trash className="size-4.5" />
+                <span className="sr-only">Delete Form</span>
               </Button>
             </div>
           );
         },
       },
     ],
-    [onEdit]
+    [onEdit, onPreview]
   );
 
   if (!forms || forms.length === 0) return <></>;
