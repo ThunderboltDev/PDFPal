@@ -74,7 +74,9 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="pl-2.5"
+                    className={`pl-2.5 ${
+                      cell.column.id.startsWith("center") ? "text-center" : ""
+                    }`}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

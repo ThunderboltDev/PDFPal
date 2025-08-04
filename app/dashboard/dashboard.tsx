@@ -6,11 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLocalStorage } from "react-use";
 
 import type { UserData, Form, LocalForm } from "@/firebase/types";
-import {
-  deleteFormById,
-  fetchFormsByUserId,
-  publishForm,
-} from "@/firebase/forms";
+import { fetchFormsByUserId, publishForm } from "@/firebase/forms";
 
 import { Button } from "@/components/ui/button";
 import withAuth from "@/hoc/with-auth";
@@ -77,17 +73,15 @@ function Dashboard({ userData }: DashboardProps) {
     };
 
     setNewForm(defaultForm);
-    router.push(`forms/edit/${newFormId}`);
+    router.push(`/forms/edit/${newFormId}`);
   };
 
-  const handleFormEdit = (form: Form) => {
-    router.push(`/forms/edit/${form.id}`);
+  const handleFormView = (form: Form) => {
+    router.push(`/forms/${form.id}`);
   };
 
-  const handleFormDelete = async (form: Form) => {
-    await deleteFormById(form.id, userData.uid);
-
-    window.location.reload();
+  const handleFormSettings = (form: Form) => {
+    router.push(`/forms/settings/${form.id}`);
   };
 
   const handleDraftEdit = (form: LocalForm) => {
@@ -123,8 +117,8 @@ function Dashboard({ userData }: DashboardProps) {
       )}
       <FormsTable
         forms={forms}
-        onEdit={handleFormEdit}
-        onDelete={handleFormDelete}
+        onView={handleFormView}
+        onSettings={handleFormSettings}
       />
       <DraftFormsTable
         forms={draftForms}

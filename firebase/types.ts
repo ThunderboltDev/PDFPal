@@ -35,6 +35,7 @@ export type Form = {
   createdBy: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  responses?: number;
   fields: Field[];
   settings?: { themeColor?: string; isPublic?: boolean };
 };

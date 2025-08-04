@@ -1,86 +1,89 @@
 "use client";
 
-import { Pencil, Upload, Trash } from "lucide-react";
+import { ExternalLink, Settings } from "lucide-react";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
 import type { Form } from "@/firebase/types";
-import { PublishConfirmDialog } from "./dialogs/publish";
-import { DeleteConfirmDialog } from "./dialogs/delete";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function FormsTable({
   forms,
-  onEdit,
-  onDelete,
+  onView,
+  onSettings,
 }: {
   forms: Form[] | null;
-  onEdit: (form: Form) => void;
-  onDelete: (form: Form) => void;
+  onView: (form: Form) => void;
+  onSettings: (form: Form) => void;
 }) {
-  const [modal, setModal] = useState<{
-    type: "delete" | "publish";
-    form: Form;
-  } | null>(null);
-
-  const handleConfirm = () => {
-    if (!modal) return;
-    const { type, form } = modal;
-    switch (type) {
-      case "delete": {
-        onDelete(form);
-        break;
-      }
-      case "publish": {
-        break;
-      }
-    }
-    setModal(null);
-  };
-
   const columns = useMemo<ColumnDef<Form>[]>(
     () => [
       {
-        accessorKey: "start-title",
+        accessorKey: "title",
         header: "Title",
-        cell: ({ getValue }) => getValue(),
+        cell: ({ getValue }) =>
+          getValue() || <span className="italic">Untitled</span>,
       },
       {
-        id: "actions",
+        id: "center-responses",
+        accessorKey: "responses",
+        header: "Responses",
+        cell: ({ getValue }) => (
+          <span className="mx-auto w-fit">{String(getValue() || 0)}</span>
+        ),
+      },
+      {
+        id: "end-actions",
         header: "Actions",
         cell: ({ row }) => {
           const form = row.original!;
           return (
-            <div className="flex space-x-1">
-              <Button
-                size="icon"
-                variant="light"
-                onClick={() => onEdit(form)}
-              >
-                <Pencil />
-              </Button>
-              <Button
-                size="icon"
-                variant="accent"
-                onClick={() => setModal({ type: "publish", form: form })}
-              >
-                <Upload />
-              </Button>
-              <Button
-                size="icon"
-                variant="destructive"
-                onClick={() => setModal({ type: "delete", form: form })}
-              >
-                <Trash />
-              </Button>
+            <div className="w-fit">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="inline-block">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="mx-0 text-fg-500 hover:text-blue-600"
+                      onClick={() => onView(form)}
+                    >
+                      <ExternalLink className="size-4.5" />
+                      <span className="sr-only">View Form</span>
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>View Form</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="inline-block">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="mx-0 text-fg-500 hover:text-fg-100"
+                      onClick={() => onSettings(form)}
+                    >
+                      <Settings className="size-4.5" />
+                      <span className="sr-only">Form Settings</span>
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>Form Settings</TooltipContent>
+              </Tooltip>
             </div>
           );
         },
       },
     ],
-    [onEdit]
+    [onSettings, onView]
   );
 
   if (!forms || forms.length === 0) return <></>;
@@ -92,22 +95,6 @@ export default function FormsTable({
         columns={columns}
         data={forms}
       />
-      {modal &&
-        (modal.type === "delete" ? (
-          <DeleteConfirmDialog
-            open
-            onOpenChange={() => setModal(null)}
-            form={modal.form}
-            onConfirm={handleConfirm}
-          />
-        ) : (
-          <PublishConfirmDialog
-            open
-            onOpenChange={() => setModal(null)}
-            form={modal.form}
-            onConfirm={handleConfirm}
-          />
-        ))}
     </>
   );
 }

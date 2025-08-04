@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Upload, Trash, ExternalLink } from "lucide-react";
+import { Pencil, Upload, Trash, Eye } from "lucide-react";
 
 import { useState, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -10,6 +10,11 @@ import { PublishConfirmDialog } from "./dialogs/publish";
 import { DeleteConfirmDialog } from "./dialogs/delete";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function DraftFormsTable({
   forms,
@@ -60,42 +65,70 @@ export default function DraftFormsTable({
           const form = row.original!;
           return (
             <div className="w-fit">
-              <Button
-                size="icon"
-                variant="ghost"
-                className="mx-0 text-fg-500 hover:text-fg-100"
-                onClick={() => onEdit(form)}
-              >
-                <Pencil className="size-4.5" />
-                <span className="sr-only">Edit Form</span>
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="mx-0 text-fg-500 hover:text-blue-600"
-                onClick={() => onPreview(form)}
-              >
-                <ExternalLink className="size-4.5" />
-                <span className="sr-only">Preview Form</span>
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="mx-0 text-fg-500 hover:text-accent"
-                onClick={() => setModal({ type: "publish", form: form })}
-              >
-                <Upload className="size-4.5" />
-                <span className="sr-only">Publish Form</span>
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="mx-0 text-fg-500 hover:text-destructive"
-                onClick={() => setModal({ type: "delete", form: form })}
-              >
-                <Trash className="size-4.5" />
-                <span className="sr-only">Delete Form</span>
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="inline-block">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="mx-0 text-fg-500 hover:text-fg-100"
+                      onClick={() => onEdit(form)}
+                    >
+                      <Pencil className="size-4.5" />
+                      <span className="sr-only">Edit Form</span>
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>Edit Form</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="inline-block">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="mx-0 text-fg-500 hover:text-blue-600"
+                      onClick={() => onPreview(form)}
+                    >
+                      <Eye className="size-4.5" />
+                      <span className="sr-only">Preview Form</span>
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>Preview Form</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="inline-block">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="mx-0 text-fg-500 hover:text-accent"
+                      onClick={() => setModal({ type: "publish", form: form })}
+                    >
+                      <Upload className="size-4.5" />
+                      <span className="sr-only">Publish Form</span>
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>Publish Form</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="inline-block">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="mx-0 text-fg-500 hover:text-destructive"
+                      onClick={() => setModal({ type: "delete", form: form })}
+                    >
+                      <Trash className="size-4.5" />
+                      <span className="sr-only">Delete Form</span>
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>Delete Form</TooltipContent>
+              </Tooltip>
             </div>
           );
         },

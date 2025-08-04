@@ -90,4 +90,6 @@ export async function deleteFormById(formId: string, userId: string) {
 
   batch.delete(formRef);
   batch.update(userRef, { formsCreated: increment(-1) });
+
+  await batch.commit();
 }
