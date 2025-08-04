@@ -50,20 +50,16 @@ export default function DraftFormsTable({
       {
         accessorKey: "title",
         header: "Title",
-        cell: ({ getValue }) => getValue(),
+        cell: ({ getValue }) =>
+          getValue() || <span className="italic">Untitled</span>,
       },
       {
-        accessorKey: "description",
-        header: "Description",
-        cell: ({ getValue }) => getValue(),
-      },
-      {
-        id: "actions",
+        id: "end-actions",
         header: "Actions",
         cell: ({ row }) => {
           const form = row.original!;
           return (
-            <div className="flex justify-center">
+            <div className="w-fit">
               <Button
                 size="icon"
                 variant="ghost"

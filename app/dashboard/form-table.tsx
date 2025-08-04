@@ -43,13 +43,8 @@ export default function FormsTable({
   const columns = useMemo<ColumnDef<Form>[]>(
     () => [
       {
-        accessorKey: "title",
+        accessorKey: "start-title",
         header: "Title",
-        cell: ({ getValue }) => getValue(),
-      },
-      {
-        accessorKey: "description",
-        header: "Description",
         cell: ({ getValue }) => getValue(),
       },
       {

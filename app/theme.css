@@ -110,6 +110,61 @@
   --chart-5: oklch(0.645 0.246 16.439);
 }
 
+@utility gradient-text-fg {
+  @apply text-transparent bg-clip-text;
+  @apply bg-linear-0;
+  @apply from-fg-100 via-fg-300 to-fg-500;
+}
+
+@utility gradient-text-accent {
+  @apply text-transparent bg-clip-text;
+  @apply bg-linear-0;
+  @apply from-accent-800 to-accent-400;
+}
+
+@keyframes rotate-angle {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
+  }
+}
+
+@utility gradient-border {
+  @apply relative z-10 overflow-visible;
+  background: inherit;
+
+  @property --angle {
+    initial-value: 0deg;
+    syntax: "<angle>";
+    inherits: false;
+  }
+
+  &::before {
+    content: "";
+
+    @apply absolute inset-1/2 -z-10;
+    @apply pointer-events-none rounded-[inherit];
+    @apply -translate-x-1/2 -translate-y-1/2;
+
+    animation: rotate-angle 3s linear infinite;
+
+    width: calc(100% + 6px);
+    height: calc(100% + 6px);
+
+    background-image: conic-gradient(
+      from var(--angle),
+      var(--color-accent),
+      var(--color-primary-700),
+      var(--color-accent-400),
+      var(--color-accent-700),
+      var(--color-primary-500),
+      var(--color-accent)
+    );
+  }
+}
+
 @utility container-* {
   margin-inline: auto;
   width: calc(100vw - 4rem);

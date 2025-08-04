@@ -29,23 +29,38 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
 
   return (
     <div className="rounded-md border overflow-hidden">
-      <Table>
+      <Table className="table-auto">
         <TableHeader>
           {table.getHeaderGroups().map((hg) => (
             <TableRow
               key={hg.id}
               className="bg-bg-200"
             >
-              {hg.headers.map((h) => (
-                <TableHead
-                  key={h.id}
-                  className="text-center"
-                >
-                  {h.isPlaceholder
-                    ? null
-                    : flexRender(h.column.columnDef.header, h.getContext())}
-                </TableHead>
-              ))}
+              {hg.headers.map((header) => {
+                const isPlaceEnd = header.column.id.startsWith("end-");
+                return (
+                  <TableHead
+                    key={header.id}
+                    className={
+                      isPlaceEnd
+                        ? "text-center not-first:px-0 w-[1px] whitespace-nowrap"
+                        : "text-center"
+                    }
+                    style={
+                      isPlaceEnd
+                        ? { width: header.getSize?.() + "px" }
+                        : undefined
+                    }
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
         </TableHeader>
@@ -57,7 +72,10 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
                 className={index % 2 === 0 ? "bg-bg-200/50" : "bg-bg-200"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    key={cell.id}
+                    className="pl-2.5"
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

@@ -47,7 +47,7 @@ function Dashboard({ userData }: DashboardProps) {
         if (raw) {
           try {
             const form = JSON.parse(raw) as LocalForm;
-            if (form && form.title) results.push(form);
+            if (form) results.push(form);
           } catch {}
         }
       }
