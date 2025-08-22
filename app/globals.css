@@ -9,6 +9,19 @@
     @apply transition-colors duration-200 ease-in;
   }
 
+  ::-webkit-scrollbar {
+    @apply w-1 bg-bg-300;
+  }
+
+  ::-webkit-scrollbar-thumb,
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      var(--color-accent-500),
+      var(--color-accent-600)
+    );
+  }
+
   body {
     @apply bg-bg-100 text-fg-100;
   }
@@ -56,6 +69,11 @@
     font-size: clamp(1.125rem, calc(0.875rem + 0.75vw), 1.5rem);
   }
 
+  a {
+    @apply font-light text-blue-500/90 hover:text-blue-500;
+    @apply underline-offset-4 hover:underline hover:decoration-1;
+  }
+
   p,
   ul,
   ol,
@@ -76,16 +94,26 @@
     @apply cursor-pointer;
   }
 
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"] {
+    appearance: none;
+  }
+
   /* Forms */
 
   [contenteditable][data-placeholder]:empty::before {
     @apply text-fg-500 pointer-events-none block;
     content: attr(data-placeholder);
   }
-
-  /* [contenteditable][data-placeholder]:focus::before {
-    content: "\feff";
-  } */
 }
 
 :root {

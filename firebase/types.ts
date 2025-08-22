@@ -19,11 +19,16 @@ export type FieldType = (typeof allFieldTypes)[number];
 
 export type Field = {
   id: string;
+  order: number;
   type: FieldType;
   label: string;
   placeholder: string;
   required?: boolean;
-  order: number;
+  min?: number;
+  max?: number;
+  minLength?: number;
+  maxLength?: number;
+  step?: number;
   options?: { name: string; value: string }[];
   settings?: Record<string, unknown>;
 };
@@ -40,11 +45,16 @@ export type Form = {
   settings?: { themeColor?: string; isPublic?: boolean };
 };
 
-export type LocalForm = Omit<Form, "createdBy" | "createdAt" | "updatedAt">;
+export type DraftForm = Omit<Form, "createdBy" | "createdAt" | "updatedAt">;
 
 export type FormResponse = {
   id: string;
   respondentId?: string;
   submittedAt: Timestamp;
-  answers: { fieldId: string; value: string | number | boolean | null }[];
+  answers: Record<string, string | number | boolean | null>;
 };
+
+export type DraftFormResponse = Omit<
+  FormResponse,
+  "respondentId" | "submittedAt"
+>;

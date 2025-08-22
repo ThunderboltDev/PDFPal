@@ -107,13 +107,14 @@ export default function Auth() {
     <>
       <OverlayLoader loading={loading || loadingAuth} />
       <div className="w-screen h-screen grid items-center">
-        <div className="bg-bg-300 rounded-md p-5 w-3/4 max-w-96 mx-auto">
+        <div className="bg-bg-200 rounded-md p-5 w-3/4 max-w-96 mx-auto">
           <h2>Welcome!</h2>
           <p className="text-sm text-fg-300 text-center mt-2">
             Create an account or login to continue!
           </p>
           <div className="flex flex-col gap-2 mt-1">
             <Button
+              className="w-full"
               variant="light"
               onClick={handleGoogleSignIn}
             >
@@ -126,6 +127,7 @@ export default function Auth() {
               Continue with Google
             </Button>
             <Button
+              className="w-full"
               variant="light"
               onClick={handleAnonymousSignIn}
             >

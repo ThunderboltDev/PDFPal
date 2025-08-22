@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
-import { Form, LocalForm } from "@/firebase/types";
+import { Form, DraftForm } from "@/firebase/types";
 
 interface PublishConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
-  form: Form | LocalForm;
+  form: Form | DraftForm;
 }
 
 export function PublishConfirmDialog({

@@ -3,10 +3,14 @@
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLocalStorage } from "react-use";
 
-import type { UserData, Form, LocalForm } from "@/firebase/types";
-import { fetchFormsByUserId, publishForm } from "@/firebase/forms";
+import type { UserData, Form, DraftForm } from "@/firebase/types";
+import {
+  createNewDraftForm,
+  fetchFormsByUserId,
+  getDraftFormsFromStorage,
+  publishForm,
+} from "@/firebase/forms";
 
 import { Button } from "@/components/ui/button";
 import withAuth from "@/hoc/with-auth";
@@ -21,36 +25,9 @@ interface DashboardProps {
 
 function Dashboard({ userData }: DashboardProps) {
   const [forms, setForms] = useState<Form[] | null>(null);
-  const [draftForms, setDraftForms] = useState<LocalForm[] | null>(null);
+  const [draftForms, setDraftForms] = useState<DraftForm[] | null>(null);
 
   const router = useRouter();
-
-  const newFormId = crypto.randomUUID();
-
-  const [, setNewForm] = useLocalStorage<LocalForm | null>(
-    `draft-form-${newFormId}`,
-    null
-  );
-
-  function getDraftFormsFromStorage(): LocalForm[] {
-    const results: LocalForm[] = [];
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("draft-form-")) {
-        const raw = localStorage.getItem(key);
-
-        if (raw) {
-          try {
-            const form = JSON.parse(raw) as LocalForm;
-            if (form) results.push(form);
-          } catch {}
-        }
-      }
-    }
-
-    return results;
-  }
 
   useEffect(() => {
     if (!userData) return;
@@ -64,18 +41,6 @@ function Dashboard({ userData }: DashboardProps) {
     fetchForms();
   }, [userData]);
 
-  const handleCreateNewForm = async () => {
-    const defaultForm: LocalForm = {
-      id: newFormId,
-      title: "Form Title",
-      description: "A very cool description!",
-      fields: [],
-    };
-
-    setNewForm(defaultForm);
-    router.push(`/forms/edit/${newFormId}`);
-  };
-
   const handleFormView = (form: Form) => {
     router.push(`/forms/${form.id}`);
   };
@@ -84,22 +49,22 @@ function Dashboard({ userData }: DashboardProps) {
     router.push(`/forms/settings/${form.id}`);
   };
 
-  const handleDraftEdit = (form: LocalForm) => {
+  const handleDraftEdit = (form: DraftForm) => {
     router.push(`/forms/edit/${form.id}`);
   };
 
-  const handleDraftPreview = (form: LocalForm) => {
+  const handleDraftPreview = (form: DraftForm) => {
     router.push(`/forms/preview/${form.id}`);
   };
 
-  const handleDraftDelete = (form: LocalForm) => {
+  const handleDraftDelete = (form: DraftForm) => {
     const key = `draft-form-${form.id}`;
     localStorage.removeItem(key);
 
     window.location.reload();
   };
 
-  const handleDraftPublish = async (form: LocalForm) => {
+  const handleDraftPublish = async (form: DraftForm) => {
     const formId = await publishForm(form, userData.uid);
 
     const key = `draft-form-${form.id}`;
@@ -129,7 +94,7 @@ function Dashboard({ userData }: DashboardProps) {
       />
       <div className="grid place-items-center">
         <Button
-          onClick={() => handleCreateNewForm()}
+          onClick={() => router.push(createNewDraftForm())}
           disabled={(userData?.formsCreated || 0) >= 5}
           variant="accent"
           size="small"

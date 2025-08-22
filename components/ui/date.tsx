@@ -8,27 +8,41 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Button, buttonVariants } from "./button";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
+import { Calendar } from "lucide-react";
 
 const defaultClassNames = getDefaultClassNames();
 
 export interface DateProps {
+  value?: string;
   onChange: (date: Date) => void;
+  placeholder?: string;
+  captionLayout?: string;
   buttonVariant?: ComponentProps<typeof Button>["variant"];
 }
 
 export function Date({
+  value = "",
   onChange,
+  placeholder = "Date",
   captionLayout = "label",
   buttonVariant = "ghost",
 }: DayPickerProps & DateProps) {
-  const [date, setDate] = useState(new globalThis.Date().toDateString());
+  const [date, setDate] = useState(value);
+  const [open, setOpen] = useState(false);
+
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <PopoverTrigger asChild>
         <Input
           className="min-w-full"
           type="text"
           value={date}
+          placeholder={placeholder}
+          icon={<Calendar />}
+          iconTooltip="Date Picker"
           readOnly
         />
       </PopoverTrigger>
@@ -36,6 +50,7 @@ export function Date({
         <DayPicker
           mode="single"
           onDayClick={(date: Date) => {
+            setOpen(false);
             onChange(date);
             setDate(date.toDateString());
           }}

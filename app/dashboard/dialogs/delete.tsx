@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Trash, X } from "lucide-react";
-import { Form, LocalForm } from "@/firebase/types";
+import { Form, DraftForm } from "@/firebase/types";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
-  form: Form | LocalForm;
+  form: Form | DraftForm;
 }
 
 export function DeleteConfirmDialog({

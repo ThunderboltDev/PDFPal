@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useLocalStorage, useMount } from "react-use";
 import { useState } from "react";
 
-import type { LocalForm } from "@/firebase/types";
+import type { DraftForm } from "@/firebase/types";
 
 import TextEditor from "@/app/forms/edit/[formId]/text-editor";
 import OverlayLoader from "@/components/ui/overlay-loader";
@@ -13,7 +13,7 @@ import { DynamicFormEditorRenderer } from "./editor-renderer";
 export default function EditFormPage() {
   const { formId } = useParams();
   const [mounted, setMounted] = useState(false);
-  const [draftForm, setDraftForm] = useLocalStorage<LocalForm | null>(
+  const [draftForm, setDraftForm] = useLocalStorage<DraftForm | null>(
     `draft-form-${formId}`,
     null
   );

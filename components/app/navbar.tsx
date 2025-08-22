@@ -19,7 +19,7 @@ export default function Navbar() {
   const { userData } = useAuth();
 
   return (
-    <div className="fixed top-0 left-0 w-full p-1.5 bg-bg-500/25 border-b border-bg-500/50 backdrop-blur-md grid grid-cols-3">
+    <div className="fixed top-0 left-0 w-screen p-1.5 pr-3 bg-bg-500/25 border-b border-bg-500/50 backdrop-blur-md grid grid-cols-3">
       <div>
         <SidebarTrigger />
       </div>

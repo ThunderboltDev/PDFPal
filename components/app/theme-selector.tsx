@@ -44,7 +44,10 @@ export default function ThemeSelector() {
       >
         {themeIcons[currentTheme]}
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent
+        side="bottom"
+        align="end"
+      >
         {themes.map((theme) => (
           <SelectItem
             key={theme}

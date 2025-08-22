@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { FieldWithToolbar } from "./field-toolbar";
-import type { LocalForm, Field, FieldType } from "@/firebase/types";
+import type { DraftForm, Field, FieldType } from "@/firebase/types";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { InsertInputSelection } from "./input-selection";
 
 type FormEditorRendererForm = {
-  draftForm: LocalForm;
-  setDraftForm: (form: LocalForm) => void;
+  draftForm: DraftForm;
+  setDraftForm: (form: DraftForm) => void;
 };
 
 export function DynamicFormEditorRenderer({

@@ -5,7 +5,7 @@ import { Pencil, Upload, Trash, Eye } from "lucide-react";
 import { useState, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import type { LocalForm } from "@/firebase/types";
+import type { DraftForm } from "@/firebase/types";
 import { PublishConfirmDialog } from "./dialogs/publish";
 import { DeleteConfirmDialog } from "./dialogs/delete";
 import { Button } from "@/components/ui/button";
@@ -23,15 +23,15 @@ export default function DraftFormsTable({
   onPreview,
   onPublish,
 }: {
-  forms: LocalForm[] | null;
-  onEdit: (form: LocalForm) => void;
-  onDelete: (form: LocalForm) => void;
-  onPreview: (form: LocalForm) => void;
-  onPublish: (form: LocalForm) => void;
+  forms: DraftForm[] | null;
+  onEdit: (form: DraftForm) => void;
+  onDelete: (form: DraftForm) => void;
+  onPreview: (form: DraftForm) => void;
+  onPublish: (form: DraftForm) => void;
 }) {
   const [modal, setModal] = useState<{
     type: "delete" | "publish";
-    form: LocalForm;
+    form: DraftForm;
   } | null>(null);
 
   const handleConfirm = () => {
@@ -50,7 +50,7 @@ export default function DraftFormsTable({
     setModal(null);
   };
 
-  const columns = useMemo<ColumnDef<LocalForm>[]>(
+  const columns = useMemo<ColumnDef<DraftForm>[]>(
     () => [
       {
         accessorKey: "title",

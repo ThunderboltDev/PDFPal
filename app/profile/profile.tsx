@@ -1,79 +1,239 @@
 "use client";
 
-import { format } from "date-fns";
+import { LayoutDashboard, Link, LogOut, Plus, Trash, X } from "lucide-react";
+
 import Image from "next/image";
+import { ReactNode, useEffect, useState } from "react";
 import withAuth from "@/hoc/with-auth";
-import type { UserData } from "@/firebase/types";
+import type { DraftForm, User, UserData } from "@/firebase/types";
 import Skeleton from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import { deleteAccount, linkAccount } from "@/firebase/user";
+import OverlayLoader from "@/components/ui/overlay-loader";
+import { createNewDraftForm, getDraftFormsFromStorage } from "@/firebase/forms";
 
 interface ProfileProps {
   userData: UserData;
-  user: null;
+  user: User;
 }
 
-function Profile({ userData }: ProfileProps) {
+function Profile({ userData, user }: ProfileProps) {
+  const [loading, setLoading] = useState(false);
+  const [draftForms, setDraftForms] = useState<DraftForm[]>([]);
+  const router = useRouter();
+
+  const handleDeleteAccount = async () => {
+    setLoading(true);
+    await deleteAccount(user);
+    setLoading(false);
+  };
+
+  const handleLinkAccount = async () => {
+    setLoading(true);
+    await linkAccount(user, userData);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!userData) setDraftForms(getDraftFormsFromStorage());
+  }, [userData]);
+
   return (
-    <div className="max-w-md mx-auto pt-18">
+    <div className="max-w-md mx-auto pt-20">
+      <OverlayLoader loading={loading} />
       <h2>Profile</h2>
-      <div className="space-y-2">
-        <div>
-          {userData?.avatar ? (
-            <Image
-              src={userData.avatar}
-              alt="User Avatar"
-              width={64}
-              height={64}
-              className="mt-1 rounded-full"
-              loading="eager"
-            />
-          ) : (
-            <Skeleton
-              width={64}
-              height={64}
-            />
-          )}
+      <div className="space-y-1 bg-bg-200 shadow-md mt-3 p-4 rounded-lg">
+        <div className="grid grid-cols-[auto_1fr] gap-3">
+          <div>
+            {userData?.avatar ? (
+              <Image
+                src={userData.avatar}
+                alt={`Avatar of ${userData.displayName || "User"}`}
+                width={64}
+                height={64}
+                className="mt-1 rounded-full"
+                loading="eager"
+              />
+            ) : (
+              <Skeleton
+                width={64}
+                height={64}
+              />
+            )}
+          </div>
+          <div className="flex flex-col gap-0 items-start mt-2">
+            <span className="font-normal">
+              {userData?.displayName ?? <Skeleton width={120} />}
+            </span>
+            {!userData?.isAnonymous && (
+              <span className="text-fg-500 text-sm">
+                {userData?.email ?? <Skeleton width={80} />}
+              </span>
+            )}
+          </div>
         </div>
-        <ProfileRow
+        {/* <ProfileRow
           label="UID"
           value={userData?.uid}
           skeletonWidth={200}
-        />
-        <ProfileRow
-          label="Display Name"
-          value={userData?.displayName}
-          skeletonWidth={100}
-        />
-        <ProfileRow
-          label="Email"
-          value={userData?.email}
-        />
-        <ProfileRow
-          label="Created At"
-          value={
-            userData?.createdAt
-              ? format(userData?.createdAt.toDate(), "PPP")
-              : null
-          }
-        />
+        /> */}
+      </div>
+      <h3 className="mt-4">Forms</h3>
+      <div className="space-y-1 bg-bg-200 shadow-md mt-3 p-4 rounded-lg">
+        <p className="text-center text-sm text-fg-500">
+          All your published forms show here!
+        </p>
+        {userData?.formsCreated ? (
+          <></>
+        ) : (
+          <>
+            <p className="text-center">
+              You haven&apos;t published any forms yet!
+            </p>
+          </>
+        )}
+        <div className="grid place-items-center mt-4">
+          <Button
+            onClick={() => router.push("/dashboard")}
+            className="mx-auto"
+            variant="accent"
+            size="small"
+          >
+            <LayoutDashboard />
+            Go to Dashboard
+          </Button>
+        </div>
+      </div>
+      <div className="space-y-1 bg-bg-200 shadow-md mt-4 p-4 rounded-lg">
+        <p className="text-center text-sm text-fg-500">
+          All your drafted forms show here!
+        </p>
+        {draftForms.length ? (
+          <></>
+        ) : (
+          <>
+            <p className="text-center">
+              You haven&apos;t created any forms yet! <br />
+              Click the button below to get started.
+            </p>
+          </>
+        )}
+        <div className="grid place-items-center mt-4">
+          <Button
+            onClick={() => router.push(createNewDraftForm())}
+            disabled={(userData?.formsCreated || 0) >= 5}
+            variant="accent"
+            size="small"
+          >
+            <Plus />
+            Create New Form
+          </Button>
+        </div>
+      </div>
+      <div className="space-y-2 mt-8 w-64 mx-auto">
+        {userData?.isAnonymous && (
+          <ModalConfirmation
+            icon={<Link />}
+            variant="blue"
+            label="Link Account"
+            title="Link Account?"
+            onConfirm={handleLinkAccount}
+          >
+            Linking your account allows you to connect it with another service
+            or platform. This can enhance your experience and provide additional
+            features.
+          </ModalConfirmation>
+        )}
+        <ModalConfirmation
+          icon={<LogOut />}
+          variant="destructive"
+          label="Logout"
+          title="Confirm Logout?"
+          onConfirm={() => router.push("/logout")}
+        >
+          Are you sure you want to log out? You will need to log in again to
+          access your account.
+        </ModalConfirmation>
+        <ModalConfirmation
+          icon={<Trash />}
+          variant="destructive"
+          label="Delete Account"
+          title="Delete Account?"
+          onConfirm={handleDeleteAccount}
+        >
+          Are you sure you want to delete your account? This action cannot be
+          undone.
+        </ModalConfirmation>
+      </div>
+      <div className="w-full my-6 text-sm text-center text-fg-500">
+        {userData?.uid || ""}
       </div>
     </div>
   );
 }
 
-function ProfileRow({
-  label,
-  value,
-  skeletonWidth,
-}: {
+interface ModalConfirmationProps {
+  icon: ReactNode;
   label: string;
-  value: string | null | undefined;
-  skeletonWidth?: number;
-}) {
+  variant: "default" | "destructive" | "blue";
+  onConfirm: () => void;
+  title: string;
+  children: ReactNode;
+}
+
+function ModalConfirmation({
+  icon,
+  label,
+  variant,
+  onConfirm,
+  title,
+  children,
+}: ModalConfirmationProps) {
   return (
-    <div>
-      <span className="font-normal">{label}:</span>{" "}
-      <span>{value ?? <Skeleton width={skeletonWidth || 120} />}</span>
-    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant={variant}
+          className="w-full"
+        >
+          {icon}
+          {label}
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{children}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="space-x-2">
+          <DialogClose asChild>
+            <Button variant="light">
+              <X />
+              Cancel
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              variant={variant}
+              onClick={onConfirm}
+            >
+              {icon} {label}
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

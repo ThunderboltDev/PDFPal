@@ -101,7 +101,7 @@
   --fg-400: oklch(0.8 0 0);
   --fg-500: oklch(0.75 0 0);
 
-  --destructive: oklch(0.65 0.25 27.216);
+  --destructive: oklch(0.577 0.22 27.325);
 
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -169,4 +169,15 @@
   margin-inline: auto;
   width: calc(100vw - 4rem);
   max-width: --value(--container-width- *, integer);
+}
+
+@utility input {
+  @apply h-9 w-full px-3 py-1 text-base md:text-sm font-light;
+  @apply bg-transparent shadow-xs transition-[color,box-shadow,border-color];
+  @apply rounded-sm border border-bg-300;
+  @apply outline-none placeholder:text-fg-500;
+  @apply disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed;
+  @apply file:text-fg-100 file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-light;
+  @apply focus-visible:ring-[3px] focus-visible:border-accent/75 focus-visible:ring-accent/50;
+  @apply aria-invalid:ring-destructive/50 aria-invalid:border-destructive/75;
 }

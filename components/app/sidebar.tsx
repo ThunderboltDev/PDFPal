@@ -19,6 +19,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const items = [
   {
@@ -64,10 +65,13 @@ export function AppSidebar() {
                     variant={pathname === item.url ? "active" : "default"}
                     asChild
                   >
-                    <a href={item.url}>
+                    <Link
+                      href={item.url}
+                      className="no-underline"
+                    >
                       <item.icon className="" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

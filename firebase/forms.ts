@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 
 import { db, formsCollection } from "@/lib/firebase";
-import type { Form, LocalForm } from "@/firebase/types";
+import type { Form, DraftForm } from "@/firebase/types";
 
 export async function fetchFormById(formId: string): Promise<Form | null> {
   const docRef = doc(db, "forms", formId);
@@ -37,7 +37,7 @@ export async function fetchFormsByUserId(
 }
 
 export async function publishForm(
-  form: LocalForm,
+  form: DraftForm,
   userId: string
 ): Promise<string> {
   const formRef = doc(formsCollection);
@@ -93,3 +93,37 @@ export async function deleteFormById(formId: string, userId: string) {
 
   await batch.commit();
 }
+
+export function getDraftFormsFromStorage(): DraftForm[] {
+  const results: DraftForm[] = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith("draft-form-")) {
+      const raw = localStorage.getItem(key);
+
+      if (raw) {
+        try {
+          const form = JSON.parse(raw) as DraftForm;
+          if (form) results.push(form);
+        } catch {}
+      }
+    }
+  }
+
+  return results;
+}
+
+export const createNewDraftForm = () => {
+  const newFormId = crypto.randomUUID();
+  const defaultForm: DraftForm = {
+    id: newFormId,
+    title: "Form Title",
+    description: "A very cool description!",
+    fields: [],
+  };
+
+  localStorage.setItem(`draft-form-${newFormId}`, JSON.stringify(defaultForm));
+
+  return `/forms/edit/${newFormId}`;
+};
