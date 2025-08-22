@@ -87,9 +87,9 @@ export function DynamicFormEditorRenderer({
       />
       {draftForm.fields.length === 0 ? (
         <Button
+          onClick={() => insert(0)}
           variant="default"
           size="small"
-          onClick={() => insert(0)}
         >
           <Plus />
           Add First Field

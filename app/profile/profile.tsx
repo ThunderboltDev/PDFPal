@@ -1,11 +1,15 @@
 "use client";
 
 import { LayoutDashboard, Link, LogOut, Plus, Trash, X } from "lucide-react";
+import { FaUser } from "react-icons/fa";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
-import withAuth from "@/hoc/with-auth";
+import { deleteAccount, linkAccount } from "@/firebase/user";
+import { createNewDraftForm, getDraftFormsFromStorage } from "@/firebase/forms";
 import type { DraftForm, User, UserData } from "@/firebase/types";
+import OverlayLoader from "@/components/ui/overlay-loader";
 import Skeleton from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,10 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
-import { deleteAccount, linkAccount } from "@/firebase/user";
-import OverlayLoader from "@/components/ui/overlay-loader";
-import { createNewDraftForm, getDraftFormsFromStorage } from "@/firebase/forms";
+import withAuth from "@/hoc/with-auth";
 
 interface ProfileProps {
   userData: UserData;
@@ -53,18 +54,24 @@ function Profile({ userData, user }: ProfileProps) {
     <div className="max-w-md mx-auto pt-20">
       <OverlayLoader loading={loading} />
       <h2>Profile</h2>
-      <div className="space-y-1 bg-bg-200 shadow-md mt-3 p-4 rounded-lg">
+      <div className="space-y-1 bg-bg-200 shadow-md mt-4 p-4 rounded-lg">
         <div className="grid grid-cols-[auto_1fr] gap-3">
           <div>
-            {userData?.avatar ? (
-              <Image
-                src={userData.avatar}
-                alt={`Avatar of ${userData.displayName || "User"}`}
-                width={64}
-                height={64}
-                className="mt-1 rounded-full"
-                loading="eager"
-              />
+            {userData ? (
+              userData.avatar ? (
+                <Image
+                  src={userData.avatar}
+                  alt={`Avatar of ${userData.displayName || "User"}`}
+                  width={64}
+                  height={64}
+                  className="mt-1 rounded-full"
+                  loading="eager"
+                />
+              ) : (
+                <div className="w-16 h-16 bg-bg-300 rounded-full flex items-center justify-center">
+                  <FaUser className="w-8 h-8 text-fg-500" />
+                </div>
+              )
             ) : (
               <Skeleton
                 width={64}
@@ -72,25 +79,25 @@ function Profile({ userData, user }: ProfileProps) {
               />
             )}
           </div>
-          <div className="flex flex-col gap-0 items-start mt-2">
+          <div className="flex flex-col gap-0 items-start mt-0">
             <span className="font-normal">
               {userData?.displayName ?? <Skeleton width={120} />}
             </span>
             {!userData?.isAnonymous && (
               <span className="text-fg-500 text-sm">
-                {userData?.email ?? <Skeleton width={80} />}
+                {userData?.email ?? (
+                  <Skeleton
+                    width={80}
+                    height={12}
+                  />
+                )}
               </span>
             )}
           </div>
         </div>
-        {/* <ProfileRow
-          label="UID"
-          value={userData?.uid}
-          skeletonWidth={200}
-        /> */}
       </div>
-      <h3 className="mt-4">Forms</h3>
-      <div className="space-y-1 bg-bg-200 shadow-md mt-3 p-4 rounded-lg">
+      <h3 className="mt-6">Forms</h3>
+      <div className="space-y-1 bg-bg-200 shadow-md mt-4 p-4 rounded-lg">
         <p className="text-center text-sm text-fg-500">
           All your published forms show here!
         </p>
@@ -141,7 +148,8 @@ function Profile({ userData, user }: ProfileProps) {
           </Button>
         </div>
       </div>
-      <div className="space-y-2 mt-8 w-64 mx-auto">
+      <h3 className="mt-6">Account Actions</h3>
+      <div className="space-y-2 mt-4 w-64 mx-auto">
         {userData?.isAnonymous && (
           <ModalConfirmation
             icon={<Link />}

@@ -78,7 +78,10 @@ function Dashboard({ userData }: DashboardProps) {
       <OverlayLoader loading={forms === null || draftForms === null} />
       <h2>Dashboard</h2>
       {draftForms?.length === 0 && forms?.length === 0 && (
-        <p className="text-center">No forms created!</p>
+        <p className="text-center">
+          You haven&apos;t created any forms yet! <br />
+          Click the button below to get started!
+        </p>
       )}
       <FormsTable
         forms={forms}

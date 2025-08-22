@@ -2,12 +2,13 @@ import { ArrowDown, ArrowUp, Plus, Trash } from "lucide-react";
 
 import { useState } from "react";
 import {
-  useFloating,
   offset,
   flip,
   shift,
   useHover,
+  useClick,
   useDismiss,
+  useFloating,
   useInteractions,
   safePolygon,
 } from "@floating-ui/react";
@@ -49,10 +50,17 @@ export function FieldWithToolbar({
     mouseOnly: true,
   });
 
+  const click = useClick(context, {
+    toggle: true,
+    ignoreMouse: true,
+    stickIfOpen: false,
+  });
+
   const dismiss = useDismiss(context);
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
     hover,
+    click,
     dismiss,
   ]);
 

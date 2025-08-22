@@ -10,7 +10,8 @@ export default function Skeleton(props: CustomSkeletonProps) {
     <SkeletonBase
       {...props}
       borderRadius={props.borderRadius ?? 999}
-      containerClassName="!contents !h-0 flex-1 animate-pulse"
+      containerClassName="!contents !h-0 flex-1"
+      className="!animate-pulse"
     />
   );
 }
