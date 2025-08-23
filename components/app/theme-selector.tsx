@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/select";
 
 const themeIcons: Record<Theme, ReactNode> = {
-  system: <LuMonitor className="size-4.5" />,
-  light: <LuSun className="size-4.5" />,
-  dark: <LuMoon className="size-4.5" />,
+  system: <LuMonitor className="size-4.5 text-fg-300" />,
+  light: <LuSun className="size-4.5 text-fg-300" />,
+  dark: <LuMoon className="size-4.5 text-fg-300" />,
 };
 
 type Theme = "system" | "light" | "dark";
@@ -40,7 +40,7 @@ export default function ThemeSelector() {
     >
       <SelectTrigger
         showArrow={false}
-        className="border-none text-fg-100 bg-transparent hover:bg-bg-500/25 shadow-none transition-colors duration-300 ease-in mt-1 pl-2.25 min-h-9 w-9"
+        className="border-none bg-transparent hover:bg-bg-500/25 shadow-none transition-colors duration-300 ease-in mt-1 pl-2.25 min-h-9 w-9"
       >
         {themeIcons[currentTheme]}
       </SelectTrigger>

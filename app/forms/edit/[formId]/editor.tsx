@@ -27,7 +27,7 @@ export default function EditFormPage() {
 
   return (
     <div className="container-sm mt-18">
-      <EditorNavbar />
+      <EditorNavbar formId={formId as string} />
       <TextEditor
         as="h1"
         value={draftForm.title}
