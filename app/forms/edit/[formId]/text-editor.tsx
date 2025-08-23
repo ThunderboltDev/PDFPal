@@ -12,7 +12,9 @@ export default function TextEditor<E extends ElementType>({
   as,
   value,
   placeholder,
+  onEnter,
   onChange,
+  onKeyDown,
   ...props
 }: TextEditorProps & ComponentProps<E>) {
   const ref = useRef<HTMLElement>(null);
@@ -31,6 +33,14 @@ export default function TextEditor<E extends ElementType>({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (onEnter) onEnter(e);
+    }
+    if (onKeyDown) onKeyDown(e);
+  };
+
   useEffect(() => {
     if (ref.current && document.activeElement !== ref.current) {
       ref.current.innerText = value;
@@ -42,6 +52,7 @@ export default function TextEditor<E extends ElementType>({
       ref={ref}
       contentEditable
       suppressContentEditableWarning
+      onKeyDown={handleKeyDown}
       onInput={handleInput}
       onBlur={handleBlur}
       style={{ outline: "none", cursor: "text" }}

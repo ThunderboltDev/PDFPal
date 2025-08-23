@@ -22,6 +22,15 @@
     );
   }
 
+  textarea::-webkit-scrollbar,
+  textarea::-webkit-scrollbar-thumb {
+    @apply rounded-tr-xs w-2;
+  }
+
+  textarea::-webkit-scrollbar-corner {
+    @apply bg-bg-300 border-none outline-none;
+  }
+
   body {
     @apply bg-bg-100 text-fg-100;
   }

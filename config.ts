@@ -27,7 +27,23 @@ const config = {
     previewWidth: 1200,
     previewHeight: 628,
   },
-  keywords: [""],
+  keywords: [
+    "form builder",
+    "form creator",
+    "survey tool",
+    "quiz maker",
+    "data collection",
+    "online forms",
+    "custom forms",
+    "form templates",
+    "form analytics",
+    "form sharing",
+    "form integration",
+    "user-friendly forms",
+    "responsive forms",
+    "secure forms",
+    "collaborative forms",
+  ],
 };
 
 export default config;

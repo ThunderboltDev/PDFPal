@@ -2,45 +2,51 @@
 
 import { FaUser } from "react-icons/fa";
 
-import { usePathname, useRouter } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
-import { useAuth } from "./providers";
-import { SidebarTrigger } from "../ui/sidebar";
-import ThemeSelector from "./theme-selector";
+import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/components/app/providers";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import ThemeSelector from "@/components/app/theme-selector";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { LayoutDashboard } from "lucide-react";
 
-const noNavPaths = [
-  /^\/$/,
-  /^\/auth/,
-  /^\/forms\/edit\/[^/]+$/,
-  /^\/forms\/preview\/[^/]+$/,
-] as const;
-
-export default function Navbar() {
+export default function EditorNavbar() {
   const router = useRouter();
-  const pathname = usePathname();
   const { userData } = useAuth();
 
-  if (noNavPaths.some((pattern) => pattern.test(pathname))) {
-    return null;
-  }
   return (
     <div className="fixed top-0 left-0 w-screen p-1.5 pr-3 bg-bg-500/25 border-b border-bg-500 backdrop-blur-md grid grid-cols-3">
       <div>
         <SidebarTrigger />
       </div>
-      <Button
-        variant="ghost"
-        className="text-xl py-1.5 px-4 w-fit mx-auto"
-      >
-        SparkSight
-      </Button>
+      <div></div>
       <div className="h-11 flex flex-row gap-2 justify-end">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="inline-block">
+              <Button
+                onClick={() => router.push("/dashboard")}
+                className="mt-1 text-accent"
+                variant="ghost"
+                size="icon"
+              >
+                <LayoutDashboard />
+                <span className="sr-only">Go to Dashboard</span>
+              </Button>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent
+            side="bottom"
+            sideOffset={-5}
+          >
+            <span>Dashboard</span>
+          </TooltipContent>
+        </Tooltip>
         <ThemeSelector />
         <Tooltip>
           <TooltipTrigger asChild>
