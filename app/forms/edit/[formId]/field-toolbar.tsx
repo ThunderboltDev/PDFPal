@@ -6,13 +6,11 @@ import {
   flip,
   shift,
   useHover,
-  useFocus,
-  // useClick,
+  useClick,
   useDismiss,
   useFloating,
   useInteractions,
   safePolygon,
-  // autoUpdate,
 } from "@floating-ui/react";
 import { Button } from "../../../../components/ui/button";
 import { FieldEditor } from "./field-editor";
@@ -44,37 +42,30 @@ export function FieldWithToolbar({
     placement: "bottom-start",
     strategy: "fixed",
     middleware: [offset(16), flip(), shift()],
-    // whileElementsMounted: autoUpdate,
   });
 
-  const isHoverable =
-    typeof window !== "undefined" &&
-    window.matchMedia("(hover: hover)").matches;
+  // const isHoverable =
+  //   typeof window !== "undefined" &&
+  //   window.matchMedia("(hover: hover)").matches;
 
   const hover = useHover(context, {
-    enabled: isHoverable,
     restMs: 100,
     delay: { open: 100, close: 100 },
     handleClose: safePolygon(),
     mouseOnly: true,
   });
 
-  const focus = useFocus(context, {
-    visibleOnly: false,
+  const click = useClick(context, {
+    toggle: true,
+    ignoreMouse: true,
+    stickIfOpen: false,
   });
-
-  // const click = useClick(context, {
-  //   enabled: !window.matchMedia("(hover: hover)").matches,
-  //   toggle: true,
-  //   ignoreMouse: true,
-  //   stickIfOpen: false,
-  // });
 
   const dismiss = useDismiss(context);
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
     hover,
-    focus,
+    click,
     dismiss,
   ]);
 
