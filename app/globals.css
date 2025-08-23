@@ -24,7 +24,7 @@
 
   textarea::-webkit-scrollbar,
   textarea::-webkit-scrollbar-thumb {
-    @apply rounded-tr-xs w-2;
+    @apply w-2;
   }
 
   textarea::-webkit-scrollbar-corner {

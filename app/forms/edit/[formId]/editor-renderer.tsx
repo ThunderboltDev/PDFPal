@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { FieldWithToolbar } from "./field-toolbar";
 import type { DraftForm, Field, FieldType } from "@/firebase/types";
-import { Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { useState } from "react";
 import { InsertInputSelection } from "./input-selection";
 
@@ -108,6 +108,12 @@ export function DynamicFormEditorRenderer({
           />
         ))
       )}
+      <Button
+        variant="accent"
+        className="mt-4 mb-16"
+      >
+        Submit <ArrowRight />
+      </Button>
     </div>
   );
 }

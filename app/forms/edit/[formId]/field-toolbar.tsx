@@ -11,6 +11,7 @@ import {
   useFloating,
   useInteractions,
   safePolygon,
+  autoUpdate,
 } from "@floating-ui/react";
 import { Button } from "../../../../components/ui/button";
 import { FieldEditor } from "./field-editor";
@@ -42,11 +43,8 @@ export function FieldWithToolbar({
     placement: "bottom-start",
     strategy: "fixed",
     middleware: [offset(16), flip(), shift()],
+    whileElementsMounted: autoUpdate,
   });
-
-  // const isHoverable =
-  //   typeof window !== "undefined" &&
-  //   window.matchMedia("(hover: hover)").matches;
 
   const hover = useHover(context, {
     restMs: 100,
@@ -59,9 +57,13 @@ export function FieldWithToolbar({
     toggle: true,
     ignoreMouse: true,
     stickIfOpen: false,
+    keyboardHandlers: false,
   });
 
-  const dismiss = useDismiss(context);
+  const dismiss = useDismiss(context, {
+    outsidePress: false,
+    referencePress: false,
+  });
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
     hover,
