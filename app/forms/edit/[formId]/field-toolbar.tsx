@@ -42,7 +42,7 @@ export function FieldWithToolbar({
     onOpenChange: setOpen,
     placement: "bottom-start",
     strategy: "fixed",
-    middleware: [offset(16), flip(), shift()],
+    middleware: [offset(12), flip(), shift()],
     whileElementsMounted: autoUpdate,
   });
 
@@ -88,7 +88,7 @@ export function FieldWithToolbar({
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
-          className="z-10 p-0 m-0 -mt-2 bg-bg-200/50 backdrop-blur-md border-1 border-bg-500 rounded-md"
+          className="z-10 p-0 m-0 -mt-2 bg-bg-100/50 backdrop-blur-sm border-1 border-bg-500 rounded-md"
         >
           <Button
             size="icon"

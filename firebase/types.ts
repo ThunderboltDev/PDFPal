@@ -1,10 +1,11 @@
 import { allFieldTypes } from "@/components/forms/field-config";
 import type { User as FirebaseUser } from "firebase/auth";
 import type { Timestamp } from "firebase/firestore";
+import { DayPickerProps } from "react-day-picker";
 
 export type User = FirebaseUser;
 
-export type UserData = {
+export interface UserData {
   uid: string;
   email: string | null;
   displayName: string;
@@ -13,11 +14,11 @@ export type UserData = {
   createdAt: Timestamp;
   lastLogin: Timestamp;
   formsCreated?: number;
-};
+}
 
 export type FieldType = (typeof allFieldTypes)[number];
 
-export type Field = {
+export interface Field {
   id: string;
   order: number;
   type: FieldType;
@@ -29,32 +30,33 @@ export type Field = {
   minLength?: number;
   maxLength?: number;
   step?: number;
+  dateDisabled?: DayPickerProps["disabled"];
   options?: { name: string; value: string }[];
-  settings?: Record<string, unknown>;
-};
+  flags?: Record<string, boolean>;
+}
 
-export type Form = {
+export interface LocalForm {
   id: string;
   title: string;
   description: string;
-  createdBy: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
   responses?: number;
   fields: Field[];
   settings?: { themeColor?: string; isPublic?: boolean };
-};
+}
 
-export type DraftForm = Omit<Form, "createdBy" | "createdAt" | "updatedAt">;
+export interface Form extends LocalForm {
+  createdBy: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
 
-export type FormResponse = {
+export interface LocalFormResponse {
   id: string;
+  hasSubmitted?: boolean;
+  answers: Record<string, string | number | boolean | null>;
+}
+
+export interface FormResponse extends Omit<LocalFormResponse, "hasSubmitted"> {
   respondentId?: string;
   submittedAt: Timestamp;
-  answers: Record<string, string | number | boolean | null>;
-};
-
-export type DraftFormResponse = Omit<
-  FormResponse,
-  "respondentId" | "submittedAt"
->;
+}

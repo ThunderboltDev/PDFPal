@@ -30,7 +30,7 @@ export default function Navbar() {
     return null;
   }
   return (
-    <div className="fixed z-100 top-0 left-0 w-screen p-1.5 pr-3 bg-bg-500/25 border-b border-bg-500 backdrop-blur-md grid grid-cols-3">
+    <div className="fixed z-50 top-0 left-0 w-screen p-1.5 pr-3 bg-bg-500/25 border-b border-bg-500 backdrop-blur-md grid grid-cols-3">
       <div>
         <SidebarTrigger />
       </div>

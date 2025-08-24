@@ -13,13 +13,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Eye, LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Pencil } from "lucide-react";
 
-interface EditorNavbarProps {
+interface PreviewNavbarProps {
   formId: string;
 }
 
-export default function EditorNavbar({ formId }: EditorNavbarProps) {
+export default function PreviewNavbar({ formId }: PreviewNavbarProps) {
   const router = useRouter();
   const { userData } = useAuth();
 
@@ -36,15 +36,20 @@ export default function EditorNavbar({ formId }: EditorNavbarProps) {
               <Button
                 size="icon"
                 variant="ghost"
-                className="mt-1 text-fg-300 hover:text-blue-600"
-                onClick={() => router.push(`/forms/preview/${formId}`)}
+                className="mt-1 text-fg-300 hover:text-fg-100"
+                onClick={() => router.push(`/forms/edit/${formId}`)}
               >
-                <Eye className="size-4.5" />
-                <span className="sr-only">Preview Form</span>
+                <Pencil className="size-4.5" />
+                <span className="sr-only">Edit Form</span>
               </Button>
             </div>
           </TooltipTrigger>
-          <TooltipContent>Preview Form</TooltipContent>
+          <TooltipContent
+            side="bottom"
+            sideOffset={-5}
+          >
+            Preview Form
+          </TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>

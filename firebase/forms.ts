@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 
 import { db, formsCollection } from "@/lib/firebase";
-import type { Form, DraftForm } from "@/firebase/types";
+import type { Form, LocalForm } from "@/firebase/types";
 
 export async function fetchFormById(formId: string): Promise<Form | null> {
   const docRef = doc(db, "forms", formId);
@@ -37,7 +37,7 @@ export async function fetchFormsByUserId(
 }
 
 export async function publishForm(
-  form: DraftForm,
+  form: LocalForm,
   userId: string
 ): Promise<string> {
   const formRef = doc(formsCollection);
@@ -94,8 +94,8 @@ export async function deleteFormById(formId: string, userId: string) {
   await batch.commit();
 }
 
-export function getDraftFormsFromStorage(): DraftForm[] {
-  const results: DraftForm[] = [];
+export function getDraftFormsFromStorage(): LocalForm[] {
+  const results: LocalForm[] = [];
 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -104,7 +104,7 @@ export function getDraftFormsFromStorage(): DraftForm[] {
 
       if (raw) {
         try {
-          const form = JSON.parse(raw) as DraftForm;
+          const form = JSON.parse(raw) as LocalForm;
           if (form) results.push(form);
         } catch {}
       }
@@ -116,7 +116,7 @@ export function getDraftFormsFromStorage(): DraftForm[] {
 
 export const createNewDraftForm = () => {
   const newFormId = crypto.randomUUID();
-  const defaultForm: DraftForm = {
+  const defaultForm: LocalForm = {
     id: newFormId,
     title: "Form Title",
     description: "A very cool description!",

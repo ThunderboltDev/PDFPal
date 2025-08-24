@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { deleteAccount, linkAccount } from "@/firebase/user";
 import { createNewDraftForm, getDraftFormsFromStorage } from "@/firebase/forms";
-import type { DraftForm, User, UserData } from "@/firebase/types";
+import type { LocalForm, User, UserData } from "@/firebase/types";
 import OverlayLoader from "@/components/ui/overlay-loader";
 import Skeleton from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ interface ProfileProps {
 
 function Profile({ userData, user }: ProfileProps) {
   const [loading, setLoading] = useState(false);
-  const [draftForms, setDraftForms] = useState<DraftForm[]>([]);
+  const [draftForms, setDraftForms] = useState<LocalForm[]>([]);
   const router = useRouter();
 
   const handleDeleteAccount = async () => {

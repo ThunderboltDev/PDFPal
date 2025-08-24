@@ -13,7 +13,7 @@ interface FieldEditorProps {
 export function FieldEditor({ field, index, update }: FieldEditorProps) {
   return (
     <div>
-      <div className="flex flex-row translate-x-1">
+      <div className="flex flex-row space-y-1">
         <TextEditor
           as="span"
           value={field.label}
@@ -21,7 +21,7 @@ export function FieldEditor({ field, index, update }: FieldEditorProps) {
           onChange={(text: string) => {
             update(index, { ...field, label: text });
           }}
-          className="mb-0.5 md:text-sm"
+          className="md:text-sm font-normal"
         />
         <RequiredToggle
           id={`field-required-${field.id}`}

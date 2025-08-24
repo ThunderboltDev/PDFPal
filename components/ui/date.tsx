@@ -1,3 +1,5 @@
+import { Calendar } from "lucide-react";
+
 import {
   DayPicker,
   DayPickerProps,
@@ -8,24 +10,27 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Button, buttonVariants } from "./button";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
-import { Calendar } from "lucide-react";
 
 const defaultClassNames = getDefaultClassNames();
 
 export interface DateProps {
+  id: string;
   value?: string;
   onChange: (date: Date) => void;
   placeholder?: string;
   captionLayout?: string;
   buttonVariant?: ComponentProps<typeof Button>["variant"];
+  disabled?: DayPickerProps["disabled"];
 }
 
 export function Date({
+  id,
   value = "",
   onChange,
   placeholder = "Date",
   captionLayout = "label",
   buttonVariant = "ghost",
+  disabled,
 }: DayPickerProps & DateProps) {
   const [date, setDate] = useState(value);
   const [open, setOpen] = useState(false);
@@ -37,6 +42,7 @@ export function Date({
     >
       <PopoverTrigger asChild>
         <Input
+          id={id}
           className="min-w-full"
           type="text"
           value={date}
@@ -54,7 +60,9 @@ export function Date({
             onChange(date);
             setDate(date.toDateString());
           }}
+          selected={date ? new globalThis.Date(date) : undefined}
           captionLayout={captionLayout}
+          disabled={disabled}
           classNames={{
             root: cn("w-fit", defaultClassNames.root),
             months: cn(
@@ -114,9 +122,9 @@ export function Date({
               "aspect-square !rounded-sm size-8 font-light text-center focus-visible:ring-3 focus-visible:ring-accent/50",
               "bg-transparent hover:bg-bg-300"
             ),
-            selected: cn("bg-accent/50 hover:bg-accent/75"),
-            outside: cn("text-fg-500 rounded-sm"),
-            disabled: cn("text-fg-500"),
+            selected: cn("bg-accent/50 hover:bg-accent"),
+            outside: cn("text-fg-300 opacity-50 rounded-sm"),
+            disabled: cn("text-fg-300 opacity-50 cursor-not-allowed"),
             hidden: cn("invisible", defaultClassNames.hidden),
           }}
         />

@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { UserData, Form, DraftForm } from "@/firebase/types";
+import type { UserData, Form, LocalForm } from "@/firebase/types";
 import {
   createNewDraftForm,
   fetchFormsByUserId,
@@ -25,7 +25,7 @@ interface DashboardProps {
 
 function Dashboard({ userData }: DashboardProps) {
   const [forms, setForms] = useState<Form[] | null>(null);
-  const [draftForms, setDraftForms] = useState<DraftForm[] | null>(null);
+  const [draftForms, setDraftForms] = useState<LocalForm[] | null>(null);
 
   const router = useRouter();
 
@@ -49,22 +49,22 @@ function Dashboard({ userData }: DashboardProps) {
     router.push(`/forms/settings/${form.id}`);
   };
 
-  const handleDraftEdit = (form: DraftForm) => {
+  const handleDraftEdit = (form: LocalForm) => {
     router.push(`/forms/edit/${form.id}`);
   };
 
-  const handleDraftPreview = (form: DraftForm) => {
+  const handleDraftPreview = (form: LocalForm) => {
     router.push(`/forms/preview/${form.id}`);
   };
 
-  const handleDraftDelete = (form: DraftForm) => {
+  const handleDraftDelete = (form: LocalForm) => {
     const key = `draft-form-${form.id}`;
     localStorage.removeItem(key);
 
     window.location.reload();
   };
 
-  const handleDraftPublish = async (form: DraftForm) => {
+  const handleDraftPublish = async (form: LocalForm) => {
     const formId = await publishForm(form, userData.uid);
 
     const key = `draft-form-${form.id}`;
