@@ -66,10 +66,10 @@ export async function publishForm(
 }
 
 export async function updateForm(form: Form) {
-  const newForm: Form = {
+  const newForm = {
     ...form,
     updatedAt: Timestamp.now(),
-  };
+  } satisfies Form;
 
   await updateDoc(doc(db, "forms", form.id), newForm);
 }
