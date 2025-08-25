@@ -22,6 +22,10 @@
     );
   }
 
+  ::selection {
+    @apply bg-accent/25;
+  }
+
   textarea::-webkit-scrollbar,
   textarea::-webkit-scrollbar-thumb {
     @apply w-2;
