@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import { useLocalStorage } from "react-use";
 import { DynamicFormRenderer } from "../../components/form-renderer";
 import OverlayLoader from "@/components/ui/overlay-loader";
@@ -10,6 +11,8 @@ import PreviewNavbar from "./navbar";
 
 export default function FormSubmission() {
   const { formId } = useParams();
+  const router = useRouter();
+
   const formKey = `draft-form-${formId}`;
   const responseKey = `form-response-${formId}`;
 
@@ -34,17 +37,15 @@ export default function FormSubmission() {
 
   const draft = useSyncExternalStore(subscribe, getSnapshot, () => null);
 
-  const handleSubmit = (response: LocalFormResponse) => {
-    alert(`Response receieved: \n${JSON.stringify(response)}`);
+  const handleSubmit = () => {
+    router.push(`/forms/preview/${formId}/submission`);
   };
 
   if (!draft || !response) return <OverlayLoader loading />;
 
   return (
     <>
-      <PreviewNavbar
-        formId={formId as string}
-      />
+      <PreviewNavbar formId={formId as string} />
       <DynamicFormRenderer
         form={draft ? JSON.parse(draft) : null}
         response={response}

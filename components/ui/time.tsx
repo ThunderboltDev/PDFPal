@@ -4,6 +4,7 @@ import { ComponentProps, KeyboardEvent, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./select";
 import { Input } from "./input";
 import { Label } from "./label";
+import { cn } from "@/lib/utils";
 
 const invalidCharacters = ["e", "E", "+", "-"];
 
@@ -17,7 +18,7 @@ const parseValue = (value: string): string[] => {
     return [hour, minute, upperPeriod];
   }
 
-  return ["12", "00", "AM"];
+  return ["", "", "AM"];
 };
 
 const blockInvalidCharacters = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -36,21 +37,27 @@ const sanitizeInput = (value: string, min: number, max: number) => {
 
 interface TimeProps {
   id?: string;
-  value: `${string}:${string} ${"AM" | "PM"}`;
+  value?: string;
   required?: boolean;
   is24HourFormat?: boolean;
   onValueChange: (value: string) => void;
+  onBlur?: (value: string, source: "h" | "m" | "period") => void;
+  timeInvalid?: boolean;
+  periodInvalid?: boolean;
 }
 
 export default function Time({
   id,
-  value = "12:00 AM",
+  value,
   required = false,
   is24HourFormat = false,
   onValueChange,
+  onBlur = () => {},
+  timeInvalid,
+  periodInvalid,
   ...props
-}: TimeProps & ComponentProps<typeof Input>) {
-  const parsedValue = parseValue(value);
+}: Omit<ComponentProps<typeof Input>, "onBlur"> & TimeProps) {
+  const parsedValue = parseValue(value ?? "");
 
   const [hour, setHour] = useState(parsedValue[0]);
   const [minute, setMinute] = useState(parsedValue[1]);
@@ -64,7 +71,13 @@ export default function Time({
       className="flex flex-row gap-1"
     >
       <legend className="sr-only">Select Time:</legend>
-      <div className="input w-fit py-0 px-1.5 flex flex-row items-center cursor-text focus-within:ring-3 focus-within:ring-accent/50 focus-within:border-accent/75">
+      <div
+        className={cn(
+          timeInvalid ? "ring-destructive/50 border-destructive/75" : "",
+          "input w-fit py-0 px-1.5 flex flex-row items-center cursor-text",
+          "focus-within:ring-3 focus-within:ring-accent/50 focus-within:border-accent/75"
+        )}
+      >
         <Label
           htmlFor={id}
           className="sr-only"
@@ -85,12 +98,15 @@ export default function Time({
           required={required}
           {...props}
           onKeyDown={blockInvalidCharacters}
+          aria-invalid={timeInvalid}
           onBlur={(e) => {
             const sanitizedInput = sanitizeInput(
               e.target.value,
               0,
               is24HourFormat ? 23 : 11
             );
+
+            onBlur(sanitizedInput, "h");
             setHour(sanitizedInput);
             onValueChange(`${sanitizedInput}:${minute} ${period}`);
           }}
@@ -122,8 +138,10 @@ export default function Time({
           required={required}
           {...props}
           onKeyDown={blockInvalidCharacters}
+          aria-invalid={timeInvalid}
           onBlur={(e) => {
             const sanitizedInput = sanitizeInput(e.target.value, 0, 59);
+            onBlur(sanitizedInput, "m");
             setMinute(sanitizedInput);
             onValueChange(`${hour}:${sanitizedInput} ${period}`);
           }}
@@ -153,10 +171,11 @@ export default function Time({
               id={`period-${id}`}
               aria-describedby={descriptionId}
               className="bg-transparent hover:bg-transparent"
+              aria-invalid={periodInvalid}
             >
-              <span className="text-fg-100"> {period}</span>
+              <span>{period}</span>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent onBlur={() => onBlur(period, "period")}>
               <SelectItem value="AM">AM</SelectItem>
               <SelectItem value="PM">PM</SelectItem>
             </SelectContent>

@@ -13,7 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LayoutDashboard, Pencil } from "lucide-react";
+import { BrushCleaning, LayoutDashboard, Pencil } from "lucide-react";
 
 interface PreviewNavbarProps {
   formId: string;
@@ -23,6 +23,11 @@ export default function PreviewNavbar({ formId }: PreviewNavbarProps) {
   const router = useRouter();
   const { userData } = useAuth();
 
+  const handleClearAnswers = () => {
+    localStorage.removeItem(`form-response-${formId}`);
+    window.location.reload();
+  };
+
   return (
     <div className="fixed z-50 top-0 left-0 w-screen p-1.5 pr-3 bg-bg-500/25 border-b border-bg-500 backdrop-blur-md grid grid-cols-3">
       <div>
@@ -30,6 +35,27 @@ export default function PreviewNavbar({ formId }: PreviewNavbarProps) {
       </div>
       <div></div>
       <div className="h-11 flex flex-row gap-2 justify-end">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="inline-block">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="mt-1 text-fg-300 hover:text-red-500"
+                onClick={handleClearAnswers}
+              >
+                <BrushCleaning className="size-4.5" />
+                <span className="sr-only">Clear Answers</span>
+              </Button>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent
+            side="bottom"
+            sideOffset={-5}
+          >
+            Clear Answers
+          </TooltipContent>
+        </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="inline-block">
@@ -48,7 +74,7 @@ export default function PreviewNavbar({ formId }: PreviewNavbarProps) {
             side="bottom"
             sideOffset={-5}
           >
-            Preview Form
+            Edit Form
           </TooltipContent>
         </Tooltip>
         <Tooltip>

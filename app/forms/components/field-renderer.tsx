@@ -90,6 +90,8 @@ export default function RenderField({
           field={field}
           response={response}
           update={update}
+          error={error}
+          setError={setError}
         />
       );
     }
@@ -99,6 +101,8 @@ export default function RenderField({
           field={field}
           response={response}
           update={update}
+          error={error}
+          setError={setError}
         />
       );
     }

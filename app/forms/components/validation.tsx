@@ -6,7 +6,7 @@ const basicValidation = (
   regex?: RegExp,
   regexReason?: string
 ): string | false => {
-  if (field.required && value.trim() === "") {
+  if (field.required && (value.trim() === "" || value == null)) {
     return "This field is required.";
   }
 
@@ -46,6 +46,7 @@ const validateNumber = (field: Field, value: string): string | false => {
 
   return false;
 };
+
 const validateUrl = (value: string): string | false => {
   try {
     new URL(value);
@@ -65,6 +66,12 @@ const validateField = (field: Field, value: string): string | false => {
     }
     case "number": {
       return basicValidation(field, value) || validateNumber(field, value);
+    }
+    case "date": {
+      return basicValidation(field, value);
+    }
+    case "time": {
+      return basicValidation(field, value);
     }
     case "email": {
       return basicValidation(

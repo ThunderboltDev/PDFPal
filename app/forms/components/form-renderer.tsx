@@ -47,11 +47,16 @@ export function DynamicFormRenderer({
 
     setErrors(newErrors);
 
-    const invalidField: HTMLElement | null = e.currentTarget.querySelector(
-      '[aria-invalid="true"]'
-    );
+    if (Object.keys(newErrors).length > 0) {
+      const firstElementId = Object.keys(newErrors)[0];
+      const invalidElement: HTMLElement | null = e.currentTarget.querySelector(
+        `[id="${firstElementId}"]`
+      );
 
-    if (invalidField) return invalidField.focus();
+      invalidElement?.focus();
+
+      return;
+    }
 
     onSubmit(response);
   };

@@ -17,20 +17,24 @@ export interface DateProps {
   id: string;
   value?: string;
   onChange: (date: Date) => void;
+  onBlur: (date: string) => void;
   placeholder?: string;
   captionLayout?: string;
   buttonVariant?: ComponentProps<typeof Button>["variant"];
   disabled?: DayPickerProps["disabled"];
+  ariaInvalid?: boolean;
 }
 
 export function Date({
   id,
   value = "",
   onChange,
+  onBlur,
   placeholder = "Date",
   captionLayout = "label",
   buttonVariant = "ghost",
   disabled,
+  ariaInvalid = false,
 }: DayPickerProps & DateProps) {
   const [date, setDate] = useState(value);
   const [open, setOpen] = useState(false);
@@ -49,10 +53,15 @@ export function Date({
           placeholder={placeholder}
           icon={<Calendar />}
           iconTooltip="Date Picker"
+          // onBlur={onBlur}
           readOnly
+          aria-invalid={ariaInvalid}
         />
       </PopoverTrigger>
-      <PopoverContent align="start">
+      <PopoverContent
+        align="start"
+        onBlur={() => onBlur(date)}
+      >
         <DayPicker
           mode="single"
           onDayClick={(date: Date) => {
@@ -63,6 +72,7 @@ export function Date({
           selected={date ? new globalThis.Date(date) : undefined}
           captionLayout={captionLayout}
           disabled={disabled}
+          // onDayBlur={onBlur}
           classNames={{
             root: cn("w-fit", defaultClassNames.root),
             months: cn(

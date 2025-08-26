@@ -44,7 +44,7 @@ export default function TextareaInput({
         placeholder={field.placeholder || fieldTypeToLabel[field.type]}
         required={field.required}
         minLength={field.minLength ?? 0}
-        maxLength={field.maxLength ?? 20}
+        maxLength={field.maxLength ?? 250}
         aria-invalid={!!error}
       />
       <ErrorMessage error={error} />
