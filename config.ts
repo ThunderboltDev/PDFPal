@@ -1,13 +1,13 @@
-const url = "https://sparksight.vercel.app";
+const url = "https://something.vercel.app";
 
 const config = {
-  name: "SparkSight",
+  name: "SaaS",
   abbr: "SS",
-  id: "spark-sight",
-  description: "Illuminate your ideas with SparkSight!",
+  id: "saas",
+  description: "Cool!",
   url: url,
   author: "Surprized Pikachu",
-  themeColor: "#9900ff",
+  themeColor: "#00aaff",
   gtag: "G-",
   adsense: "",
   socials: {
@@ -44,6 +44,6 @@ const config = {
     "secure forms",
     "collaborative forms",
   ],
-};
+} as const;
 
 export default config;
