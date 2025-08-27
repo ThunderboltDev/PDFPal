@@ -1,31 +1,44 @@
-"use client";
+import { ComponentType } from "react";
+import { redirect } from "next/navigation";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { User } from "@prisma/client";
+import { db } from "@/lib/db";
 
-import { ComponentType, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { User } from "firebase/auth";
-import { UserData } from "@/firebase/types";
-import { useAuth } from "@/components/app/providers";
+export type PropsWithDbUser<ExtraProps = object> = ExtraProps & {
+  dbUser: User;
+};
 
-export default function withAuth<
-  T extends { userData: UserData | null; user: User | null }
->(WrappedComponent: ComponentType<T>) {
-  function AuthenticatedWrapper(props: Omit<T, "user" | "userData">) {
-    const { user, userData, loading } = useAuth();
-    const router = useRouter();
+export type PropsWithoutDbUser<T> = Omit<T, "dbUser">;
 
-    useEffect(() => {
-      if (!loading && !user) router.replace("/auth");
-    }, [user, loading, router]);
+export default function withAuth<T extends { dbUser: User }>(
+  WrappedComponent: ComponentType<T>,
+  origin: string = "/dashboard"
+) {
+  async function AuthenticatedWrapper(props: PropsWithoutDbUser<T>) {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user || !user.id) redirect(`/auth-callback?origin=${origin}`);
+
+    const dbUser = await db.user.findFirst({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!dbUser) redirect(`/auth-callback?origin=${origin}`);
 
     return (
       <WrappedComponent
         {...(props as T)}
-        user={user}
-        userData={userData}
+        dbUser={dbUser}
       />
     );
   }
 
-  AuthenticatedWrapper.displayName = `withAuth(${WrappedComponent.displayName} ?? Component)`;
+  AuthenticatedWrapper.displayName = `withAuth(${
+    WrappedComponent.displayName || "Component"
+  })`;
+
   return AuthenticatedWrapper;
 }
