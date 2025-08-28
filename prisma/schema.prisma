@@ -28,7 +28,7 @@ enum UploadStatus {
   PENDING
   PROCESSING
   FAILED
-  SUCCESs
+  SUCCESS
 }
 
 model File {

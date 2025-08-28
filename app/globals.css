@@ -3,7 +3,7 @@
 @import "./theme.css";
 
 @import "uploadthing/tw/v4";
-@source "../node_modules/@uploadthing/react/dist"
+/* @source "../node_modules/@uploadthing/react/dist" */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -13,16 +13,16 @@
   }
 
   ::-webkit-scrollbar {
-    @apply w-1 bg-transparent;
+    @apply w-1 h-1 bg-gray-200;
   }
 
   ::-webkit-scrollbar-thumb,
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-blue-500;
+    @apply bg-primary rounded-xl;
   }
 
   ::selection {
-    @apply bg-blue-500/25;
+    @apply bg-primary/25;
   }
 
   textarea::-webkit-scrollbar,
@@ -31,7 +31,7 @@
   }
 
   textarea::-webkit-scrollbar-corner {
-    @apply bg-blue-300 border-none outline-none;
+    @apply bg-gray-200 border-none outline-none;
   }
 
   h1,
@@ -77,7 +77,7 @@
     font-size: clamp(1.125rem, calc(0.875rem + 0.75vw), 1.5rem);
   }
 
-  a {
+  a.link {
     @apply text-primary hover:text-primary/90;
     @apply underline-offset-3 hover:underline hover:decoration-1;
   }
