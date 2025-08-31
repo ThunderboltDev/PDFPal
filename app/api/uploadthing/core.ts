@@ -1,10 +1,14 @@
-import { db } from "@/lib/db";
+import * as mupdf from "mupdf";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+
 import { pinecone } from "@/lib/pinecone";
+import { db } from "@/lib/db";
 
 const f = createUploadthing();
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export const ourFileRouter = {
   pdfUploader: f({
@@ -36,18 +40,20 @@ export const ourFileRouter = {
 
       try {
         const response = await fetch(file.ufsUrl);
-        const blob = await response.blob();
-        const loader = new PDFLoader(blob, {
-          splitPages: true,
-        });
+        const data = await response.arrayBuffer();
+        const document = mupdf.Document.openDocument(data, "application/pdf");
 
-        const docs = await loader.load();
-        const upsertRequest = docs.map((doc, index) => ({
+        const numberOfPages = document.countPages();
+
+        const pages = [];
+
+        for (let i = 1; i <= numberOfPages; i++)
+          pages.push(document.loadPage(i).toStructuredText().asText());
+
+        const upsertRequest = pages.map((page, index) => ({
           id: `${createdFile.id}-${index}`,
-          text: doc.pageContent,
+          text: page,
         }));
-
-        // const numberOfPages = docs.length;
 
         const namespace = pinecone
           .index(process.env.PINECONE_INDEX!, process.env.PINECONE_HOST_URL)
