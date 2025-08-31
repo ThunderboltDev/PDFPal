@@ -12,7 +12,10 @@ export default function Providers({ children }: PropsWithChildren) {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:3000/api/trpc",
+          url:
+            process.env.TEST_MODE === "true"
+              ? "http://localhost:3000/api/trpc"
+              : "https://https://pdf-pal-pro.vercel.app/api/trpc",
           transformer: SuperJSON,
           maxURLLength: 2000,
           maxItems: 1,
