@@ -7,9 +7,6 @@ import { db } from "@/lib/db";
 
 const f = createUploadthing();
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
 export const ourFileRouter = {
   pdfUploader: f({
     pdf: {
