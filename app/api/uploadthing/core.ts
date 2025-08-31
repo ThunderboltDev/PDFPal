@@ -1,6 +1,5 @@
-import * as mupdf from "mupdf";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 import { pinecone } from "@/lib/pinecone";
 import { db } from "@/lib/db";
@@ -17,9 +16,7 @@ export const ourFileRouter = {
     .middleware(async () => {
       const { getUser } = getKindeServerSession();
       const user = await getUser();
-
       if (!user || !user.id) throw new Error("unauthorized");
-
       return {
         userId: user.id,
       };
@@ -38,7 +35,10 @@ export const ourFileRouter = {
       try {
         const response = await fetch(file.ufsUrl);
         const data = await response.arrayBuffer();
-        const document = mupdf.Document.openDocument(data, "application/pdf");
+
+        const { Document } = await import("mupdf");
+
+        const document = Document.openDocument(data, "application/pdf");
 
         const numberOfPages = document.countPages();
 
