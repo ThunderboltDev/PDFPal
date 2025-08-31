@@ -7,6 +7,7 @@ import Loader from "@/components/ui/loader";
 import { ChevronLeft, XCircle, Zap } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import ChatContextProvider from "./chat-context";
 
 interface ChatWrapperProps {
   fileId: string;
@@ -57,27 +58,29 @@ export default function ChatWrapper({ fileId }: ChatWrapperProps) {
   }
 
   return (
-    <div className="relative min-h-full flex divide-y divide-zinc-200 flex-col justify-between gap-2">
-      {isLoading ? (
-        <Loader>
-          <h4>Loading...</h4>
-          <p className="text-muted-foreground text-sm">
-            Prepraring your PDF file
-          </p>
-        </Loader>
-      ) : data?.status === "PROCESSING" ? (
-        <Loader>
-          <h4>Processing...</h4>
-          <p className="text-muted-foreground text-sm">
-            Processing your PDF file
-          </p>
-        </Loader>
-      ) : (
-        <div className="flex-1 justify-between flex flex-col mb-28">
-          <Messages />
-        </div>
-      )}
-      <ChatInput isLoading={isLoading} />
-    </div>
+    <ChatContextProvider fileId={fileId}>
+      <div className="relative min-h-full flex divide-y divide-zinc-200 flex-col justify-between gap-2">
+        {isLoading ? (
+          <Loader>
+            <h4>Loading...</h4>
+            <p className="text-muted-foreground text-sm">
+              Prepraring your PDF file
+            </p>
+          </Loader>
+        ) : data?.status === "PROCESSING" ? (
+          <Loader>
+            <h4>Processing...</h4>
+            <p className="text-muted-foreground text-sm">
+              Processing your PDF file
+            </p>
+          </Loader>
+        ) : (
+          <div className="flex-1 justify-between flex flex-col mb-28">
+            <Messages fileId={fileId} />
+          </div>
+        )}
+        <ChatInput isLoading={isLoading} />
+      </div>
+    </ChatContextProvider>
   );
 }

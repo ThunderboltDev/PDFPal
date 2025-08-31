@@ -37,11 +37,7 @@ export default function RootLayout({
         <body
           className={cn("font-sans min-h-screen antialiased", inter.className)}
         >
-          <SkeletonTheme
-            baseColor="var(--color-neutral-200)"
-            customHighlightBackground="var(--color-neutral-50)"
-            duration={2}
-          >
+          <SkeletonTheme duration={2}>
             <Navbar />
             {children}
           </SkeletonTheme>

@@ -44,6 +44,27 @@ const config = {
     "secure forms",
     "collaborative forms",
   ],
+  plans: [
+    {
+      name: "free",
+      price: 0,
+      currency: "USD",
+      interval: "month",
+      productId: "free",
+    },
+    {
+      name: "pro",
+      price: 9.99,
+      currency: "USD",
+      interval: "month",
+      productId: "prod_4ZtlEyxvUyIIMxSraQ7ZcT",
+    },
+  ],
 } as const;
+
+export const CREEM_API_BASE =
+  process.env.CREEM_TEST_MODE === "true"
+    ? "https://test-api.creem.io/v1"
+    : "https://api.creem.io/v1";
 
 export default config;
