@@ -211,6 +211,8 @@ export const appRouter = router({
       }
 
       console.log("payload:", payload);
+      console.log("api key:", process.env.CREEM_API_KEY?.slice(0, 6));
+      console.log("api base url:", CREEM_API_BASE);
 
       try {
         const response = await axios.post(
@@ -222,9 +224,6 @@ export const appRouter = router({
             },
           }
         );
-
-        console.log("api key:", process.env.CREEM_API_KEY?.slice(0, 6));
-        console.log("api base url:", CREEM_API_BASE);
 
         const { checkout_url } = response.data;
         console.log("respose data:", response.data);
