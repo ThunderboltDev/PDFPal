@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
     config.resolve.alias.encoding = false;
     return config;
   },
+  async redirects() {
+    return [
+      { source: "/sign-in", destination: "/api/auth/login", permanent: false },
+      {
+        source: "/sign-up",
+        destination: "/api/auth/register",
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

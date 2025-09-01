@@ -9,8 +9,15 @@ import UploadButton from "./upload-button";
 import { trpc } from "../_trpc/client";
 import { Button } from "@/components/ui/button";
 import Skeleton from "@/components/ui/skeleton";
+import { PropsWithDbUser } from "@/hoc/with-auth";
 
-export default function Dashboard() {
+interface DashboardProps {
+  isSubscribed: boolean;
+}
+
+export default function Dashboard({
+  isSubscribed,
+}: PropsWithDbUser<DashboardProps>) {
   const [deletingFile, setDeletingFile] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
@@ -27,7 +34,7 @@ export default function Dashboard() {
     <main className="container-7xl">
       <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-300 pb-5 sm:flex-row sm:items-center sm:gap-0">
         <h2 className="mb-3">My Files</h2>
-        <UploadButton />
+        <UploadButton isSubscribed={isSubscribed} />
       </div>
       {files && files.length !== 0 ? (
         <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-100 md:grid-cols-2 lg:grid-cols-3">

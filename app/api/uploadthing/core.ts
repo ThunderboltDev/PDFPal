@@ -1,24 +1,34 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
+import { getUserSubscriptionPlan } from "@/lib/creem";
 import { pinecone } from "@/lib/pinecone";
 import { db } from "@/lib/db";
+import config from "@/config";
+
+const plans = config.plans;
 
 const f = createUploadthing();
 
 export const ourFileRouter = {
   pdfUploader: f({
-    pdf: {
-      maxFileSize: "4MB",
-      maxFileCount: 1,
-    },
+    pdf: {},
   })
     .middleware(async () => {
       const { getUser } = getKindeServerSession();
       const user = await getUser();
+
       if (!user || !user.id) throw new Error("unauthorized");
+
+      const subscriptionPlan = await getUserSubscriptionPlan();
+      const limits = subscriptionPlan.isSubscribed
+        ? { maxFileSize: config.plans.pro.maxFileSize, maxFileCount: 1 }
+        : { maxFileSize: config.plans.free.maxFileSize, maxFileCount: 1 };
+
       return {
         userId: user.id,
+        subscriptionPlan,
+        fileConfig: limits,
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
@@ -39,8 +49,25 @@ export const ourFileRouter = {
         const { Document } = await import("mupdf");
 
         const document = Document.openDocument(data, "application/pdf");
-
         const numberOfPages = document.countPages();
+
+        const { isSubscribed } = metadata.subscriptionPlan;
+
+        if (
+          (isSubscribed && numberOfPages > plans.pro.maxPages) ||
+          (!isSubscribed && numberOfPages > plans.free.maxPages)
+        ) {
+          await db.file.update({
+            where: {
+              id: createdFile.id,
+            },
+            data: {
+              uploadStatus: "FAILED",
+            },
+          });
+
+          return;
+        }
 
         const pages = [];
 

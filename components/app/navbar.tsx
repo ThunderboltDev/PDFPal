@@ -9,6 +9,7 @@ import {
 } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
 import UserAccountNav from "./user-account-nav";
+import MobileNav from "./mobile-nav";
 
 export default async function Navbar() {
   const { getUser } = getKindeServerSession();
@@ -24,6 +25,7 @@ export default async function Navbar() {
           >
             {config.name}
           </Link>
+          <MobileNav isAuthenticated={!!user}/>
           <div className="hidden items-center space-x-4 sm:flex">
             {!user ? (
               <>

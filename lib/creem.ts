@@ -7,19 +7,16 @@ import { db } from "./db";
 const plans = config.plans;
 const CREEM_API_KEY = process.env.CREEM_API_KEY!;
 
-export interface SubscriptionPlan {
-  readonly name: "pro" | "free";
-  readonly price: number;
-  readonly currency: "USD";
-  readonly interval?: "month" | "year";
-  readonly productId: string;
+type Plans = typeof plans;
+type Plan = Plans[keyof Plans];
 
+export type SubscriptionPlan = Plan & {
   currentPeriodEnd?: Date;
   subscriptionId?: string;
   customerId?: string;
   isSubscribed: boolean;
   isCanceled: boolean;
-}
+};
 
 export async function getUserSubscriptionPlan(): Promise<SubscriptionPlan> {
   const { getUser } = getKindeServerSession();
@@ -27,7 +24,7 @@ export async function getUserSubscriptionPlan(): Promise<SubscriptionPlan> {
 
   if (!user || !user.id) {
     return {
-      ...plans[0],
+      ...plans.free,
       isSubscribed: false,
       isCanceled: false,
     };
@@ -41,7 +38,7 @@ export async function getUserSubscriptionPlan(): Promise<SubscriptionPlan> {
 
   if (!dbUser || !dbUser?.subscriptionId) {
     return {
-      ...plans[0],
+      ...plans.free,
       isSubscribed: false,
       isCanceled: false,
     };
@@ -61,12 +58,11 @@ export async function getUserSubscriptionPlan(): Promise<SubscriptionPlan> {
   const isCanceled = subscription.status === "canceled";
 
   const plan =
-    plans.find((plan) => plan.productId === subscription.product.id) ||
-    plans[0];
+    Object.values(plans).find(
+      (plan) => plan.productId === subscription.product.id
+    ) || plans.free;
 
-  const currentPeriodEnd = new Date(
-    subscription.current_period_end_date * 1000
-  );
+  const currentPeriodEnd = new Date(subscription.current_period_end_date);
 
   return {
     ...plan,

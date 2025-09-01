@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
     },
 
     cancel(reason) {
-      console.log("stream cancelled:", reason);
+      console.error("stream cancelled:", reason);
     },
   });
 

@@ -20,7 +20,8 @@ interface BillingProps {
 }
 
 export default function Billing({ subscriptionPlan }: BillingProps) {
-  const { name, isCanceled, isSubscribed, currentPeriodEnd } = subscriptionPlan;
+  const { name, isCanceled, isSubscribed, currentPeriodEnd, customerId } =
+    subscriptionPlan;
 
   const { mutate: createCheckoutSession, isPending } =
     trpc.createCheckoutSession.useMutation({
@@ -30,10 +31,19 @@ export default function Billing({ subscriptionPlan }: BillingProps) {
       },
     });
 
+  const { mutate: getBillingPortalUrl } = trpc.getBillingPortalUrl.useMutation({
+    onSuccess: ({ portalUrl }) => {
+      if (portalUrl) window.location.href = portalUrl;
+      else toast.error("Something went wrong!");
+    },
+  });
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    createCheckoutSession({});
+    if (isSubscribed && customerId) getBillingPortalUrl({ customerId });
+    else createCheckoutSession({});
   };
+
   return (
     <div className="container-5xl">
       <form onSubmit={handleSubmit}>
@@ -42,10 +52,7 @@ export default function Billing({ subscriptionPlan }: BillingProps) {
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
               You are currently on the{" "}
-              <span className="font-semibold">
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </span>{" "}
-              plan.
+              <span className="font-semibold">{name}</span> plan.
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
@@ -57,7 +64,7 @@ export default function Billing({ subscriptionPlan }: BillingProps) {
               {isPending ? (
                 <>
                   <Loader2 className="size-4 mr-4 animate-spin" />
-                  Processing
+                  Redirecting...
                 </>
               ) : isSubscribed ? (
                 "Manage Subscription"
@@ -66,12 +73,12 @@ export default function Billing({ subscriptionPlan }: BillingProps) {
               )}
             </Button>
 
-            {isSubscribed && !!currentPeriodEnd && (
-              <p className="rounded-full text-xs font-medium">
+            {isSubscribed && currentPeriodEnd && (
+              <p className="rounded-full text-xs text-muted-foreground">
                 {isCanceled
                   ? "Your plan will be canceled on "
                   : "Your plan renews on "}
-                {format(currentPeriodEnd, "dd.MM.yyy")}
+                {format(currentPeriodEnd, "dd/MM/yyyy")}
               </p>
             )}
           </CardFooter>

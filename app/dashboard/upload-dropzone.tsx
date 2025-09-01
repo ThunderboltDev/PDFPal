@@ -1,3 +1,5 @@
+"use client";
+
 import { Cloud, File, Loader2 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
@@ -7,8 +9,13 @@ import { toast } from "sonner";
 import { useUploadThing } from "@/lib/uploadthing";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "../_trpc/client";
+import config from "@/config";
 
-export default function UploadDropzone() {
+interface UploadDropzoneProps {
+  isSubscribed: boolean;
+}
+
+export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
@@ -73,7 +80,13 @@ export default function UploadDropzone() {
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-zinc-500">PDF (up to 4MB)</p>
+                <p className="text-xs text-zinc-500">
+                  PDF (up to{" "}
+                  {isSubscribed
+                    ? config.plans.pro.maxFileSize
+                    : config.plans.free.maxFileSize}
+                  )
+                </p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] && (

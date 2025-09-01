@@ -30,8 +30,6 @@ export default function Messages({ fileId }: MessagesProps) {
       }
     );
 
-  useEffect(() => console.log("pages", data?.pages), [data]);
-
   const { ref: intersectionRef, entry } = useIntersection({
     root: containerRef.current,
     threshold: 0.1,

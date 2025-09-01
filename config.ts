@@ -1,8 +1,7 @@
 const url = "https://something.vercel.app";
 
 const config = {
-  name: "SaaS",
-  abbr: "SS",
+  name: "PDF Pal",
   id: "saas",
   description: "Cool!",
   url: url,
@@ -44,22 +43,30 @@ const config = {
     "secure forms",
     "collaborative forms",
   ],
-  plans: [
-    {
-      name: "free",
+  plans: {
+    free: {
+      id: "free",
+      name: "Free",
       price: 0,
       currency: "USD",
       interval: "month",
       productId: "free",
+      maxFileSize: "4MB",
+      maxFiles: 5,
+      maxPages: 5,
     },
-    {
-      name: "pro",
+    pro: {
+      id: "pro",
+      name: "Pro",
       price: 9.99,
       currency: "USD",
       interval: "month",
       productId: "prod_4ZtlEyxvUyIIMxSraQ7ZcT",
+      maxFileSize: "16MB",
+      maxFiles: 25,
+      maxPages: 25,
     },
-  ],
+  },
 } as const;
 
 export const CREEM_API_BASE =

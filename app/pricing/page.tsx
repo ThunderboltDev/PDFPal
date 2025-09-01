@@ -40,7 +40,7 @@ function Pricing({ dbUser }: PropsWithDbUser) {
                 <h3 className="my-3 text-center text-3xl font-bold">{plan}</h3>
                 <p className="text-muted-foreground">{tagline}</p>
 
-                <p className="my-5 font-bold text-6xl">{price}</p>
+                <p className="my-5 font-bold text-6xl">${price}</p>
                 <p className="text-muted-foreground">/month</p>
               </div>
 

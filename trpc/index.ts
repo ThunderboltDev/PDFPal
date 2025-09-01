@@ -169,7 +169,7 @@ export const appRouter = router({
   createCheckoutSession: privateProcedure
     .input(
       z.object({
-        productId: z.string().optional().default(config.plans[1].productId),
+        productId: z.string().optional().default(config.plans.pro.productId),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -182,11 +182,6 @@ export const appRouter = router({
           id: userId,
         },
       });
-
-      console.log("createCheckoutSession called with input:", input);
-
-      console.log("User ID:", ctx.userId);
-      console.log("Subscription Plan:", await getUserSubscriptionPlan());
 
       if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -210,10 +205,6 @@ export const appRouter = router({
         payload.customer = { email: dbUser.email };
       }
 
-      console.log("payload:", payload);
-      console.log("api key:", process.env.CREEM_API_KEY?.slice(0, 6));
-      console.log("api base url:", CREEM_API_BASE);
-
       try {
         const response = await axios.post(
           `${CREEM_API_BASE}/checkouts`,
@@ -226,8 +217,59 @@ export const appRouter = router({
         );
 
         const { checkout_url } = response.data;
-        console.log("respose data:", response.data);
         return { checkoutUrl: checkout_url };
+      } catch (error) {
+        console.error("Error in createCheckoutSession:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not initiate billing session",
+        });
+      }
+    }),
+
+  getBillingPortalUrl: privateProcedure
+    .input(
+      z.object({
+        customerId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const dbUser = await db.user.findFirst({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const subscriptionPlan = await getUserSubscriptionPlan();
+
+      if (!subscriptionPlan.customerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No active subscription",
+        });
+      }
+
+      try {
+        const response = await axios.post(
+          `${CREEM_API_BASE}/customers/billing`,
+          {
+            customer_id: input.customerId,
+          },
+          {
+            headers: {
+              "x-api-key": process.env.CREEM_API_KEY,
+            },
+          }
+        );
+
+        const { customer_portal_link } = response.data;
+        return { portalUrl: customer_portal_link };
       } catch (error) {
         console.error("Error in createCheckoutSession:", error);
         throw new TRPCError({

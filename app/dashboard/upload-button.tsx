@@ -12,7 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import UploadDropzone from "./upload-dropzone";
 
-export default function UploadButton() {
+interface UploadButtonProps {
+  isSubscribed: boolean;
+}
+
+export default function UploadButton({ isSubscribed }: UploadButtonProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleClick = () => {};
@@ -32,7 +36,7 @@ export default function UploadButton() {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Upload PDF Files</DialogTitle>
-        <UploadDropzone />
+        <UploadDropzone isSubscribed={isSubscribed} />
       </DialogContent>
     </Dialog>
   );

@@ -1,7 +1,7 @@
-export const dynamic = "force-dynamic";
-
 import withAuth from "@/hoc/with-auth";
 import FileView from "./file";
+
+export const dynamic = "force-dynamic";
 
 interface FileViewPageProps {
   params: Promise<{ fileId: string }>;

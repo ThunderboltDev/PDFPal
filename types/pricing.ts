@@ -36,7 +36,7 @@ export const pricingItems: PricingItem[] = [
     plan: "Pro",
     tagline: "For larger projects with higher needs.",
     quota: 25,
-    price: 0,
+    price: 9.99,
     features: [
       {
         text: "25 pages per PDF",
