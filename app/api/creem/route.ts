@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const webhook = (await req.json()) as WebhookResponse;
+  const webhook = JSON.parse(rawBody) as WebhookResponse;
 
   const isSubscription = webhook.object.product.billing_type === "recurring";
 
