@@ -29,6 +29,9 @@ export interface WebhookResponse {
       id: string;
       billing_type: string;
     };
+    subscription: {
+      current_period_end_date: string;
+    };
     status: string;
     current_period_end_date: string;
     metadata: {
@@ -101,7 +104,9 @@ export async function POST(req: NextRequest) {
           id: webhook.object.metadata.userId,
         },
         data: {
-          currentPeriodEnd: new Date(webhook.object.current_period_end_date),
+          currentPeriodEnd: new Date(
+            webhook.object.subscription.current_period_end_date
+          ),
         },
       });
     }
