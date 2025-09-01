@@ -166,7 +166,6 @@ export const appRouter = router({
 
       return { messages, nextCursor };
     }),
-
   createCheckoutSession: privateProcedure
     .input(
       z.object({
@@ -184,6 +183,11 @@ export const appRouter = router({
         },
       });
 
+      console.log("createCheckoutSession called with input:", input);
+
+      console.log("User ID:", ctx.userId);
+      console.log("Subscription Plan:", await getUserSubscriptionPlan());
+
       if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const productId = input.productId;
@@ -198,12 +202,16 @@ export const appRouter = router({
           userId: userId,
         },
       };
+
       if (subscriptionPlan.customerId) {
         payload.customer_id = subscriptionPlan.customerId;
         payload.customer = { id: subscriptionPlan.customerId };
       } else if (dbUser.email) {
         payload.customer = { email: dbUser.email };
       }
+
+      console.log("payload:", payload);
+
       try {
         const response = await axios.post(
           `${CREEM_API_BASE}/checkouts`,
@@ -215,7 +223,11 @@ export const appRouter = router({
           }
         );
 
+        console.log("api key:", process.env.CREEM_API_KEY?.slice(0, 6));
+        console.log("api base url:", CREEM_API_BASE);
+
         const { checkout_url } = response.data;
+        console.log("respose data:", response.data);
         return { checkoutUrl: checkout_url };
       } catch (error) {
         console.error("Error in createCheckoutSession:", error);
