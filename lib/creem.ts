@@ -48,14 +48,13 @@ export async function getUserSubscriptionPlan(): Promise<SubscriptionPlan> {
   }
 
   const response = await axios.get(
-    `${CREEM_API_BASE}/subscriptions/${dbUser.subscriptionId}`,
+    `${CREEM_API_BASE}/subscriptions?subscription_id=${dbUser.subscriptionId}`,
     {
       headers: { "x-api-key": CREEM_API_KEY },
     }
   );
 
   const subscription = response.data;
-  console.log("subscription:", subscription);
 
   const activeStates = ["active", "trialing", "canceled", "unpaid", "paused"];
   const isSubscribed = activeStates.includes(subscription.status);
