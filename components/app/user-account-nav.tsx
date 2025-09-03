@@ -1,4 +1,9 @@
-import { getUserSubscriptionPlan } from "@/lib/creem";
+"use client";
+
+import { DollarSign, Gem, LayoutDashboard, LogOut, User } from "lucide-react";
+
+import Link from "next/link";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,22 +13,22 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { DollarSign, Gem, LayoutDashboard, LogOut, User } from "lucide-react";
-import Link from "next/link";
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { type SubscriptionPlan } from "@/lib/creem";
 
 interface UserAccountNavProps {
   email: string | null;
   avatarUrl: string | null;
   name: string;
+  subscriptionPlan: SubscriptionPlan;
 }
 
-export default async function UserAccountNav({
+export default function UserAccountNav({
   email,
   avatarUrl,
   name,
+  subscriptionPlan,
 }: UserAccountNavProps) {
-  const { isSubscribed } = await getUserSubscriptionPlan();
+  const { isSubscribed } = subscriptionPlan;
 
   return (
     <DropdownMenu>

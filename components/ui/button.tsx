@@ -20,23 +20,20 @@ const baseClass =
 const buttonVariants = cva(baseClass, {
   variants: {
     variant: {
-      default:
-        "bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary/20",
+      default: "bg-background bg-background/90 text-foreground focus-visible:",
+      primary:
+        "bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary/50",
       accent:
-        "bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent/20",
-      info: "bg-info text-foreground hover:bg-info/90 focus-visible:ring-info/20",
+        "bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent/50",
+      info: "bg-info text-white hover:bg-info/90 focus-visible:ring-info/50",
       danger:
-        "bg-danger text-foreground hover:bg-danger/90 focus-visible:ring-danger/20",
+        "bg-danger text-white hover:bg-danger/90 focus-visible:ring-danger/50",
       success:
-        "bg-success text-foreground hover:bg-success/90 focus-visible:ring-success/20",
+        "bg-success text-white hover:bg-success/90 focus-visible:ring-success/50",
       warning:
-        "bg-warning text-foreground hover:bg-warning/90 focus-visible:ring-warning/20",
-      outline:
-        "border bg-background hover:bg-secondary text-accent-foreground focus-visible:ring-border/20",
-      secondary:
-        "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-secondary/20",
+        "bg-warning text-white hover:bg-warning/90 focus-visible:ring-warning/50",
       ghost:
-        "bg-transparent hover:bg-secondary text-secondary-foreground shadow-none focus-visible:ring-secondary/20",
+        "bg-transparent hover:bg-background text-foreground shadow-none focus-visible:ring-background",
     },
     size: {
       default: "h-9 px-4 py-2 has-[>svg]:px-3",

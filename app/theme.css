@@ -2,7 +2,7 @@
 
 @theme inline {
   --color-background: var(--color-gray-100);
-  --color-foreground: var(--color-zinc-950);
+  --color-foreground: var(--color-zinc-900);
 
   --color-accent: var(--color-purple-600);
   --color-accent-foreground: var(--color-zinc-100);
@@ -25,8 +25,8 @@
   --color-success: var(--color-green-600);
   --color-success-foreground: var(--color-green-800);
 
-  --color-info: var(--color-blue-600);
-  --color-info-foreground: var(--color-blue-800);
+  --color-info: var(--color-sky-600);
+  --color-info-foreground: var(--color-sky-800);
 
   --color-warning: var(--color-yellow-600);
   --color-warning-foreground: var(--color-yellow-800);
@@ -44,6 +44,48 @@
   --radius-xl: 0.625rem;
 }
 
+@keyframes bg-position-x {
+  0%,
+  100% {
+    background-position: 0% 100%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes bg-position-y {
+  0%,
+  100% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
+@utility animate-bg-position-x {
+  animation: bg-position-x 10s linear infinite;
+}
+
+@utility animate-bg-position-y {
+  animation: bg-position-y 10s linear infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@utility animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
 @keyframes rotate-angle {
   0% {
     --angle: 0deg;
@@ -54,13 +96,12 @@
 }
 
 @utility h-view {
-  height: calc(100vh - 6rem);
-  max-height: calc(100vh - 6rem);
+  height: calc(100vh - 5rem);
+  max-height: calc(100vh - 5rem);
 }
 
-@utility gradient-border {
+@utility border-gradient-* {
   @apply relative z-10 overflow-visible;
-  background: inherit;
 
   @property --angle {
     initial-value: 0deg;
@@ -68,27 +109,64 @@
     inherits: false;
   }
 
-  &::before {
+  &::before,
+  &::after {
     content: "";
 
     @apply absolute inset-1/2 -z-10;
     @apply pointer-events-none rounded-[inherit];
     @apply -translate-x-1/2 -translate-y-1/2;
 
-    animation: rotate-angle 3s linear infinite;
+    animation: rotate-angle 5s ease-in-out infinite;
 
-    width: calc(100% + 6px);
-    height: calc(100% + 6px);
+    width: calc(100% + --value(integer) * 1px);
+    height: calc(100% + --value(integer) * 1px);
 
     background-image: conic-gradient(
       from var(--angle),
+      var(--color-primary),
       var(--color-accent),
-      var(--color-primary-700),
-      var(--color-accent-400),
-      var(--color-accent-700),
-      var(--color-primary-500),
-      var(--color-accent)
+      var(--color-primary)
     );
+  }
+
+  &::after {
+    @apply blur-[2px];
+  }
+}
+
+@utility shine {
+  @apply relative;
+
+  &::before {
+    content: "";
+
+    @apply absolute top-0 left-[10%];
+    @apply w-4 h-full z-10 pointer-events-none;
+    @apply bg-white/10 -skew-4 rounded-none;
+    @apply transition-all duration-300 ease-out;
+  }
+
+  &:hover::before {
+    @apply left-[75%] w-6;
+  }
+}
+
+@utility bevel {
+  @apply relative overflow-hidden;
+
+  &::after {
+    content: "";
+
+    @apply absolute inset-0;
+    @apply size-full z-10 pointer-events-none;
+    @apply bg-gradient-to-b opacity-25;
+    @apply from-transparent to-white;
+    @apply transition-opacity duration-300 ease-out;
+  }
+
+  &:hover::after {
+    @apply opacity-30;
   }
 }
 

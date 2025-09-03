@@ -30,7 +30,7 @@ export default function UploadButton({ isSubscribed }: UploadButtonProps) {
         onClick={handleClick}
         asChild
       >
-        <Button variant="default">
+        <Button variant="primary">
           <Upload /> Upload PDF
         </Button>
       </DialogTrigger>

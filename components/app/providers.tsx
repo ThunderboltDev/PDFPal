@@ -2,6 +2,7 @@
 
 import SuperJSON from "superjson";
 import { PropsWithChildren, useState } from "react";
+import { MotionConfig } from "framer-motion";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc } from "@/app/_trpc/client";
 import { httpBatchLink } from "@trpc/client";
@@ -26,7 +27,9 @@ export default function Providers({ children }: PropsWithChildren) {
       client={trpcClient}
       queryClient={queryClient}
     >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </QueryClientProvider>
     </trpc.Provider>
   );
 }
