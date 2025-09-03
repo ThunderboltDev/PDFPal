@@ -7,26 +7,83 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import Link from "next/link";
+import config from "@/config";
 
 const faqs = [
   {
     question: "Do I need a credit card to start?",
-    answer:
-      "Nope! You can start for free without entering any payment details.",
+    answer: (
+      <>
+        <span className="font-semibold">Nope</span>! You can start for free{" "}
+        without entering any payment details. Just{" "}
+        <Link href="/sign-up">create an account</Link> and you&apos;re good to
+        go!
+      </>
+    ),
   },
   {
-    question: "Is my data secure?",
-    answer:
-      "Yes. Your PDFs are processed securely, and we never share your data.",
-  },
-  {
-    question: "Can I use multiple PDFs?",
-    answer: "Absolutely. Upload and chat with as many files as you need.",
+    question: "Can I upload multiple PDFs?",
+    answer: (
+      <>
+        Absolutely. You can upload up to{" "}
+        <span className="font-semibold">{config.plans.free.maxFiles} PDFs</span>{" "}
+        with the <Link href="/pricing#free-plan">Free Plan</Link> and up to{" "}
+        <span className="font-semibold">{config.plans.pro.maxFiles} PDFs</span>{" "}
+        with the <Link href="/pricing#pro-plan">Pro Plan</Link>. However it is
+        not possible to chat with multiple PDFs at the same time.
+      </>
+    ),
   },
   {
     question: "What's included in the Free Plan?",
-    answer:
-      "Basic chat features with limited monthly usage. Upgrade anytime for Pro features.",
+    answer: (
+      <>
+        In the <Link href="/pricing#free-plan">Free Plan</Link>, you can upload
+        up to{" "}
+        <span className="font-semibold">{config.plans.free.maxFiles} PDFs</span>{" "}
+        with a max file size of {config.plans.free.maxFileSize} and maximum{" "}
+        {config.plans.free.maxPages} and chat with them as much as you want!
+        Upgrade to <Link href="/pricing#pro-plan">Pro Plan</Link> to increase
+        these limits.
+      </>
+    ),
+  },
+  {
+    question: "What's the difference between Free and Pro plans?",
+    answer: (
+      <>
+        In the <Link href="/pricing#free-plan">Free Plan</Link>, you get limited
+        number of PDFs and lower max file size and page limit. While in the{" "}
+        <Link href="/pricing#pro-plan">Pro Plan</Link>, you get to experience{" "}
+        <span className="font-semibold">
+          higher usage, faster processing and more PDFs to chat with
+        </span>
+        !
+      </>
+    ),
+  },
+  {
+    question: "Can I cancel my subscription anytime?",
+    answer: (
+      <>
+        <span className="font-semibold">
+          You can cancel your subscription anytime
+        </span>{" "}
+        by going to the <Link href="/billing">Billing</Link> page.
+      </>
+    ),
+  },
+  {
+    question: "Do you store my files permanently?",
+    answer: (
+      <>
+        Your files are stored securely until you delete them by going to the{" "}
+        <Link href="/dashboard">Dashboard</Link>. You can view your uploaded{" "}
+        files anywhere and anytime from the{" "}
+        <Link href="/dashboard">Dashboard</Link>.
+      </>
+    ),
   },
 ];
 
@@ -55,7 +112,6 @@ export default function FAQ() {
           <AccordionItem
             key={index}
             value={`faq-${index}`}
-            className=""
           >
             <AccordionTrigger className="">{faq.question}</AccordionTrigger>
             <AccordionContent>{faq.answer}</AccordionContent>

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { ReactNode } from "react";
 import { SkeletonTheme } from "react-loading-skeleton";
 
+import Footer from "@/components/app/footer";
 import Navbar from "@/components/app/navbar";
 import Providers from "@/components/app/providers";
 import { Toaster } from "@/components/ui/sonner";
@@ -40,6 +41,7 @@ export default function RootLayout({
           <SkeletonTheme duration={2}>
             <Navbar />
             {children}
+            <Footer />
           </SkeletonTheme>
           <Toaster />
         </body>

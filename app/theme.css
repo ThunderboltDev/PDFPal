@@ -131,7 +131,7 @@
   }
 
   &::after {
-    @apply blur-[2px];
+    @apply blur-md;
   }
 }
 

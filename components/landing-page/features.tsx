@@ -48,7 +48,7 @@ export default function Features() {
         whileInView={{ opacity: 1, y: "0%", filter: "blur(0px)" }}
         viewport={{ once: true }}
         transition={{
-          duration: 1,
+          duration: 0.5,
           ease: "easeInOut",
         }}
         className="px-6 lg:px-8"
@@ -80,7 +80,7 @@ export default function Features() {
             }}
             viewport={{ once: true }}
             transition={{
-              duration: 0.75,
+              duration: 0.5,
               ease: "easeOut",
             }}
             className="relative z-1"

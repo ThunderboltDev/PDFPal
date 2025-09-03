@@ -11,6 +11,7 @@ export default function UpgradeButton() {
     });
   return (
     <Button
+      variant="primary"
       onClick={() => createCheckoutSession({})}
       className="w-full"
     >
