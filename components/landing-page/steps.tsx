@@ -8,7 +8,7 @@ import {
   MessageCircleMore,
   UserPlus,
 } from "lucide-react";
-import { ButtonLink } from "../ui/button";
+import { LinkButton } from "../ui/button";
 
 const steps = [
   {
@@ -87,14 +87,14 @@ export default function Steps() {
           transition={{ duration: 0.5, ease: "easeInOut" }}
           className="inline-block"
         >
-          <ButtonLink
+          <LinkButton
             href="/dashboard"
             variant="primary"
             size="lg"
             className="px-4 rounded-full font-semibold shine bevel"
           >
             Start for free <ArrowRight className="size-4.5" />
-          </ButtonLink>
+          </LinkButton>
         </motion.div>
         <p className="text-xs text-zinc-500">Free - No credit card required</p>
       </div>

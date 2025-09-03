@@ -79,7 +79,7 @@ interface ButtonLinkProps
   href: string;
 }
 
-function ButtonLink({ className, variant, size, ...props }: ButtonLinkProps) {
+function LinkButton({ className, variant, size, ...props }: ButtonLinkProps) {
   return (
     <Link
       data-slot="button"
@@ -89,4 +89,4 @@ function ButtonLink({ className, variant, size, ...props }: ButtonLinkProps) {
   );
 }
 
-export { Button, ButtonLink, buttonVariants };
+export { Button, LinkButton, buttonVariants };

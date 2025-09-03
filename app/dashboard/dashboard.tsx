@@ -2,12 +2,11 @@
 
 import { Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
 
-import Link from "next/link";
 import { useState } from "react";
 import { format } from "date-fns";
 import UploadButton from "./upload-button";
 import { trpc } from "../_trpc/client";
-import { Button } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import Skeleton from "@/components/ui/skeleton";
 import { PropsWithDbUser } from "@/hoc/with-auth";
 
@@ -49,7 +48,7 @@ export default function Dashboard({
                 key={file.id}
                 className="col-span-1 divide-y divide-gray-200 rounded-lg bg-gray-100 shadow-md transition hover:shadow-lg"
               >
-                <Link
+                <LinkButton
                   href={`/dashboard/${file.id}`}
                   className="flex flex-col gap-2 no-underline"
                 >
@@ -63,7 +62,7 @@ export default function Dashboard({
                       </div>
                     </div>
                   </div>
-                </Link>
+                </LinkButton>
                 <div className="px-6 py-2 grid grid-cols-3 place-items-center gap-6 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Plus className="size-4" />

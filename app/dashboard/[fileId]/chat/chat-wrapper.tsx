@@ -1,12 +1,12 @@
 "use client";
 
+import { ChevronLeft, XCircle, Zap } from "lucide-react";
+
 import { trpc } from "@/app/_trpc/client";
 import ChatInput from "./chat-input";
 import Messages from "./messages";
 import Loader from "@/components/ui/loader";
-import { ChevronLeft, XCircle, Zap } from "lucide-react";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/button";
 import ChatContextProvider from "./chat-context";
 
 interface ChatWrapperProps {
@@ -37,20 +37,20 @@ export default function ChatWrapper({ fileId }: ChatWrapperProps) {
             5 pages per PDF
           </p>
           <div className="flex flex-col gap-2 mt-4 w-48 mx-auto">
-            <Link
+            <LinkButton
               href="/pricing#pro-plan"
-              className={buttonVariants({ variant: "default" })}
+              variant="accent"
             >
               <Zap className="size-4" />
               Upgrade to Pro Plan
-            </Link>
-            <Link
+            </LinkButton>
+            <LinkButton
               href="/dashboard"
-              className={buttonVariants({ variant: "secondary" })}
+              variant="default"
             >
               <ChevronLeft className="size-4" />
               Back to Dashboard
-            </Link>
+            </LinkButton>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { SendHorizonal } from "lucide-react";
 
 import { motion } from "framer-motion";
-import { ButtonLink } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/button";
 import { Lamp } from "@/components/ui/lamp";
 
 export default function Hero() {
@@ -32,14 +32,14 @@ export default function Hero() {
           required
         </p>
         <div>
-          <ButtonLink
+          <LinkButton
             href="/dashboard"
             variant="accent"
             size="lg"
             className="mt-5 px-8 rounded-full font-semibold shine bevel shadow-md shadow-accent/25 animate-float"
           >
             Start Chatting <SendHorizonal strokeWidth={3} />
-          </ButtonLink>
+          </LinkButton>
           <p className="mt-3 text-xs text-muted-foreground">
             Free - No credit card required
           </p>

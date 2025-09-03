@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import config from "@/config";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants, LinkButton } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
@@ -40,15 +40,14 @@ export default function NavbarWrapper({
           <div className="hidden items-center space-x-4 sm:flex">
             {!user ? (
               <>
-                <Link
+                <LinkButton
                   href="/pricing"
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "sm" }),
-                    "text-gray-700 no-underline"
-                  )}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-700 no-underline"
                 >
                   Pricing
-                </Link>
+                </LinkButton>
                 <LoginLink
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "sm" }),
@@ -68,15 +67,14 @@ export default function NavbarWrapper({
               </>
             ) : (
               <>
-                <Link
+                <LinkButton
                   href="/dashboard"
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "sm" }),
-                    "text-gray-700 no-underline"
-                  )}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-700 no-underline"
                 >
                   Dashboard
-                </Link>
+                </LinkButton>
                 <UserAccountNav
                   name={
                     user.username ??

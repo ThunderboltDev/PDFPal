@@ -1,4 +1,4 @@
-import { buttonVariants } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -7,7 +7,6 @@ import {
 import withAuth, { PropsWithDbUser } from "@/hoc/with-auth";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Check, HelpCircle, Minus } from "lucide-react";
-import Link from "next/link";
 import UpgradeButton from "./upgrade-button";
 import { pricingItems } from "@/types/pricing";
 
@@ -106,29 +105,25 @@ function Pricing({ dbUser }: PropsWithDbUser) {
               <div className="border-t border-gray-200" />
               <div className="p-5">
                 {plan === "Free" ? (
-                  <Link
+                  <LinkButton
                     href={dbUser ? "/dashboard" : "/sign-in"}
-                    className={buttonVariants({
-                      variant: "secondary",
-                      className: "w-full",
-                    })}
+                    variant="default"
+                    className="w-full"
                   >
                     {dbUser ? "Dashboard" : "Sign up"}
                     <ArrowRight className="size-5 ml-1.5" />
-                  </Link>
+                  </LinkButton>
                 ) : dbUser ? (
                   <UpgradeButton></UpgradeButton>
                 ) : (
-                  <Link
+                  <LinkButton
                     href="/sign-in"
-                    className={buttonVariants({
-                      variant: "default",
-                      className: "w-full",
-                    })}
+                    variant="default"
+                    className="w-full"
                   >
                     {dbUser ? "Upgrade Now" : "Sign up"}
                     <ArrowRight className="size-5 ml-1.5" />
-                  </Link>
+                  </LinkButton>
                 )}
               </div>
             </div>
