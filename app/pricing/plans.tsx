@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, HelpCircle, X } from "lucide-react";
+import { ArrowRight, Check, HelpCircle, UserPlus, X } from "lucide-react";
 
 import { motion } from "framer-motion";
 import {
@@ -8,11 +8,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LinkButton } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { PropsWithNullableDbUser } from "@/hoc/with-auth";
 import { cn } from "@/lib/utils";
-
-import UpgradeButton from "./upgrade-button";
+import { trpc } from "../_trpc/client";
 
 type Feature = {
   id?: string;
@@ -105,6 +104,11 @@ const pricingItems: PricingItem[] = [
 ] as const;
 
 export default function Plans({ dbUser }: PropsWithNullableDbUser) {
+  const { mutate: createCheckoutSession } =
+    trpc.createCheckoutSession.useMutation({
+      onSuccess: ({ checkoutUrl }) => (window.location.href = checkoutUrl),
+    });
+
   return (
     <div className="pt-12 grid grid-cols-1 gap-10 md:grid-cols-2">
       {pricingItems.map(
@@ -186,26 +190,32 @@ export default function Plans({ dbUser }: PropsWithNullableDbUser) {
 
               <div className="border-t border-gray-200" />
               <div className="p-5">
-                {name === "Free" ? (
-                  <LinkButton
-                    href={dbUser ? "/dashboard" : "/sign-in"}
-                    variant="default"
-                    className="w-full"
-                  >
-                    {dbUser ? "Dashboard" : "Sign up"}
-                    <ArrowRight className="size-5 ml-1.5" />
-                  </LinkButton>
-                ) : dbUser ? (
-                  <UpgradeButton />
-                ) : (
+                {!dbUser ? (
                   <LinkButton
                     href="/sign-in"
                     variant="primary"
                     className="w-full"
                   >
-                    {dbUser ? "Upgrade Now" : "Sign up"}
-                    <ArrowRight className="size-5 ml-1.5" />
+                    Sign up
+                    <UserPlus />
                   </LinkButton>
+                ) : name === "Free" ? (
+                  <LinkButton
+                    href="/dashboard"
+                    variant="default"
+                    className="w-full"
+                  >
+                    Dashboard
+                    <ArrowRight className="size-5" />
+                  </LinkButton>
+                ) : (
+                  <Button
+                    variant="primary"
+                    onClick={() => createCheckoutSession({})}
+                    className="w-full"
+                  >
+                    Upgrade Now <ArrowRight className="size-5" />
+                  </Button>
                 )}
               </div>
             </div>

@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardWrapper() {
   const { isSubscribed } = await getUserSubscriptionPlan();
-  const ProtectedDashboard = withAuth(Dashboard, `/dashboard`);
+  const ProtectedDashboard = withAuth(Dashboard, {origin: "/dashboard"});
 
   return <ProtectedDashboard isSubscribed={isSubscribed} />;
 }

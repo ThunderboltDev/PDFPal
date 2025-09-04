@@ -12,6 +12,8 @@ interface FileViewPageProps {
 export default async function FileViewPage({ params }: FileViewPageProps) {
   const { fileId } = await params;
 
-  const ProtectedFileView = withAuth(FileView, `/dashboard/${fileId}`);
+  const ProtectedFileView = withAuth(FileView, {
+    origin: `/dashboard/${fileId}`,
+  });
   return <ProtectedFileView fileId={fileId} />;
 }
