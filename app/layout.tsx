@@ -39,8 +39,8 @@ export default function RootLayout({
           className={cn("font-sans min-h-screen antialiased", inter.className)}
         >
           <SkeletonTheme duration={2}>
-            <Navbar />
             {children}
+            <Navbar />
             <Footer />
           </SkeletonTheme>
           <Toaster />

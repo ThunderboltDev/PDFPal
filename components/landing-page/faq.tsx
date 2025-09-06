@@ -30,8 +30,8 @@ const faqs = [
         <span className="font-semibold">{config.plans.free.maxFiles} PDFs</span>{" "}
         with the <Link href="/pricing#free-plan">Free Plan</Link> and up to{" "}
         <span className="font-semibold">{config.plans.pro.maxFiles} PDFs</span>{" "}
-        with the <Link href="/pricing#pro-plan">Pro Plan</Link>. However it is
-        not possible to chat with multiple PDFs at the same time.
+        with the <Link href="/pricing#pro-plan">Pro Plan</Link>. Currently you
+        can only chat with one PDF at a time.
       </>
     ),
   },
@@ -54,12 +54,10 @@ const faqs = [
     answer: (
       <>
         In the <Link href="/pricing#free-plan">Free Plan</Link>, you get limited
-        number of PDFs and lower max file size and page limit. While in the{" "}
+        number of PDFs to upload, smaller file size, page limits and unlimited{" "}
+        chats with Standard AI Model. While in the{" "}
         <Link href="/pricing#pro-plan">Pro Plan</Link>, you get to experience{" "}
-        <span className="font-semibold">
-          higher usage, faster processing and more PDFs to chat with
-        </span>
-        !
+        higher max file size, higher PDF upload limit and Advanced AI model!
       </>
     ),
   },
@@ -82,6 +80,17 @@ const faqs = [
         <Link href="/dashboard">Dashboard</Link>. You can view your uploaded{" "}
         files anywhere and anytime from the{" "}
         <Link href="/dashboard">Dashboard</Link>.
+      </>
+    ),
+  },
+  {
+    question: "Can I switch plans?",
+    answer: (
+      <>
+        Yes, you can switch your selected plan anytime by going to the{" "}
+        <Link href="/billing">Billing Page</Link>. By default every user is on{" "}
+        the <Link href="/pricing#free-plan">Free Plan</Link> and can upgrade to{" "}
+        <Link href="/pricing#pro-plan">Pro Plan</Link> whenever they want.
       </>
     ),
   },

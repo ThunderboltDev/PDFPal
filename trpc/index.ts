@@ -213,6 +213,8 @@ export const appRouter = router({
             headers: {
               "x-api-key": process.env.CREEM_API_KEY,
             },
+            timeout: 10_000,
+            proxy: false,
           }
         );
 
@@ -265,6 +267,8 @@ export const appRouter = router({
             headers: {
               "x-api-key": process.env.CREEM_API_KEY,
             },
+            timeout: 10_000,
+            proxy: false,
           }
         );
 

@@ -44,12 +44,12 @@ export async function getUserSubscriptionPlan(): Promise<SubscriptionPlan> {
     };
   }
 
-  const response = await axios.get(
-    `${CREEM_API_BASE}/subscriptions?subscription_id=${dbUser.subscriptionId}`,
-    {
-      headers: { "x-api-key": CREEM_API_KEY },
-    }
-  );
+  const response = await axios.get(`${CREEM_API_BASE}/subscriptions`, {
+    headers: { "x-api-key": CREEM_API_KEY },
+    params: { subscription_id: dbUser?.subscriptionId },
+    timeout: 10_000,
+    proxy: false,
+  });
 
   const subscription = response.data;
 

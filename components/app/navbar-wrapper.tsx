@@ -1,95 +1,186 @@
 "use client";
 
-import Link from "next/link";
-import config from "@/config";
-import { buttonVariants, LinkButton } from "../ui/button";
-import { cn } from "@/lib/utils";
-import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
-import { ArrowRight } from "lucide-react";
-import UserAccountNav from "./user-account-nav";
-import MobileNav from "./mobile-nav";
-import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
+import {
+  CreditCard,
+  DollarSign,
+  LayoutDashboard,
+  LogOut,
+  Mail,
+  Menu,
+  UserPlus,
+  X,
+} from "lucide-react";
+
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
+
+import { Button, LinkButton } from "@/components/ui/button";
 import { SubscriptionPlan } from "@/lib/creem";
+import { cn } from "@/lib/utils";
+import config from "@/config";
+import Image from "next/image";
 
 interface NavbarWrapperProps {
   user: KindeUser<Record<string, string>> | null;
   subscriptionPlan: SubscriptionPlan;
 }
 
+const sidebarVariants = {
+  hidden: { x: "-100%" },
+  visible: { x: 0 },
+};
+
+const overlayVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
 export default function NavbarWrapper({
   user,
   subscriptionPlan,
 }: NavbarWrapperProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
   const excludedPaths = ["/login"];
   if (excludedPaths.includes(pathname)) return null;
 
+  const navLinks = [
+    {
+      href: "/dashboard",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      href: "/pricing",
+      label: "Pricing",
+      icon: DollarSign,
+    },
+    {
+      href: "/billing",
+      label: "Billing",
+      icon: CreditCard,
+    },
+    {
+      href: "/contact",
+      label: "Contact",
+      icon: Mail,
+    },
+  ];
+
   return (
-    <nav className="fixed h-14 top-0 left-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
-      <div className="container-7xl">
-        <div className="flex h-14 items-center justify-between border-b border-zinc-200">
-          <Link
-            href="/"
-            className="text-foreground hover:text-foreground no-underline flex z-40 text-lg font-semibold"
-          >
-            {config.name}
-          </Link>
-          <MobileNav isAuthenticated={!!user} />
-          <div className="hidden items-center space-x-4 sm:flex">
-            {!user ? (
-              <>
-                <LinkButton
-                  href="/pricing"
+    <nav className="fixed h-14 top-0 left-0 z-30 w-full border-b border-secondary bg-white/50 backdrop-blur-md transition-all">
+      <div className="max-w-5xl px-4 flex h-14 items-center justify-between">
+        <LinkButton
+          href="/"
+          variant="ghost"
+          className="text-secondary-foreground hover:text-foreground text-lg font-semibold hover:bg-background/50"
+        >
+          {config.name}
+        </LinkButton>
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              <motion.aside
+                key="sidebar"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={sidebarVariants}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="fixed inset-0 min-h-screen w-56 bg-white shadow-lg z-100 p-3"
+                role="dialog"
+                aria-modal="true"
+              >
+                <div className="flex gap-3 px-2 items-center text-lg">
+                  <Image
+                    src="/logo.png"
+                    height={35}
+                    width={35}
+                    alt={`${config.name} Logo`}
+                  />
+                  <span>{config.name}</span>
+                </div>
+                <Button
+                  size="icon"
                   variant="ghost"
-                  size="sm"
-                  className="text-gray-700 no-underline"
+                  onClick={() => setIsOpen(false)}
+                  className="absolute top-0 right-0 size-8 text-secondary-foreground hover:text-foreground"
                 >
-                  Pricing
-                </LinkButton>
-                <LoginLink
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "sm" }),
-                    "text-gray-700 no-underline"
-                  )}
-                >
-                  Login
-                </LoginLink>
-                <RegisterLink
-                  className={cn(
-                    buttonVariants({ variant: "default", size: "sm" }),
-                    "no-underline"
-                  )}
-                >
-                  Get Started <ArrowRight className="size-4" />
-                </RegisterLink>
-              </>
-            ) : (
-              <>
-                <LinkButton
-                  href="/dashboard"
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-700 no-underline"
-                >
-                  Dashboard
-                </LinkButton>
-                <UserAccountNav
-                  name={
-                    user.username ??
-                    user.given_name ??
-                    user.family_name ??
-                    "Your Account"
-                  }
-                  email={user.email}
-                  avatarUrl={user.picture}
-                  subscriptionPlan={subscriptionPlan}
-                />
-              </>
-            )}
-          </div>
-        </div>
+                  <X className="size-5" />
+                </Button>
+                <ul className="space-y-2 mt-4">
+                  {navLinks.map((link) => (
+                    <li key={link.href}>
+                      <LinkButton
+                        href={link.href}
+                        size="default"
+                        variant="ghost"
+                        className={cn(
+                          "w-full justify-start text-base md:text-[15px]",
+                          pathname === link.href
+                            ? "text-accent-foreground bg-accent hover:bg-accent/90"
+                            : "text-secondary-foreground hover:text-foreground"
+                        )}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <link.icon className="size-5 md:size-4" />
+                        {link.label}
+                      </LinkButton>
+                    </li>
+                  ))}
+                </ul>
+                <div className="w-full p-2 absolute left-0 bottom-0">
+                  <Button
+                    variant="ghost"
+                    className={cn(
+                      "w-full flex justify-start text-base md:text-[15px]",
+                      {
+                        "text-danger hover:bg-danger/10": user,
+                        "text-primary hover:bg-primary/10": !user,
+                      }
+                    )}
+                  >
+                    {user ? (
+                      <>
+                        <LogOut className="size-5" />
+                        Log Out
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="size-5" />
+                        Sign In
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </motion.aside>
+              <motion.div
+                key="overlay"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={overlayVariants}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-99 w-full min-h-screen bg-black/30 cursor-pointer"
+                onClick={() => setIsOpen(false)}
+                aria-hidden
+              />
+            </>
+          )}
+        </AnimatePresence>
+        <Button
+          onClick={() => setIsOpen((prev) => !prev)}
+          size="icon"
+          variant="ghost"
+          className="text-secondary-foreground hover:text-foreground font-semibold hover:bg-background/50"
+          aria-label="Open Sidebar"
+        >
+          <Menu className="size-6" />
+          <span className="sr-only">Open Sidebar</span>
+        </Button>
       </div>
     </nav>
   );

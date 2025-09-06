@@ -70,7 +70,7 @@ const pricingItems: PricingItem[] = [
   {
     id: "pro-plan",
     name: "Pro",
-    className: "border-gradient-5 animate-float",
+    className: "border-gradient-5",
     tagline: "For larger PDFs and higher quality",
     quota: 25,
     price: 9.99,
@@ -110,7 +110,7 @@ export default function Plans({ dbUser }: PropsWithNullableDbUser) {
     });
 
   return (
-    <div className="pt-12 grid grid-cols-1 gap-10 md:grid-cols-2">
+    <div className="pt-12 grid grid-cols-1 gap-10 md:grid-cols-2 lg:gap-16">
       {pricingItems.map(
         ({ id, name, className, price, tagline, quota, features }) => (
           <motion.div
@@ -120,11 +120,11 @@ export default function Plans({ dbUser }: PropsWithNullableDbUser) {
             initial={{ scale: 0, y: -50 }}
             whileInView={{ scale: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 50 }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 50 }}
           >
             <div className="relative rounded-[14px] bg-white">
               {id === "pro-plan" && (
-                <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-primary to-accent p-2 text-sm font-medium text-white bevel">
+                <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-primary to-accent p-2 text-sm text-center font-medium text-white bevel">
                   Upgrade Now!
                 </div>
               )}
@@ -132,10 +132,8 @@ export default function Plans({ dbUser }: PropsWithNullableDbUser) {
               <div className="p-5">
                 <h2 className="my-3">{name}</h2>
                 <p className="text-muted-foreground mb-4">{tagline}</p>
-                <div>
-                  <span className="font-bold text-5xl">${price}</span>
-                  <span className="text-muted-foreground">/mo</span>
-                </div>
+                <p className="font-bold text-5xl">${price}</p>
+                <p className="text-muted-foreground">/mo</p>
               </div>
 
               <div className="flex h-14 items-center justify-center border-y border-gray-200 bg-gray-50">

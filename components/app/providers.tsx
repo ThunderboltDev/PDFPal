@@ -1,8 +1,9 @@
 "use client";
 
 import SuperJSON from "superjson";
-import { PropsWithChildren, useState } from "react";
 import { MotionConfig } from "framer-motion";
+import { PropsWithChildren, useState } from "react";
+import { KindeProvider } from "@kinde-oss/kinde-auth-nextjs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc } from "@/app/_trpc/client";
 import { httpBatchLink } from "@trpc/client";
@@ -28,7 +29,9 @@ export default function Providers({ children }: PropsWithChildren) {
       queryClient={queryClient}
     >
       <QueryClientProvider client={queryClient}>
-        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        <KindeProvider>
+          <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        </KindeProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );
