@@ -11,7 +11,7 @@ const baseClass =
   "shadow-md " +
   "no-underline " +
   "disabled:cursor-not-allowed disabled:saturate-0 " +
-  "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 " +
+  "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 " +
   "shrink-0 [&_svg]:shrink-0 " +
   "outline-none focus-visible:border-ring " +
   "focus-visible:ring-ring/50 focus-visible:ring-[3px] " +

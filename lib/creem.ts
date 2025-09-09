@@ -1,4 +1,3 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import axios from "axios";
 
 import config, { CREEM_API_BASE } from "@/config";
@@ -19,8 +18,7 @@ export type SubscriptionPlan = Plan & {
 };
 
 export async function getUserSubscriptionPlan(): Promise<SubscriptionPlan> {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const user = { id: "" };
 
   if (!user || !user.id) {
     return {

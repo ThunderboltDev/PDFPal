@@ -1,11 +1,5 @@
-import { withAuth } from "@kinde-oss/kinde-auth-nextjs/middleware";
-
-export default withAuth(async function middleware() {}, {
-  isReturnToCurrentPage: true,
-  loginPage: "/login",
-  publicPaths: ["/public", "/more"],
-});
+export { default } from "next-auth/middleware";
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/billing", "/auth-callback"],
+  matcher: ["/dashboard/:path*", "/auth-callback", "/billing", "/settings"],
 };

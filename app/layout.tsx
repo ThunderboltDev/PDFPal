@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { SkeletonTheme } from "react-loading-skeleton";
 
 import Footer from "@/components/app/footer";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import "./globals.css";
+import { getServerSession } from "next-auth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,29 +24,26 @@ export const metadata: Metadata = {
   description: config.description,
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: ReactNode;
-}>) {
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const session = await getServerSession();
   return (
     <html
       lang="en"
       className="scheme-light"
       suppressHydrationWarning
     >
-      <Providers>
-        <body
-          className={cn("font-sans min-h-screen antialiased", inter.className)}
-        >
+      <body
+        className={cn("font-sans min-h-screen antialiased", inter.className)}
+      >
+        <Providers session={session}>
           <SkeletonTheme duration={2}>
             {children}
             <Navbar />
             <Footer />
           </SkeletonTheme>
           <Toaster />
-        </body>
-      </Providers>
+        </Providers>
+      </body>
     </html>
   );
 }

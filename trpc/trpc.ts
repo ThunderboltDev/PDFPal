@@ -1,20 +1,27 @@
 import superjson from "superjson";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { getServerSession } from "next-auth";
+import { db } from "@/lib/db";
 
 const t = initTRPC.create({
   transformer: superjson,
 });
 
 export const isAuthenticated = t.middleware(async (opts) => {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await getServerSession();
 
-  if (!user || !user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!session || !session.user?.email)
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  const user = await db.user.findFirst({
+    where: {
+      email: session.user?.email,
+    },
+  });
 
   return opts.next({
     ctx: {
-      userId: user.id,
+      userId: user?.id,
       user,
     },
   });

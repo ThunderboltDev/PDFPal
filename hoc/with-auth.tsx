@@ -1,8 +1,9 @@
 import { ComponentType } from "react";
 import { redirect } from "next/navigation";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { User } from "@prisma/client";
 import { db } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export type PropsWithDbUser<ExtraProps = object> = ExtraProps & {
   dbUser: User;
@@ -38,17 +39,16 @@ export default function withAuth<T extends { dbUser: User }>(
   const origin = options?.origin ?? "/dashboard";
 
   async function AuthenticatedWrapper(props: PropsWithoutDbUser<T>) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
+    const session = await getServerSession(authOptions);
 
-    if (!user || !user.id) {
-      if (allowUnauthenticated) <WrappedComponent {...(props as T)} />;
+    if (!session) {
+      if (allowUnauthenticated) return <WrappedComponent {...(props as T)} />;
       redirect(`/auth-callback?origin=${origin}`);
     }
 
     const dbUser = await db.user.findFirst({
       where: {
-        id: user.id,
+        email: session.user?.email ?? "",
       },
     });
 
