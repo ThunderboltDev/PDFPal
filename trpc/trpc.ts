@@ -1,6 +1,7 @@
 import superjson from "superjson";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 const t = initTRPC.create({
@@ -8,16 +9,20 @@ const t = initTRPC.create({
 });
 
 export const isAuthenticated = t.middleware(async (opts) => {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
-  if (!session || !session.user?.email)
+  if (!session || !session.user?.id)
     throw new TRPCError({ code: "UNAUTHORIZED" });
 
-  const user = await db.user.findFirst({
+  const user = await db.user.findUnique({
     where: {
-      email: session.user?.email,
+      id: session.user?.id,
     },
   });
+
+  if (!user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
 
   return opts.next({
     ctx: {

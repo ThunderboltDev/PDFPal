@@ -1,6 +1,5 @@
 import z from "zod/v4";
 import axios from "axios";
-import bcrypt from "bcrypt";
 
 import { TRPCError } from "@trpc/server";
 import { privateProcedure, publicProcedure, router } from "./trpc";
@@ -27,68 +26,12 @@ interface CheckoutPayload {
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.email)
+
+    if (!session || !session.user?.email || !session.user?.id)
       throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    const dbUser = await db.user.findFirst({
-      where: {
-        email: session.user?.email,
-      },
-    });
-
-    if (!dbUser) {
-      await db.user.upsert({
-        where: {
-          email: session.user?.email,
-        },
-        update: {},
-        create: {
-          email: session.user?.email ?? undefined,
-          image: session.user?.image ?? undefined,
-        },
-      });
-    }
 
     return { success: true };
   }),
-
-  registerUser: publicProcedure
-    .input(z.object({ email: z.string(), password: z.string() }))
-    .mutation(async ({ input }) => {
-      const { email, password } = input;
-      const user = await db.user.findFirst({
-        where: {
-          email: email,
-        },
-      });
-
-      if (user)
-        return {
-          success: false,
-          message: "Email is already in use",
-        };
-
-      const hashedPassword = await bcrypt.hash(password, 15);
-
-      const newUser = await db.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-        },
-      });
-
-      if (newUser && newUser.id) {
-        return {
-          success: true,
-          message: "User registered successfully",
-        };
-      } else {
-        return {
-          success: false,
-          message: "Something went wrong!",
-        };
-      }
-    }),
 
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;

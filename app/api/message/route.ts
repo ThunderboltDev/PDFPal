@@ -1,4 +1,4 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextRequest } from "next/server";
 
 import { InferenceClient } from "@huggingface/inference";
@@ -6,16 +6,17 @@ import { InferenceClient } from "@huggingface/inference";
 import { MessageValidator } from "./message-validation";
 import { pinecone } from "@/lib/pinecone";
 import { db } from "@/lib/db";
+import { authOptions } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await getServerSession(authOptions);
 
-  if (!user || !user.id) return new Response("Unauthorized", { status: 401 });
+  if (!session || !session.user.id)
+    return new Response("Unauthorized", { status: 401 });
 
-  const userId = user.id;
+  const userId = session.user.id;
   const body = await req.json();
 
   const { fileId, prompt } = MessageValidator.parse(body);

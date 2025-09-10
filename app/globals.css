@@ -53,6 +53,12 @@
     @apply font-bold text-center text-pretty;
   }
 
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold;
+  }
+
   h1 {
     @apply leading-[1.2];
 

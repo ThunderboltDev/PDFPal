@@ -41,7 +41,7 @@ export default function withAuth<T extends { dbUser: User }>(
   async function AuthenticatedWrapper(props: PropsWithoutDbUser<T>) {
     const session = await getServerSession(authOptions);
 
-    if (!session) {
+    if (!session || !session.user.id) {
       if (allowUnauthenticated) return <WrappedComponent {...(props as T)} />;
       redirect(`/auth-callback?origin=${origin}`);
     }

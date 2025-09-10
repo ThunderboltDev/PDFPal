@@ -25,7 +25,7 @@ import OverlayLoader from "@/components/ui/overlay-loader";
 
 const errorMessages: Record<string, string> = {
   OAuthAccountNotLinked:
-    "This email is already in use. Sign in with the provider you used originally, or link that account first.",
+    "This email is already in use. Sign in with the provider you used originally.",
   Callback: "Error during sign-in. Please try again.",
   EmailSignin: "Error sending magic link. Try again.",
   Default: "Unable to sign in.",
@@ -40,6 +40,8 @@ type FormValues = z.infer<typeof formSchema>;
 export default function Login() {
   const [magicLinkEmail, setMagicLinkEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
+
   const params = useSearchParams();
   const router = useRouter();
 
@@ -49,12 +51,18 @@ export default function Login() {
   const error = params.get("error") || null;
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && error) {
+      toast.error(errorMessages[error] ?? "Something went terribly wrong!");
+    }
+  }, [error, mounted]);
+
+  useEffect(() => {
     if (status === "authenticated") router.replace(callbackUrl);
-    if (error)
-      toast.error("An error occured", {
-        description: errorMessages[error] ?? "Something went horribly wrong!",
-      });
-  }, [callbackUrl, error, router, status]);
+  }, [callbackUrl, router, status]);
 
   const form = useForm<FormValues>({
     mode: "onBlur",
@@ -80,15 +88,11 @@ export default function Login() {
         });
       } else {
         setMagicLinkEmail(values.email);
-        toast.success("Magic link sent", {
-          description: `Check ${values.email} for the sign-in link.`,
-        });
+        toast.success(`Verification email was sent to ${values.email}`);
       }
     } catch (error) {
       console.error("signIn error:", error);
-      toast.error("Something went wrong!", {
-        description: "Please try again.",
-      });
+      toast.error("Something went wrong! Please try again");
     } finally {
       setIsLoading(false);
     }
@@ -106,12 +110,11 @@ export default function Login() {
             Didn&apos;t receive it? Check your spam folder or try again.
           </p>
           <div className="mt-4 flex justify-center gap-2">
-            <Button onClick={() => setMagicLinkEmail(null)}>Try again</Button>
             <Button
               variant="primary"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/dashboard")}
             >
-              Back to home
+              Try Again
             </Button>
           </div>
         </div>
@@ -153,7 +156,7 @@ export default function Login() {
               className="w-full"
             >
               <User />
-              {isLoading ? "Processing..." : "Continue"}
+              {isLoading ? "Processing..." : "Continue with Email"}
             </Button>
           </form>
         </Form>
@@ -175,7 +178,7 @@ export default function Login() {
           </Button>
           <Button
             variant="default"
-            onClick={() => signIn("github", { callbackUrl })}
+            onClick={() => signIn("github", { redirect: false, callbackUrl })}
           >
             <Image
               src="/providers/github.webp"

@@ -22,6 +22,7 @@ import config from "@/config";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import Skeleton from "../ui/skeleton";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const sidebarVariants = {
   hidden: { x: "-100%" },
@@ -39,7 +40,7 @@ export default function Navbar() {
 
   const { data: session, status } = useSession();
 
-  const excludedPaths = ["/login", "/register"];
+  const excludedPaths = ["/auth", "/auth-callback", "/logout", "/thank-you"];
   if (excludedPaths.includes(pathname)) return null;
 
   const navLinks = [
@@ -116,7 +117,7 @@ export default function Navbar() {
                         className={cn(
                           "w-full justify-start text-base md:text-[15px]",
                           pathname === link.href
-                            ? "text-accent-foreground bg-accent hover:bg-accent/90"
+                            ? "text-accent/85 hover:text-accent hover:bg-accent/10"
                             : "text-secondary-foreground hover:text-foreground"
                         )}
                         onClick={() => setIsOpen(false)}
@@ -161,20 +162,19 @@ export default function Navbar() {
                     />
                   ) : (
                     status === "authenticated" && (
-                      <div className="flex flex-row gap-2 mt-2 px-3 py-2 rounded-md items-center hover:bg-background">
-                        {session.user?.image ? (
-                          <Image
-                            src={session.user.image}
-                            width={128}
-                            height={128}
-                            alt="Your Avatar"
-                            className="size-5"
-                          />
-                        ) : (
-                          <User className="size-8" />
-                        )}
+                      <LinkButton
+                        href="/account"
+                        variant="ghost"
+                        className="w-full flex justify-start text-base md:text-[15px] px-3 text-primary hover:bg-primary/10"
+                      >
+                        <Avatar className="size-5">
+                          <AvatarImage src={session.user.image ?? ""} />
+                          <AvatarFallback className="size-5 bg-transparent">
+                            <User className="size-5" />
+                          </AvatarFallback>
+                        </Avatar>
                         <span>{session.user?.name ?? "You"}</span>
-                      </div>
+                      </LinkButton>
                     )
                   )}
                 </div>

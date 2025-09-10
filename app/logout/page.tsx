@@ -7,7 +7,7 @@ export default function Logout() {
   useEffect(() => {
     const logout = async () =>
       await signOut({
-        callbackUrl: "/login",
+        callbackUrl: "/auth",
       });
     logout();
   });

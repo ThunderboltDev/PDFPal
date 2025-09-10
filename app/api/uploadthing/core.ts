@@ -1,8 +1,9 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { getServerSession } from "next-auth";
 
 import { getUserSubscriptionPlan } from "@/lib/creem";
 import { pinecone } from "@/lib/pinecone";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import config from "@/config";
 
@@ -15,10 +16,9 @@ export const ourFileRouter = {
     pdf: {},
   })
     .middleware(async () => {
-      const { getUser } = getKindeServerSession();
-      const user = await getUser();
+      const session = await getServerSession(authOptions);
 
-      if (!user || !user.id) throw new Error("unauthorized");
+      if (!session || !session.user?.id) throw new Error("unauthorized");
 
       const subscriptionPlan = await getUserSubscriptionPlan();
       const limits = subscriptionPlan.isSubscribed
@@ -26,7 +26,7 @@ export const ourFileRouter = {
         : { maxFileSize: config.plans.free.maxFileSize, maxFileCount: 1 };
 
       return {
-        userId: user.id,
+        userId: session.user.id,
         subscriptionPlan,
         fileConfig: limits,
       };
