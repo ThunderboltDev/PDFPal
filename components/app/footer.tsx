@@ -9,15 +9,17 @@ const currentYear = new Date().getFullYear();
 export default function Footer() {
   const pathname = usePathname();
 
-  const includedPaths = ["/", "/pricing", "/billing"];
+  const includedPaths = ["/", "/pricing", "/billing", "/account"];
   if (!includedPaths.includes(pathname)) return null;
 
   return (
-    <footer className="bg-background">
+    <footer className="bg-background mt-16">
       <div className="mx-auto max-w-6xl p-6">
         <div className="flex flex-col gap-3 md:flex-row justify-evenly">
           <div>
-            <h4 className="text-secondary-foreground">{config.name}</h4>
+            <h4 className="text-secondary-foreground text-center">
+              {config.name}
+            </h4>
           </div>
           <ul className="mt-3 text-sm text-center grid grid-cols-2 gap-3 md:flex md:gap-10 md:flex-row">
             <li>

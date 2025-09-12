@@ -50,7 +50,7 @@
   h4,
   h5,
   h6 {
-    @apply font-bold text-center text-pretty;
+    @apply font-bold text-pretty;
   }
 
   h4,
@@ -96,14 +96,14 @@
   }
 
   p {
-    @apply max-w-prose mx-auto text-center text-pretty;
+    @apply max-w-prose text-pretty;
   }
 
   a {
     @apply text-primary hover:text-primary/90;
     @apply underline-offset-3 hover:underline;
-    @apply decoration-current hover:decoration-1;
-    @apply focus-visible:outline-none focus-visible:ring-current;
+    @apply decoration-primary/90 hover:decoration-1;
+    @apply focus-visible:outline-none focus-visible:ring-primary/90;
     @apply focus-visible:ring-2 focus-visible:ring-offset-2;
     @apply rounded-[1px];
   }

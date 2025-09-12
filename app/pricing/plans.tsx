@@ -117,12 +117,12 @@ export default function Plans({ dbUser }: PropsWithNullableDbUser) {
             id={id}
             key={id}
             className={cn("rounded-2xl shadow-lg", className)}
-            initial={{ scale: 0, y: -50 }}
+            initial={{ scale: 0.75, y: -50 }}
             whileInView={{ scale: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, type: "spring", stiffness: 50 }}
           >
-            <div className="relative rounded-[14px] bg-white">
+            <div className="relative rounded-[14px] bg-white text-center">
               {id === "pro-plan" && (
                 <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-primary to-accent p-2 text-sm text-center font-medium text-white bevel">
                   Upgrade Now!
