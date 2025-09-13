@@ -1,5 +1,11 @@
 "use client";
 
+import { ReceiptText, Loader2, Zap } from "lucide-react";
+
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { FormEvent } from "react";
+
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,10 +16,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SubscriptionPlan } from "@/lib/creem";
-import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
-import { FormEvent } from "react";
-import { toast } from "sonner";
 
 interface BillingProps {
   subscriptionPlan: SubscriptionPlan;
@@ -45,19 +47,22 @@ export default function Billing({ subscriptionPlan }: BillingProps) {
   };
 
   return (
-    <div className="container-5xl">
+    <div className="container-xl mt-18">
+      <h2>Billing</h2>
+      <p>Manage subscriptions</p>
       <form onSubmit={handleSubmit}>
-        <Card>
+        <Card className="mt-6">
           <CardHeader>
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
               You are currently on the{" "}
-              <span className="font-semibold">{name}</span> plan.
+              <span className="font-semibold">{name} Plan</span>.
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
             <Button
               type="submit"
+              variant="primary"
               disabled={isPending}
               aria-busy={isPending}
             >
@@ -67,9 +72,14 @@ export default function Billing({ subscriptionPlan }: BillingProps) {
                   Redirecting...
                 </>
               ) : isSubscribed ? (
-                "Manage Subscription"
+                <>
+                  <ReceiptText />
+                  Manage Subscription
+                </>
               ) : (
-                "Upgrade to Pro"
+                <>
+                  <Zap /> Upgrade to Pro
+                </>
               )}
             </Button>
 

@@ -46,24 +46,51 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, email }) {
+    async signIn({ user, account, email }) {
       if (!user.email) return "Email is not provided";
       if (email?.verificationRequest) return true;
 
-      await db.user.upsert({
-        where: {
-          email: user.email,
-        },
-        update: {
-          lastLogin: new Date(),
-        },
-        create: {
-          id: user.id,
-          displayName: user.name,
-          avatarUrl: user.image,
-          email: user.email,
-        },
+      const existingUser = await db.user.findUnique({
+        where: { email: user.email },
+        include: { accounts: true },
       });
+
+      if (existingUser) {
+        if (!account) return "Account cannot be found!";
+        const linked = existingUser.accounts.find(
+          (acc) => acc.provider === account?.provider
+        );
+
+        if (!linked) {
+          await db.account.create({
+            data: {
+              userId: existingUser.id,
+              type: account.type,
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              refreshToken: account.refresh_token,
+              accessToken: account.access_token,
+              expiresAt: account.expires_at
+                ? new Date(account.expires_at * 1000)
+                : null,
+
+              tokenType: account.token_type,
+              idToken: account.id_token,
+              scope: account.scope,
+              sessionState: account.session_state,
+            },
+          });
+        }
+      } else {
+        await db.user.create({
+          data: {
+            id: user.id,
+            displayName: user.name,
+            avatarUrl: user.image,
+            email: user.email,
+          },
+        });
+      }
 
       return true;
     },

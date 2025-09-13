@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import { Mail } from "lucide-react";
 
 import Image from "next/image";
 import { toast } from "sonner";
@@ -101,7 +101,7 @@ export default function Login() {
   if (magicLinkEmail)
     return (
       <div className="h-screen grid place-items-center bg-background p-4">
-        <div className="container-md flex flex-col shadow-2xl p-6 rounded-lg bg-white text-center">
+        <div className="container-md text-center flex flex-col shadow-2xl p-6 rounded-lg bg-white">
           <h2>Check your email</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             We sent a magic sign-in link to <strong>{magicLinkEmail}</strong>.
@@ -123,14 +123,16 @@ export default function Login() {
 
   return (
     <div className="h-screen grid place-items-center bg-background">
-      <div className="container-md flex flex-col shadow-2xl p-6 rounded-lg bg-white">
+      <div className="container-md text-center flex flex-col shadow-2xl p-6 rounded-lg bg-white">
         <OverlayLoader isLoading={isLoading} />
-        <h2>Welcome Back!</h2>
-        <p className="text-muted-foreground my-2">Log in to your account</p>
+        <h2 className="text-4xl">Welcome!</h2>
+        <p className="text-muted-foreground">
+          Create an account or login to continue!
+        </p>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-3"
+            className="space-y-3 mt-4"
           >
             <FormField
               control={form.control}
@@ -155,7 +157,7 @@ export default function Login() {
               variant="primary"
               className="w-full"
             >
-              <User />
+              <Mail className="size-4.5" />
               {isLoading ? "Processing..." : "Continue with Email"}
             </Button>
           </form>
@@ -166,13 +168,16 @@ export default function Login() {
           </span>
         </div>
         <div className="flex flex-col gap-3">
-          <Button variant="default">
+          <Button
+            variant="default"
+            onClick={() => signIn("google", { redirect: false, callbackUrl })}
+          >
             <Image
               src="/providers/google.webp"
               alt="Google Logo"
               className="size-5"
-              width={120}
               height={120}
+              width={120}
             />
             Continue with Google
           </Button>

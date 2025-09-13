@@ -30,9 +30,9 @@ export default function Dashboard({
   });
 
   return (
-    <main className="container-7xl">
-      <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-300 pb-5 sm:flex-row sm:items-center sm:gap-0">
-        <h2 className="mb-3">My Files</h2>
+    <main className="container-7xl mt-20">
+      <div className="flex flex-col items-start justify-between gap-2 border-b border-gray-300 pb-5 sm:flex-row sm:items-center sm:gap-0">
+        <h2 className="mb-1">My Files</h2>
         <UploadButton isSubscribed={isSubscribed} />
       </div>
       {files && files.length !== 0 ? (

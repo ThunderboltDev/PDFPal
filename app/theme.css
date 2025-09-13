@@ -165,7 +165,7 @@
 
 @utility container-* {
   @apply mx-auto;
-  width: calc(100vw - 4rem);
+  width: calc(100vw - 3rem);
   max-width: --value(--container- *, integer);
 }
 

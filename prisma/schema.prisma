@@ -9,11 +9,10 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  displayName   String?
-  email         String    @unique
-  emailVerified DateTime?
-  avatarUrl     String?
+  id          String  @id @default(cuid())
+  displayName String?
+  email       String  @unique
+  avatarUrl   String?
 
   lastLogin DateTime @default(now())
   createdAt DateTime @default(now())
@@ -26,41 +25,32 @@ model User {
   currentPeriodEnd   DateTime?
 
   accounts Account[]
-  sessions Session[]
 
   File    File[]
   Message Message[]
 }
 
 model Account {
-  id                String    @id @default(cuid())
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?   @db.Text
-  access_token      String?   @db.Text
-  expires_at        DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  token_type        String?
-  scope             String?
-  id_token          String?   @db.Text
-  session_state     String?
+  refreshToken      String? @db.Text
+  accessToken       String? @db.Text
+
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  tokenType    String?
+  scope        String?
+  idToken      String? @db.Text
+  sessionState String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-}
-
-model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {

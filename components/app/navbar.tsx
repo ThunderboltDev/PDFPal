@@ -12,17 +12,16 @@ import {
   X,
 } from "lucide-react";
 
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import Image from "next/image";
 
 import { Button, LinkButton } from "@/components/ui/button";
+import Skeleton from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import config from "@/config";
-import Image from "next/image";
-import { useSession } from "next-auth/react";
-import Skeleton from "../ui/skeleton";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const sidebarVariants = {
   hidden: { x: "-100%" },
@@ -38,7 +37,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   const excludedPaths = ["/auth", "/auth-callback", "/logout", "/thank-you"];
   if (excludedPaths.includes(pathname)) return null;
@@ -131,7 +130,7 @@ export default function Navbar() {
                 <div className="w-full p-2 absolute left-0 bottom-0">
                   <LinkButton
                     variant="ghost"
-                    href={status === "authenticated" ? "/logout" : "/register"}
+                    href={status === "authenticated" ? "/logout" : "/auth"}
                     className={cn(
                       "w-full flex justify-start text-base md:text-[15px]",
                       {
@@ -167,13 +166,8 @@ export default function Navbar() {
                         variant="ghost"
                         className="w-full flex justify-start text-base md:text-[15px] px-3 text-primary hover:bg-primary/10"
                       >
-                        <Avatar className="size-5">
-                          <AvatarImage src={session.user.image ?? ""} />
-                          <AvatarFallback className="size-5 bg-transparent">
-                            <User className="size-5" />
-                          </AvatarFallback>
-                        </Avatar>
-                        <span>{session.user?.name ?? "You"}</span>
+                        <User className="size-5" />
+                        Account
                       </LinkButton>
                     )
                   )}

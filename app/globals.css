@@ -102,8 +102,8 @@
   a {
     @apply text-primary hover:text-primary/90;
     @apply underline-offset-3 hover:underline;
-    @apply decoration-primary/90 hover:decoration-1;
-    @apply focus-visible:outline-none focus-visible:ring-primary/90;
+    @apply decoration-current hover:decoration-1;
+    @apply focus-visible:outline-none focus-visible:ring-current;
     @apply focus-visible:ring-2 focus-visible:ring-offset-2;
     @apply rounded-[1px];
   }

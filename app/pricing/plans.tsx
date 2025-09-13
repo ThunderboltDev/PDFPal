@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Button, LinkButton } from "@/components/ui/button";
 import { PropsWithNullableDbUser } from "@/hoc/with-auth";
+import { trpc } from "@/app/_trpc/client";
 import { cn } from "@/lib/utils";
-import { trpc } from "../_trpc/client";
 
 type Feature = {
   id?: string;

@@ -151,7 +151,10 @@ function FormError({ className, ...props }: React.ComponentProps<"p">) {
     <span
       data-slot="form-error"
       id={formMessageId}
-      className={cn("text-danger text-sm md:text-xs mt-1", className)}
+      className={cn(
+        "text-danger text-left text-sm md:text-xs mt-0.75",
+        className
+      )}
       {...props}
     >
       {body}

@@ -2,13 +2,15 @@
 
 import { Cloud, File, Loader2 } from "lucide-react";
 
+import Dropzone from "react-dropzone";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Dropzone from "react-dropzone";
 import { toast } from "sonner";
-import { useUploadThing } from "@/lib/uploadthing";
+
 import { Progress } from "@/components/ui/progress";
-import { trpc } from "../_trpc/client";
+import { useUploadThing } from "@/lib/uploadthing";
+import { trpc } from "@/app/_trpc/client";
 import config from "@/config";
 
 interface UploadDropzoneProps {
@@ -67,20 +69,20 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border h-64 m-4 border-dashed border-gray-300 rounded-lg"
+          className="border mx-4 h-64 border-dashed border-muted rounded-lg"
         >
           <div className="flex items-center justify-center size-full">
             <label
               htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center size-full rounded-lg cursor-pointer bg-gray-200/50 hover:bg-gray-200/25"
+              className="flex flex-col items-center justify-center size-full rounded-lg cursor-pointer bg-background/50 hover:bg-background/75"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Cloud className="size-7 text-zinc-700 mb-2" />
-                <p className="mb-2 text-sm text-zinc-600">
+                <Cloud className="size-16 text-secondary-foreground mb-2" />
+                <p className="mb-1 text-secondary-foreground">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm text-muted-foreground">
                   PDF (up to{" "}
                   {isSubscribed
                     ? config.plans.pro.maxFileSize

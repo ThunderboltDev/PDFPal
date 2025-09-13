@@ -1,21 +1,20 @@
-import withAuth from "@/hoc/with-auth";
 import { getUserSubscriptionPlan } from "@/lib/creem";
-
-import Account from "./account";
-import { getServerSession } from "next-auth";
 import { db } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
+import Account from "./account";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 
 export default async function AccountWrapper() {
   const subscriptionPlan = await getUserSubscriptionPlan();
   const session = await getServerSession();
 
-  if (!session) return;
+  if (!session || !session.user || !session.user.email)
+    return redirect("/auth");
 
-  const user = await db.user.findUnique({
+  const usage = await db.user.findUnique({
     where: {
-      email: session.user.email ?? "",
+      email: session.user.email,
     },
     select: {
       _count: {
@@ -27,13 +26,27 @@ export default async function AccountWrapper() {
     },
   });
 
-  const ProtectedDashboard = withAuth(Account, { origin: "/account" });
+  const userWithAccounts = await db.user.findUnique({
+    where: { email: session.user.email },
+    select: {
+      displayName: true,
+      email: true,
+      avatarUrl: true,
+      accounts: {
+        select: {
+          provider: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
 
   return (
-    <ProtectedDashboard
+    <Account
       subscriptionPlan={subscriptionPlan}
-      filesUploaded={user?._count.File ?? 0}
-      messages={user?._count.Message ?? 0}
+      userWithAccounts={userWithAccounts}
+      filesUploaded={usage?._count.File ?? 0}
+      messages={usage?._count.Message ?? 0}
     />
   );
 }
