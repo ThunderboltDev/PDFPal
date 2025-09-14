@@ -18,7 +18,7 @@ export const ourFileRouter = {
     .middleware(async () => {
       const session = await getServerSession(authOptions);
 
-      if (!session || !session.user?.id) throw new Error("unauthorized");
+      if (!session || !session.user?.id) throw new Error("Unauthorized");
 
       const subscriptionPlan = await getUserSubscriptionPlan();
       const limits = subscriptionPlan.isSubscribed

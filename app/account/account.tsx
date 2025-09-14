@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import Skeleton from "@/components/ui/skeleton";
 import { SubscriptionPlan } from "@/lib/creem";
 import config from "@/config";
+import { UpgradeButton } from "@/components/upgrade-button";
 
 const providers = {
   google: {
@@ -119,16 +120,16 @@ export default function Account({
           );
         })}
       </div>
-      <h6 className="mt-8">Current Plan</h6>
+      <h6 className="mt-8">Subscription</h6>
       <Separator />
-      <div className="mt-2">
+      <div className="mt-2 flex flex-row gap-6 items-center justify-between">
         <div>
           <p>
             You are currently on the{" "}
             <span className="font-medium">{name} Plan</span>
           </p>
           {isSubscribed && currentPeriodEnd && (
-            <p className="rounded-full text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {isCanceled
                 ? "Your plan will be canceled on "
                 : "Your plan renews on "}
@@ -142,9 +143,11 @@ export default function Account({
             </p>
           )}
         </div>
-        <div></div>
+        <div>
+          <UpgradeButton isSubscribed={isSubscribed} />
+        </div>
       </div>
-      <h6 className="mt-8">Usage</h6>
+      <h6 className="mt-8">Total Usage</h6>
       <Separator />
       <div className="mt-2">
         <p>

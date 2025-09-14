@@ -1,13 +1,13 @@
-import { getUserSubscriptionPlan } from "@/lib/creem";
 import { db } from "@/lib/db";
 
 import Account from "./account";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
+import { getUserSubscriptionPlan } from "@/lib/creem";
 
 export default async function AccountWrapper() {
-  const subscriptionPlan = await getUserSubscriptionPlan();
   const session = await getServerSession();
+  const subscriptionPlan = await getUserSubscriptionPlan();
 
   if (!session || !session.user || !session.user.email)
     return redirect("/auth");
@@ -32,6 +32,7 @@ export default async function AccountWrapper() {
       displayName: true,
       email: true,
       avatarUrl: true,
+      subscriptionId: true,
       accounts: {
         select: {
           provider: true,

@@ -15,13 +15,36 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { Button, LinkButton } from "@/components/ui/button";
 import Skeleton from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import config from "@/config";
+
+const navLinks = [
+  {
+    href: "/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    href: "/pricing",
+    label: "Pricing",
+    icon: DollarSign,
+  },
+  {
+    href: "/billing",
+    label: "Billing",
+    icon: CreditCard,
+  },
+  {
+    href: "/contact",
+    label: "Contact",
+    icon: Mail,
+  },
+];
 
 const sidebarVariants = {
   hidden: { x: "-100%" },
@@ -35,35 +58,19 @@ const overlayVariants = {
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const pathname = usePathname();
 
+  const pathname = usePathname();
   const { status } = useSession();
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const excludedPaths = ["/auth", "/auth-callback", "/logout", "/thank-you"];
   if (excludedPaths.includes(pathname)) return null;
-
-  const navLinks = [
-    {
-      href: "/dashboard",
-      label: "Dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      href: "/pricing",
-      label: "Pricing",
-      icon: DollarSign,
-    },
-    {
-      href: "/billing",
-      label: "Billing",
-      icon: CreditCard,
-    },
-    {
-      href: "/contact",
-      label: "Contact",
-      icon: Mail,
-    },
-  ];
 
   return (
     <nav className="fixed h-14 top-0 left-0 z-30 w-full border-b border-secondary bg-white/50 backdrop-blur-md transition-all">
@@ -119,7 +126,6 @@ export default function Navbar() {
                             ? "text-accent/85 hover:text-accent hover:bg-accent/10"
                             : "text-secondary-foreground hover:text-foreground"
                         )}
-                        onClick={() => setIsOpen(false)}
                       >
                         <link.icon className="size-5 md:size-4" />
                         {link.label}

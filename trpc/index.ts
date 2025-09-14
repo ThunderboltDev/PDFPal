@@ -1,4 +1,4 @@
-import z from "zod/v4";
+import z from "zod";
 import axios from "axios";
 
 import { TRPCError } from "@trpc/server";
@@ -147,6 +147,7 @@ export const appRouter = router({
 
       return { messages, nextCursor };
     }),
+
   createCheckoutSession: privateProcedure
     .input(
       z.object({
@@ -210,59 +211,57 @@ export const appRouter = router({
       }
     }),
 
-  getBillingPortalUrl: privateProcedure
-    .input(
-      z.object({
-        customerId: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
+  getBillingPortalUrl: privateProcedure.mutation(async ({ ctx }) => {
+    const { userId } = ctx;
 
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const dbUser = await db.user.findFirst({
-        where: {
-          id: userId,
-        },
+    const dbUser = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+    const subscriptionPlan = await getUserSubscriptionPlan();
+
+    if (!subscriptionPlan.customerId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No active subscription",
       });
+    }
 
-      if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      const subscriptionPlan = await getUserSubscriptionPlan();
-
-      if (!subscriptionPlan.customerId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "No active subscription",
-        });
-      }
-
-      try {
-        const response = await axios.post(
-          `${CREEM_API_BASE}/customers/billing`,
-          {
-            customer_id: input.customerId,
+    try {
+      const response = await axios.post(
+        `${CREEM_API_BASE}/customers/billing`,
+        {
+          customer_id: subscriptionPlan.customerId,
+        },
+        {
+          headers: {
+            "x-api-key": process.env.CREEM_API_KEY,
           },
-          {
-            headers: {
-              "x-api-key": process.env.CREEM_API_KEY,
-            },
-            timeout: 10_000,
-            proxy: false,
-          }
-        );
+          timeout: 10_000,
+          proxy: false,
+        }
+      );
 
-        const { customer_portal_link } = response.data;
-        return { portalUrl: customer_portal_link };
-      } catch (error) {
-        console.error("Error in createCheckoutSession:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not initiate billing session",
-        });
-      }
-    }),
+      const { customer_portal_link } = response.data;
+      return { portalUrl: customer_portal_link };
+    } catch (error) {
+      console.error("Error in createCheckoutSession:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not initiate billing session",
+      });
+    }
+  }),
+
+  getUserSubscriptionPlan: publicProcedure.query(async () => {
+    return await getUserSubscriptionPlan();
+  }),
 });
 
 export type AppRouter = typeof appRouter;
