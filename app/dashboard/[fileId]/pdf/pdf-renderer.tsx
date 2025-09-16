@@ -15,7 +15,7 @@ import { useResizeDetector } from "react-resize-detector";
 import SimpleBar from "simplebar-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod/v4";
+import z from "zod";
 
 import {
   DropdownMenu,

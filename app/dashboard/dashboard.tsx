@@ -10,6 +10,7 @@ import Skeleton from "@/components/ui/skeleton";
 import { PropsWithDbUser } from "@/hoc/with-auth";
 
 import UploadButton from "./upload-button";
+import { Separator } from "@/components/ui/separator";
 
 interface DashboardProps {
   isSubscribed: boolean;
@@ -32,10 +33,11 @@ export default function Dashboard({
 
   return (
     <main className="container-7xl mt-20">
-      <div className="flex flex-col items-start justify-between gap-2 border-b border-gray-300 pb-5 sm:flex-row sm:items-center sm:gap-0">
+      <div className="flex flex-col items-start justify-between gap-2 pb-5 sm:flex-row sm:items-center sm:gap-0">
         <h2 className="mb-1">My Files</h2>
         <UploadButton isSubscribed={isSubscribed} />
       </div>
+      <Separator />
       {files && files.length !== 0 ? (
         <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-100 md:grid-cols-2 lg:grid-cols-3">
           {files
@@ -89,10 +91,17 @@ export default function Dashboard({
             ))}
         </ul>
       ) : isLoading ? (
-        <div className="mt-4">
+        <div className="mt-9 grid grid-cols-1 gap-0 divide-y divide-zinc-100 md:grid-cols-2 lg:grid-cols-3">
           <Skeleton
             borderRadius={10}
-            count={3}
+            height={80}
+          />
+          <Skeleton
+            borderRadius={10}
+            height={80}
+          />
+          <Skeleton
+            borderRadius={10}
             height={80}
           />
         </div>
