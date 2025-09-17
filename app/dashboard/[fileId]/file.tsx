@@ -1,7 +1,14 @@
 import { notFound } from "next/navigation";
 import { PropsWithDbUser } from "@/hoc/with-auth";
-import ChatWrapper from "./chat/chat-wrapper";
 import { db } from "@/lib/db";
+
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
+
+import ChatWrapper from "./chat/chat-wrapper";
 import PDFRendererWrapper from "./pdf/pdf-renderer-wrapper";
 
 interface FileViewProps {
@@ -22,18 +29,31 @@ export default async function FileView({
   if (!file) notFound();
 
   return (
-    <div className="flex-1 justify-between flex flex-col h-[calc(100vh-3.5rem)] overflow-x-hidden">
-      <div className="container-7xl grow md:flex xl:px-4">
-        {/* Left Side */}
-        <div className="flex-1 xl:flex">
-          <div className="py-5 xl:flex-1">
+    <div className="mt-14">
+      <div className="hidden md:flex">
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel
+            defaultSize={70}
+            minSize={25}
+          >
             <PDFRendererWrapper fileUrl={file.url} />
-          </div>
-        </div>
-        {/* Right Side */}
-        <div className="shrink-0 flex-[0.75] border-t border-gray-200 md:max-w-96 md:w-full md:border-l md:border-t-0">
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel
+            defaultSize={30}
+            minSize={25}
+          >
+            <ChatWrapper fileId={fileId} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+      <div className="flex flex-col md:hidden">
+        <main className="overflow-auto">
+          <PDFRendererWrapper fileUrl={file.url} />
+        </main>
+        <aside className="flex-1 border-t border-secondary">
           <ChatWrapper fileId={fileId} />
-        </div>
+        </aside>
       </div>
     </div>
   );

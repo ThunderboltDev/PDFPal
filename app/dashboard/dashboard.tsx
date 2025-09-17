@@ -1,16 +1,16 @@
 "use client";
 
-import { Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
+import { Ghost, MessageSquare, Plus } from "lucide-react";
 
-import { useState } from "react";
+import Link from "next/link";
 import { format } from "date-fns";
-import { trpc } from "../_trpc/client";
-import { Button, LinkButton } from "@/components/ui/button";
-import Skeleton from "@/components/ui/skeleton";
-import { PropsWithDbUser } from "@/hoc/with-auth";
 
+import { trpc } from "../_trpc/client";
 import UploadButton from "./upload-button";
+import Skeleton from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { PropsWithDbUser } from "@/hoc/with-auth";
+import { DeleteFileDialog, RenameFileDialog } from "./dialogs";
 
 interface DashboardProps {
   isSubscribed: boolean;
@@ -19,17 +19,7 @@ interface DashboardProps {
 export default function Dashboard({
   isSubscribed,
 }: PropsWithDbUser<DashboardProps>) {
-  const [deletingFile, setDeletingFile] = useState<string | null>(null);
-
-  const utils = trpc.useUtils();
-
   const { data: files, isLoading } = trpc.getUserFiles.useQuery();
-
-  const { mutate: deleteFile } = trpc.deleteFile.useMutation({
-    onSuccess: () => utils.getUserFiles.invalidate(),
-    onMutate: ({ id }) => setDeletingFile(id),
-    onSettled: () => setDeletingFile(null),
-  });
 
   return (
     <main className="container-7xl mt-20">
@@ -39,7 +29,7 @@ export default function Dashboard({
       </div>
       <Separator />
       {files && files.length !== 0 ? (
-        <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-100 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-8 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {files
             .sort(
               (a, b) =>
@@ -49,43 +39,29 @@ export default function Dashboard({
             .map((file) => (
               <li
                 key={file.id}
-                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-gray-100 shadow-md transition hover:shadow-lg"
+                className="col-span-1 divide-y divide-secondary rounded-lg bg-background shadow-md transition hover:shadow-lg"
               >
-                <LinkButton
+                <Link
                   href={`/dashboard/${file.id}`}
-                  className="flex flex-col gap-2 no-underline"
+                  className="flex items-center justify-center px-4 py-3 gap-3 no-underline"
                 >
-                  <div className="py-3 px-6 w-full flex items-center justify-center space-x-3">
-                    <div className="size-10 flex shrink-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" />
-                    <div className="flex-1 truncate">
-                      <div className="flex items-center">
-                        <h5 className="truncate text-foreground">
-                          {file.name}
-                        </h5>
-                      </div>
-                    </div>
+                  <div className="size-10 flex shrink-0 rounded-full bg-gradient-to-br from-cyan-500 to-accent" />
+                  <div className="flex-1 truncate">
+                    <h5 className="truncate text-foreground">{file.name}</h5>
                   </div>
-                </LinkButton>
-                <div className="px-6 py-2 grid grid-cols-3 place-items-center gap-6 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2">
+                </Link>
+                <div className="grid grid-cols-3 gap-6 px-3 py-1 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
                     <Plus className="size-4" />
-                    {format(new Date(file.createdAt), "MMM yyyy")}
+                    {format(new Date(file.createdAt), "dd MMM yyyy")}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="size-4" />5
+                  <div className="flex items-center justify-center gap-1.5">
+                    <MessageSquare className="size-4" /> 5
                   </div>
-                  <Button
-                    onClick={() => deleteFile({ id: file.id })}
-                    size="sm"
-                    variant="ghost"
-                    className="flex items-center gap-2 aspect-square hover:bg-destructive/5 hover:text-destructive"
-                  >
-                    {deletingFile === file.id ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Trash className="size-4" />
-                    )}
-                  </Button>
+                  <div className="flex flex-row gap-1.5 justify-end">
+                    <RenameFileDialog file={file} />
+                    <DeleteFileDialog file={file} />
+                  </div>
                 </div>
               </li>
             ))}

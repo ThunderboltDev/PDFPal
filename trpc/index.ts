@@ -1,16 +1,16 @@
 import z from "zod";
 import axios from "axios";
+import { getServerSession } from "next-auth";
 
 import { TRPCError } from "@trpc/server";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 
-import { db } from "@/lib/db";
-import { getAbsoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan } from "@/lib/creem";
+import { getAbsoluteUrl } from "@/lib/utils";
+import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
 
 import config, { CREEM_API_BASE } from "@/config";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 type CreemCustomer = { id?: string; email?: string };
 
@@ -74,14 +74,53 @@ export const appRouter = router({
       return file;
     }),
 
+  renameFile: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        newName: z
+          .string()
+          .min(1, "File name is required")
+          .max(25, "File name is too long")
+          .refine(
+            (str) => !/[/\\\n\r]/.test(str),
+            "File name cannot contain slashes or newlines"
+          )
+          .transform((str) => str.trim()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { id, newName } = input;
+
+      const file = await db.file.findFirst({
+        where: {
+          id,
+          userId,
+        },
+        select: {
+          key: true,
+        },
+      });
+
+      if (!file)
+        throw new TRPCError({ code: "NOT_FOUND", message: "File not found." });
+
+      await db.file.update({
+        where: { id, userId },
+        data: { name: newName },
+      });
+    }),
+
   deleteFile: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
+      const { id } = input;
 
       const file = await db.file.findFirst({
         where: {
-          id: input.id,
+          id,
           userId,
         },
       });
@@ -90,7 +129,7 @@ export const appRouter = router({
 
       await db.file.delete({
         where: {
-          id: input.id,
+          id,
           userId,
         },
       });

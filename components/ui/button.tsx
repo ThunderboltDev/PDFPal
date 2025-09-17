@@ -10,7 +10,7 @@ const baseClass =
   "text-sm font-medium transition-all " +
   "shadow-md " +
   "no-underline " +
-  "disabled:cursor-not-allowed disabled:saturate-0 " +
+  "disabled:cursor-not-allowed disabled:opacity-50 " +
   "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 " +
   "shrink-0 [&_svg]:shrink-0 " +
   "outline-none focus-visible:border-ring " +

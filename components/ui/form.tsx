@@ -98,7 +98,7 @@ function FormLabel({
       data-slot="form-label"
       data-error={!!error}
       className={cn(
-        "data-[error=true]:text-destructive text-base md:text-sm",
+        "data-[error=true]:text-danger text-base md:text-sm",
         className
       )}
       htmlFor={formItemId}
@@ -131,8 +131,8 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 
   return (
     <p
-      data-slot="form-description"
       id={formDescriptionId}
+      data-slot="form-description"
       className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />

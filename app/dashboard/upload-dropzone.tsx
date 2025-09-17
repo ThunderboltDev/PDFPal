@@ -141,7 +141,9 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <Progress
                     value={uploadProgress}
-                    indicatorColor={uploadProgress === 100 ? "bg-success" : ""}
+                    indicatorColor={
+                      uploadProgress === 100 ? "success" : "primary"
+                    }
                     className="h-2 w-full"
                     aria-live="polite"
                   />
