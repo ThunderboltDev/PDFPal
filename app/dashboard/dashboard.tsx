@@ -56,9 +56,9 @@ export default function Dashboard({
                     {format(new Date(file.createdAt), "dd MMM yyyy")}
                   </div>
                   <div className="flex items-center justify-center gap-1.5">
-                    <MessageSquare className="size-4" /> 5
+                    <MessageSquare className="size-4" /> {file.messageCount}
                   </div>
-                  <div className="flex flex-row gap-1.5 justify-end">
+                  <div className="flex flex-row gap-1 justify-end">
                     <RenameFileDialog file={file} />
                     <DeleteFileDialog file={file} />
                   </div>

@@ -35,11 +35,33 @@ export const appRouter = router({
 
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
-    return await db.file.findMany({
+    const files = await db.file.findMany({
       where: {
         userId: userId,
       },
     });
+
+    const messageCounts = await db.message.groupBy({
+      by: ["fileId"],
+      where: {
+        fileId: {
+          in: files.map((file) => file.id),
+        },
+      },
+      _count: { id: true, fileId: true },
+    });
+
+    const countsMap: Record<string, number> = {};
+
+    messageCounts.forEach((messageCount) => {
+      const fileId = messageCount.fileId;
+      if (fileId) countsMap[fileId] = messageCount._count.id;
+    });
+
+    return files.map((file) => ({
+      ...file,
+      messageCount: countsMap[file.id] ?? 0,
+    }));
   }),
 
   getFileUploadStatus: privateProcedure
