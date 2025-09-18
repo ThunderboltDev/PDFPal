@@ -3,10 +3,11 @@
 import { ChevronLeft, XCircle, Zap } from "lucide-react";
 
 import { trpc } from "@/app/_trpc/client";
-import ChatInput from "./chat-input";
-import Messages from "./messages";
 import Loader from "@/components/ui/loader";
 import { LinkButton } from "@/components/ui/button";
+
+import Messages from "./messages";
+import ChatInput from "./chat-input";
 import ChatContextProvider from "./chat-context";
 
 interface ChatWrapperProps {
@@ -31,12 +32,12 @@ export default function ChatWrapper({ fileId }: ChatWrapperProps) {
       <div className="min-h-[calc(100vh-8rem)] flex flex-col justify-center items-center">
         <XCircle className="size-16 text-destructive/90" />
         <div className="text-center mt-4">
-          <h4>Too many pages</h4>
+          <h4>Processing Failed</h4>
           <p className="text-muted-foreground text-sm mt-1">
-            Your <span className="font-semibold">Free Plan</span> supports up to
-            5 pages per PDF
+            Something went wrong while processing your PDF file. Please try
+            again later!
           </p>
-          <div className="flex flex-col gap-2 mt-4 w-48 mx-auto">
+          <div className="flex flex-col gap-2.5 mt-4 w-48 mx-auto">
             <LinkButton
               href="/pricing#pro-plan"
               variant="accent"
