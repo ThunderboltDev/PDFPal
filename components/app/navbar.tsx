@@ -76,8 +76,15 @@ export default function Navbar() {
         <LinkButton
           href="/"
           variant="ghost"
-          className="text-secondary-foreground hover:text-foreground text-lg font-semibold hover:bg-background/50"
+          className="text-secondary-foreground hover:text-foreground text-lg font-semibold hover:bg-transparent px-1"
         >
+          <Image
+            src="/logo.webp"
+            height={100}
+            width={100}
+            alt={`${config.name} Logo`}
+            className="size-9"
+          />
           {config.name}
         </LinkButton>
         <ul className="hidden md:flex gap-4">
@@ -149,12 +156,13 @@ export default function Navbar() {
               role="dialog"
               aria-modal="true"
             >
-              <div className="flex gap-3 px-2 items-center text-lg">
+              <div className="flex gap-3 px-2 items-center text-lg font-semibold">
                 <Image
                   src="/logo.webp"
-                  height={35}
-                  width={35}
+                  height={100}
+                  width={100}
                   alt={`${config.name} Logo`}
+                  className="size-9"
                 />
                 <span>{config.name}</span>
               </div>
