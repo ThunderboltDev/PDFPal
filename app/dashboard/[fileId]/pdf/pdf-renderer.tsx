@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useResizeDetector } from "react-resize-detector";
 import SimpleBar from "simplebar-react";
@@ -30,7 +30,14 @@ import "simplebar-react/dist/simplebar.min.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import PDFFullScreen from "./full-screen";
-import { cn } from "@/lib/utils";
+
+function Loader() {
+  return (
+    <div className="min-h-[calc(100vh-8rem)] w-full flex items-center justify-center bg-background/50 z-10 cursor-progress">
+      <Loader2 className="animate-spin text-primary size-10" />
+    </div>
+  );
+}
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -42,13 +49,11 @@ export interface PDFRendererProps {
 }
 
 export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
-  const [numberOfPages, setNumberOfPages] = useState<number | null>(null);
-  const [renderedScale, setRenderedScale] = useState<number | null>(null);
+  const [numberOfPages, setNumberOfPages] = useState<number>(0);
+  const [isRendering, setIsRendering] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
   const [scale, setScale] = useState<number>(1);
-
-  const isLoading = renderedScale !== scale;
 
   const pageNumberValidator = z.object({
     pageNumber: z.string().refine(
@@ -78,62 +83,75 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
     mode: "onChange",
   });
 
-  const { width, ref } = useResizeDetector();
+  const { width, ref: resizeContainerRef } = useResizeDetector({
+    refreshMode: "debounce",
+    refreshRate: 300,
+  });
 
-  const handlePageNumberSubmit = ({ pageNumber }: PageNumberValidator) => {
+  const handlePageSubmit = ({ pageNumber }: PageNumberValidator) => {
     setCurrentPage(Number(pageNumber));
-    setValue("pageNumber", pageNumber);
+    // setValue("pageNumber", pageNumber);
   };
 
+  const handleNextPage = () => {
+    if (currentPage < numberOfPages) {
+      setCurrentPage((prev) => prev + 1);
+      setValue("pageNumber", String(currentPage + 1), { shouldValidate: true });
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      setValue("pageNumber", String(currentPage - 1), { shouldValidate: true });
+    }
+  };
+
+  useEffect(() => {
+    setIsRendering(true);
+  }, [scale, rotation, currentPage]);
+
   return (
-    <div className="w-full bg-background rounded-md shadow flex flex-col items-center">
-      <div className="h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2">
+    <div className="w-full bg-background/50 rounded-md shadow flex flex-col items-center">
+      <div className="h-14 w-full border-b border-secondary flex items-center justify-between px-4">
         <form
-          onSubmit={handleSubmit(handlePageNumberSubmit)}
-          className="flex items-center gap-1.5"
+          onSubmit={handleSubmit(handlePageSubmit)}
+          className="flex items-center gap-2"
           aria-label="Page Navigation"
         >
-          <Button
-            size="icon"
-            type="button"
-            variant="ghost"
-            aria-label="Previous Page"
-            disabled={currentPage === 1}
-            onClick={() => {
-              setCurrentPage((prev) => prev - 1);
-              setValue("pageNumber", String(currentPage - 1));
-            }}
-          >
-            <ChevronDown className="size-4" />
-            <span className="sr-only">Navigate to the previous page</span>
-          </Button>
-          <div className="flex items-center gap-1.5">
-            <Input
-              {...register("pageNumber")}
-              type="number"
-              inputMode="numeric"
-              placeholder={String(currentPage)}
-              aria-invalid={!!errors.pageNumber}
-              className="w-12 h-7 text-sm"
-            />
-            <p className="text-zinc-700 text-sm space-x-1">
-              <span>/</span>
-              <span>{numberOfPages ?? "?"}</span>
-            </p>
-          </div>
+          <Input
+            {...register("pageNumber")}
+            type="number"
+            inputMode="numeric"
+            placeholder={String(currentPage)}
+            aria-invalid={!!errors.pageNumber}
+            className="w-12 h-7 text-sm ml-2"
+          />
+          <p className="text-muted-foreground text-sm space-x-1">
+            <span>/</span>
+            <span>{numberOfPages || "?"}</span>
+          </p>
           <Button
             size="icon"
             type="button"
             variant="ghost"
             aria-label="Next Page"
             disabled={!!numberOfPages && currentPage === numberOfPages}
-            onClick={() => {
-              setCurrentPage((prev) => prev + 1);
-              setValue("pageNumber", String(currentPage + 1));
-            }}
+            onClick={handleNextPage}
           >
             <ChevronUp className="size-4" />
             <span className="sr-only">Navigate to the next page</span>
+          </Button>
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            aria-label="Previous Page"
+            disabled={currentPage === 1}
+            onClick={handlePrevPage}
+          >
+            <ChevronDown className="size-4" />
+            <span className="sr-only">Navigate to the previous page</span>
           </Button>
         </form>
 
@@ -183,52 +201,39 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
         </div>
       </div>
 
-      <div className="flex-1 w-full max-h-screen">
-        <SimpleBar
-          autoHide={false}
-          className="max-h-[calc(100vh-10rem)]"
-        >
-          <div ref={ref}>
+      <div
+        className="flex-1 w-full max-h-screen"
+        ref={resizeContainerRef}
+      >
+        <div className="h-full min-h-[calc(100vh-8rem)] relative">
+          {isRendering && <Loader />}
+          <SimpleBar className="max-h-[calc(100vh-8rem)]">
             <Document
-              className="max-h-full"
-              loading={
-                <div className="flex justify-center py-[calc(50vh-10rem)]">
-                  <Loader2 className="size-6 animate-spin my-auto" />
-                </div>
-              }
-              onLoadSuccess={(document) => {
-                setNumberOfPages(document.numPages);
-              }}
-              onLoadError={() => toast.error("Something went horribly wrong!")}
               file={fileUrl}
+              loading={<Loader />}
+              onLoadSuccess={({ numPages }) => {
+                setNumberOfPages(numPages);
+              }}
+              onLoadError={() =>
+                toast.error("Something went horribly wrong while loading PDF!")
+              }
             >
-              {isLoading && !!renderedScale && (
-                <Page
-                  key="fallback-page"
-                  pageNumber={currentPage}
-                  width={width ?? 1}
-                  rotate={rotation}
-                  scale={scale}
-                />
-              )}
-
               <Page
                 key="display-page"
-                className={cn(isLoading ? "hidden" : "")}
                 pageNumber={currentPage}
                 width={width ?? 1}
                 rotate={rotation}
                 scale={scale}
-                loading={
-                  <div className="flex justify-center py-[calc(50vh-10rem)]">
-                    <Loader2 className="size-6 animate-spin my-auto" />
-                  </div>
-                }
-                onRenderSuccess={() => setRenderedScale(scale)}
+                loading={<Loader />}
+                onRenderSuccess={() => setIsRendering(false)}
+                onRenderError={() => {
+                  setIsRendering(false);
+                  toast.error("Error rendering current page!");
+                }}
               />
             </Document>
-          </div>
-        </SimpleBar>
+          </SimpleBar>
+        </div>
       </div>
     </div>
   );

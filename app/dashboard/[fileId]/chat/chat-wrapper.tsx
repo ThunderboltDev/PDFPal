@@ -28,7 +28,7 @@ export default function ChatWrapper({ fileId }: ChatWrapperProps) {
 
   if (data?.status === "FAILED") {
     return (
-      <div className="min-h-[calc(100vh-10rem)] flex flex-col justify-center items-center">
+      <div className="min-h-[calc(100vh-8rem)] flex flex-col justify-center items-center">
         <XCircle className="size-16 text-destructive/90" />
         <div className="text-center mt-4">
           <h4>Too many pages</h4>
@@ -59,7 +59,7 @@ export default function ChatWrapper({ fileId }: ChatWrapperProps) {
 
   return (
     <ChatContextProvider fileId={fileId}>
-      <div className="relative min-h-full flex divide-y divide-zinc-200 flex-col justify-between gap-2">
+      <div className="relative w-full min-h-full flex divide-y divide-secondary flex-col justify-between gap-2">
         {isLoading ? (
           <Loader>
             <h4>Loading...</h4>

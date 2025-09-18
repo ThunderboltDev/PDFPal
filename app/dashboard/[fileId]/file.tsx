@@ -33,14 +33,14 @@ export default async function FileView({
       <div className="hidden md:flex">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel
-            defaultSize={70}
+            defaultSize={60}
             minSize={25}
           >
             <PDFRendererWrapper fileUrl={file.url} />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel
-            defaultSize={30}
+            defaultSize={40}
             minSize={25}
           >
             <ChatWrapper fileId={fileId} />
