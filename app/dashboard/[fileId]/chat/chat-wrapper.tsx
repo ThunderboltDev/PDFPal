@@ -33,7 +33,7 @@ export default function ChatWrapper({ fileId }: ChatWrapperProps) {
         <XCircle className="size-16 text-destructive/90" />
         <div className="text-center mt-4">
           <h4>Processing Failed</h4>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1 mx-2">
             Something went wrong while processing your PDF file. Please try
             again later!
           </p>

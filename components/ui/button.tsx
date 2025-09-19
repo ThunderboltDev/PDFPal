@@ -13,14 +13,15 @@ const baseClass =
   "disabled:cursor-not-allowed disabled:opacity-50 " +
   "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 " +
   "shrink-0 [&_svg]:shrink-0 " +
-  "outline-none focus-visible:border-ring " +
-  "focus-visible:ring-ring/50 focus-visible:ring-[3px] " +
+  "outline-none focus-visible:border-primary " +
+  "focus-visible:ring-primary/50 focus-visible:ring-[3px] " +
   "aria-invalid:ring-danger/40 aria-invalid:border-danger ";
 
 const buttonVariants = cva(baseClass, {
   variants: {
     variant: {
-      default: "bg-background bg-background/90 text-foreground focus-visible:",
+      default:
+        "bg-background bg-background/90 text-foreground focus-visible:ring-primary/50",
       primary:
         "bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary/50",
       accent:
@@ -33,7 +34,7 @@ const buttonVariants = cva(baseClass, {
       warning:
         "bg-warning text-white hover:bg-warning/90 focus-visible:ring-warning/50",
       ghost:
-        "bg-transparent hover:bg-background text-foreground shadow-none focus-visible:ring-background",
+        "bg-transparent hover:bg-background text-foreground shadow-none focus-visible:ring-primary/50",
     },
     size: {
       default: "h-9 px-4 py-2 has-[>svg]:px-3",
