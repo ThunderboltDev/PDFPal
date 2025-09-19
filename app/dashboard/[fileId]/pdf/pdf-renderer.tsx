@@ -85,12 +85,11 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
 
   const { width, ref: resizeContainerRef } = useResizeDetector({
     refreshMode: "debounce",
-    refreshRate: 300,
+    refreshRate: 250,
   });
 
   const handlePageSubmit = ({ pageNumber }: PageNumberValidator) => {
     setCurrentPage(Number(pageNumber));
-    // setValue("pageNumber", pageNumber);
   };
 
   const handleNextPage = () => {

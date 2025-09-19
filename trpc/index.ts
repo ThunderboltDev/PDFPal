@@ -45,7 +45,7 @@ export const appRouter = router({
       by: ["fileId"],
       where: {
         fileId: {
-          in: files.map((file) => file.id),
+          in: files.map((file) => file.id), 
         },
       },
       _count: { id: true, fileId: true },
