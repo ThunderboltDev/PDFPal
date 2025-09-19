@@ -7,8 +7,6 @@ interface FileViewPageProps {
   params: Promise<{ fileId: string }>;
 }
 
-// Remove async and await if error
-
 export default async function FileViewPage({ params }: FileViewPageProps) {
   const { fileId } = await params;
 

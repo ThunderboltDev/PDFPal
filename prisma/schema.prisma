@@ -80,17 +80,18 @@ enum AuthProvider {
 }
 
 enum UploadStatus {
-  PENDING
   PROCESSING
-  FAILED
   SUCCESS
+  FAILED_TOO_LARGE
+  FAILED_TOO_MANY_PAGES
+  FAILED_UNKNOWN
 }
 
 model File {
   id   String @id @default(cuid())
   name String
 
-  uploadStatus UploadStatus @default(PENDING)
+  uploadStatus UploadStatus @default(PROCESSING)
 
   key String @unique
   url String

@@ -10,6 +10,7 @@ import {
 
 import ChatWrapper from "./chat/chat-wrapper";
 import PDFRendererWrapper from "./pdf/pdf-renderer-wrapper";
+import { getUserSubscriptionPlan } from "@/lib/creem";
 
 interface FileViewProps {
   fileId: string;
@@ -19,6 +20,7 @@ export default async function FileView({
   dbUser,
   fileId,
 }: PropsWithDbUser<FileViewProps>) {
+  const { isSubscribed } = await getUserSubscriptionPlan();
   const file = await db.file.findFirst({
     where: {
       id: fileId,
@@ -43,7 +45,10 @@ export default async function FileView({
             defaultSize={40}
             minSize={25}
           >
-            <ChatWrapper fileId={fileId} />
+            <ChatWrapper
+              fileId={fileId}
+              isSubscribed={isSubscribed}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
@@ -52,7 +57,10 @@ export default async function FileView({
           <PDFRendererWrapper fileUrl={file.url} />
         </main>
         <aside className="flex-1 border-t border-secondary">
-          <ChatWrapper fileId={fileId} />
+          <ChatWrapper
+            fileId={fileId}
+            isSubscribed={isSubscribed}
+          />
         </aside>
       </div>
     </div>

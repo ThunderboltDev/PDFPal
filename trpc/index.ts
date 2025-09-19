@@ -3,6 +3,7 @@ import axios from "axios";
 import { getServerSession } from "next-auth";
 
 import { TRPCError } from "@trpc/server";
+import { utapi } from "@/app/server/uploadthing";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 
 import { getUserSubscriptionPlan } from "@/lib/creem";
@@ -33,7 +34,7 @@ export const appRouter = router({
     return { success: true };
   }),
 
-  getUserFiles: privateProcedure.query(async ({ ctx }) => {
+  getUserFiles: privateProcedure.input(z.void()).query(async ({ ctx }) => {
     const { userId } = ctx;
     const files = await db.file.findMany({
       where: {
@@ -41,15 +42,13 @@ export const appRouter = router({
       },
     });
 
-    const messageCounts = await db.message.groupBy({
-      by: ["fileId"],
-      where: {
-        fileId: {
-          in: files.map((file) => file.id), 
-        },
-      },
-      _count: { id: true, fileId: true },
-    });
+    const messageCounts = files.length
+      ? await db.message.groupBy({
+          by: ["fileId"],
+          where: { fileId: { in: files.map((f) => f.id) } },
+          _count: { id: true },
+        })
+      : [];
 
     const countsMap: Record<string, number> = {};
 
@@ -132,6 +131,13 @@ export const appRouter = router({
         where: { id, userId },
         data: { name: newName },
       });
+
+      await utapi.renameFiles({
+        fileKey: file.key,
+        newName,
+      });
+
+      return file;
     }),
 
   deleteFile: privateProcedure
@@ -155,6 +161,8 @@ export const appRouter = router({
           userId,
         },
       });
+
+      await utapi.deleteFiles(file.key);
 
       return file;
     }),

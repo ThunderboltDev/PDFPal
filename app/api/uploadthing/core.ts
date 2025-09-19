@@ -53,16 +53,28 @@ export const ourFileRouter = {
 
         const { isSubscribed } = metadata.subscriptionPlan;
 
-        if (
-          (isSubscribed && numberOfPages > plans.pro.maxPages) ||
-          (!isSubscribed && numberOfPages > plans.free.maxPages)
-        ) {
+        const plan = isSubscribed ? "pro" : "free";
+
+        if (numberOfPages > config.plans[plan].maxPages) {
           await db.file.update({
             where: {
               id: createdFile.id,
             },
             data: {
-              uploadStatus: "FAILED",
+              uploadStatus: "FAILED_TOO_MANY_PAGES",
+            },
+          });
+
+          return;
+        }
+
+        if (file.size > plans[plan].maxFileSizeInBytes) {
+          await db.file.update({
+            where: {
+              id: createdFile.id,
+            },
+            data: {
+              uploadStatus: "FAILED_TOO_LARGE",
             },
           });
 
@@ -98,7 +110,7 @@ export const ourFileRouter = {
         console.error(error);
         await db.file.update({
           data: {
-            uploadStatus: "FAILED",
+            uploadStatus: "FAILED_UNKNOWN",
           },
           where: {
             id: createdFile.id,

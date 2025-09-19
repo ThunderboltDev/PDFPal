@@ -67,20 +67,15 @@ export default function Dashboard({
             ))}
         </ul>
       ) : isLoading ? (
-        <div className="mt-9 grid grid-cols-1 gap-0 divide-y divide-zinc-100 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-8 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Skeleton
+            className="col-span-1 rounded-lg"
+            inline={true}
             borderRadius={10}
             height={80}
+            count={4}
           />
-          <Skeleton
-            borderRadius={10}
-            height={80}
-          />
-          <Skeleton
-            borderRadius={10}
-            height={80}
-          />
-        </div>
+        </ul>
       ) : (
         <div className="mt-16 flex flex-col items-center gap-2">
           <Ghost className="size-32 text-zinc-900" />
