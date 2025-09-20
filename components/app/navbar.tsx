@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  CircleQuestionMark,
   CreditCard,
   DollarSign,
   LayoutDashboard,
   LogOut,
+  Mail,
   Menu,
   User,
   UserPlus,
@@ -42,6 +44,16 @@ const navLinks = [
     href: "/billing",
     label: "Billing",
     icon: CreditCard,
+  },
+  {
+    href: "/contact",
+    label: "Contact",
+    icon: Mail,
+  },
+  {
+    href: "faq",
+    label: "FAQ",
+    icon: CircleQuestionMark,
   },
 ];
 
@@ -86,14 +98,14 @@ export default function Navbar() {
         >
           <Image
             src="/logo.webp"
-            height={100}
-            width={100}
             alt={`${config.name} Logo`}
             className="size-9"
+            height={100}
+            width={100}
           />
           {config.name}
         </LinkButton>
-        <ul className="hidden md:flex gap-4">
+        <ul className="hidden lg:flex gap-4">
           {navLinks.map((link) => (
             <li key={link.href}>
               <LinkButton
@@ -113,7 +125,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <LinkButton
             variant="ghost"
             size="sm"

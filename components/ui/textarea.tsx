@@ -1,29 +1,19 @@
+import * as React from "react";
+
 import { cn } from "@/lib/utils";
-import { ComponentProps } from "react";
-import TextareaAutosize from "react-textarea-autosize";
 
-interface TextareaProps extends ComponentProps<"textarea"> {
-  maxRows?: number;
-  minRows?: number;
-}
-
-function Textarea({
-  className,
-  minRows = 1,
-  maxRows,
-  ...props
-}: TextareaProps) {
+function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
-    <TextareaAutosize
-      {...props}
-      style={{}}
+    <textarea
       data-slot="textarea"
-      minRows={minRows}
-      maxRows={maxRows}
       className={cn(
-        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content w-full rounded-md border bg-transparent px-3 py-10 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "file:text-foreground placeholder:text-muted-foreground border-input border bg-transparent px-3 py-2 text-base rounded-md shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+        "aria-invalid:ring-danger/25 aria-invalid:border-danger",
+        "flex field-sizing-content min-h-17 overflow-x-hidden",
         className
       )}
+      {...props}
     />
   );
 }

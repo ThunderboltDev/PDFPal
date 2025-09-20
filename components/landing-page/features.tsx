@@ -54,7 +54,7 @@ export default function Features() {
         className="px-6 lg:px-8"
       >
         <div className="mx-auto max-w-2xl text-center">
-          <h2>
+          <h2 className="text-center">
             Start chatting with your documents{" "}
             <span className="text-primary underline underline-offset-2 decoration-2 decoration-wavy">
               in minutes!

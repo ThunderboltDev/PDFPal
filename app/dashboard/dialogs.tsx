@@ -102,32 +102,34 @@ export function RenameFileDialog({ file, disabled }: DialogProps) {
           </>
         ),
         children: (
-          <Form {...form}>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>New file name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="name"
-                      placeholder="New file name"
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormError />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="hidden"
-            >
-              Submit
-            </Button>
-          </Form>
+          <div className="mb-6">
+            <Form {...form}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New file name</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="name"
+                        placeholder="New file name"
+                        autoFocus
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormError />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="hidden"
+              >
+                Submit
+              </Button>
+            </Form>
+          </div>
         ),
       }}
       button={{

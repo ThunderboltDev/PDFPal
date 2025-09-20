@@ -74,7 +74,7 @@ export default function ActionDialog({
           </DialogHeader>
           <form onSubmit={async (e) => await handleSubmit(e)}>
             {dialog.children}
-            <DialogFooter className="mt-6">
+            <DialogFooter>
               <DialogClose asChild>
                 <Button
                   variant="default"

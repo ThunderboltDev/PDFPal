@@ -10,13 +10,9 @@ const config = {
   gtag: "G-",
   adsense: "",
   socials: {
-    github: "",
-    youtube: "",
-    twitter: "@surprizedPika",
-    linkedIn: "",
+    github: "https://github.com/",
     discord: "",
-    email: "thunderbolt3141592@gmail.com",
-    bluesky: "surprizedpika.bsky.social",
+    email: "pdfpal0@gmail.com",
   },
   assets: {
     favicon: `${url}favicon.ico`,

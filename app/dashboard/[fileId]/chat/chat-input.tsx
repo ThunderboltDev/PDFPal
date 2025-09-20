@@ -1,8 +1,8 @@
 import { useContext, KeyboardEvent, useRef } from "react";
+import TextareaAutosize from "react-textarea-autosize";
 import { Loader2, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { ChatContext } from "./chat-context";
 import { cn } from "@/lib/utils";
 
@@ -34,16 +34,18 @@ export default function ChatInput({ isLoading }: ChatInputProps) {
         <div className="relative flex h-full flex-1 items-stretch md:flex-col">
           <div className="relative flex flex-1 w-full flex-grow p-4">
             <div className="relative flex-grow">
-              <Textarea
+              <TextareaAutosize
                 ref={inputRef}
-                rows={1}
-                maxRows={4}
+                data-slot="textarea"
                 placeholder="Chat with your PDF"
-                className="resize-none pr-12 text-base py-2.5"
-                autoFocus
+                rows={1}
+                minRows={1}
+                maxRows={4}
                 value={message}
-                onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
+                onChange={handleInputChange}
+                className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content w-full rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none pr-12 text-base py-2.5"
+                autoFocus
               />
               <Button
                 className={cn(

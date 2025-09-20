@@ -1,6 +1,7 @@
 import z from "zod";
 import axios from "axios";
 import { getServerSession } from "next-auth";
+import nodemailer from "nodemailer";
 
 import { TRPCError } from "@trpc/server";
 import { utapi } from "@/app/server/uploadthing";
@@ -8,11 +9,11 @@ import { privateProcedure, publicProcedure, router } from "./trpc";
 
 import { getUserSubscriptionPlan } from "@/lib/creem";
 import { getAbsoluteUrl } from "@/lib/utils";
+import { pinecone } from "@/lib/pinecone";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 import config, { CREEM_API_BASE } from "@/config";
-import { pinecone } from "@/lib/pinecone";
 
 type CreemCustomer = { id?: string; email?: string };
 
@@ -337,6 +338,29 @@ export const appRouter = router({
   getUserSubscriptionPlan: publicProcedure.query(async () => {
     return await getUserSubscriptionPlan();
   }),
+
+  sendMessage: publicProcedure
+    .input(
+      z.object({
+        name: z.string().min(3).max(50),
+        email: z.email(),
+        message: z.string().min(10).max(250),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const transporter = nodemailer.createTransport(process.env.EMAIL_SERVER);
+
+      await transporter.sendMail({
+        from: `"${input.name}" <${input.email}>`,
+        to: config.socials.email,
+        subject: `New contact message from ${input.name}`,
+        html: `<p><strong>Name:</strong> ${input.name}</p>
+               <p><strong>Email:</strong> ${input.email}</p>
+               <p><strong>Message:</strong><br/>${input.message}</p>`,
+      });
+
+      return { success: true };
+    }),
 });
 
 export type AppRouter = typeof appRouter;

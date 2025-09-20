@@ -96,7 +96,7 @@
   }
 
   p {
-    @apply max-w-prose text-pretty;
+    @apply max-w-prose mx-auto text-pretty;
   }
 
   a {

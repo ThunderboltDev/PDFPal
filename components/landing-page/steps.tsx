@@ -46,7 +46,7 @@ export default function Steps() {
           ease: "easeOut",
         }}
       >
-        <h2>Start right now for free</h2>
+        <h2 className="text-center">Start right now for free</h2>
         <p className="mt-3 text-center text-muted-foreground">
           It only takes a minute to get started!
         </p>

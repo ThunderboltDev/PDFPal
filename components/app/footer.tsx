@@ -9,7 +9,15 @@ const currentYear = new Date().getFullYear();
 export default function Footer() {
   const pathname = usePathname();
 
-  const includedPaths = ["/", "/pricing", "/contact"];
+  const includedPaths = [
+    "/",
+    "/pricing",
+    "/contact",
+    "/faq",
+    "/billing",
+    "/privacy-policy",
+    "/terms-of-service",
+  ];
   if (!includedPaths.includes(pathname)) return null;
 
   return (
