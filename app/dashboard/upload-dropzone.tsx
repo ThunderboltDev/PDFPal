@@ -38,8 +38,8 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
 
     const interval = setInterval(() => {
       setUploadProgress((previousProgress) => {
-        if (previousProgress >= 90) clearInterval(interval);
-        return previousProgress + 3;
+        if (previousProgress >= 95) clearInterval(interval);
+        return previousProgress + Math.floor(Math.random() * 3) + 1;
       });
     }, 500);
 

@@ -40,7 +40,7 @@
     "@trpc/react-query": "^11.5.0",
     "@trpc/server": "^11.5.0",
     "@uploadthing/react": "^7.3.3",
-    "axios": "^1.11.0",
+    "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -1,6 +1,13 @@
 "use client";
 
-import { Ghost, MessageSquare, Plus } from "lucide-react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  Ghost,
+  Loader2,
+  MessageSquare,
+  Plus,
+} from "lucide-react";
 
 import Link from "next/link";
 import { format } from "date-fns";
@@ -29,7 +36,7 @@ export default function Dashboard({
       </div>
       <Separator />
       {files && files.length !== 0 ? (
-        <ul className="mt-8 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-8 mb-12 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {files
             .sort(
               (a, b) =>
@@ -45,29 +52,57 @@ export default function Dashboard({
                   href={`/dashboard/${file.id}`}
                   className="flex items-center justify-center px-4 py-3 gap-3 no-underline"
                 >
-                  <div className="size-10 flex shrink-0 rounded-full bg-gradient-to-br from-cyan-500 to-accent" />
+                  {file.uploadStatus === "SUCCESS" ? (
+                    <div className="size-10 flex shrink-0 rounded-full bg-gradient-to-br from-cyan-500 to-accent" />
+                  ) : file.uploadStatus === "PROCESSING" ? (
+                    <div className="size-10 flex shrink-0 rounded-full border-4 border-dashed border-muted animate-spin animation-duration-[3s]" />
+                  ) : (
+                    <AlertCircle className="size-10 flex shrink-0 rounded-full text-danger/80 bg-danger/15" />
+                  )}
                   <div className="flex-1 truncate">
                     <h5 className="truncate text-foreground">{file.name}</h5>
                   </div>
                 </Link>
-                <div className="grid grid-cols-3 gap-6 px-3 py-1 text-xs text-muted-foreground">
+                <div className="grid grid-cols-3 gap-6 px-3 py-1 h-10 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1.5">
                     <Plus className="size-4" />
                     {format(new Date(file.createdAt), "dd MMM yyyy")}
                   </div>
                   <div className="flex items-center justify-center gap-1.5">
-                    <MessageSquare className="size-4" /> {file.messageCount}
+                    {file.uploadStatus === "SUCCESS" ? (
+                      <>
+                        <MessageSquare className="size-4" /> {file.messageCount}
+                      </>
+                    ) : file.uploadStatus === "PROCESSING" ? (
+                      <span className="text-info/75 flex flex-row gap-1.5 justify-end items-center">
+                        <Loader2 className="size-4 animate-spin" />
+                        Processing...
+                      </span>
+                    ) : (
+                      <span className="text-danger/75 flex flex-row gap-1.5 justify-end items-center">
+                        <AlertTriangle className="size-4" />
+                        Failed
+                      </span>
+                    )}
                   </div>
-                  <div className="flex flex-row gap-1 justify-end">
-                    <RenameFileDialog file={file} />
-                    <DeleteFileDialog file={file} />
+                  <div className="flex flex-row gap-1 justify-end items-center">
+                    <>
+                      <RenameFileDialog
+                        file={file}
+                        disabled={file.uploadStatus !== "SUCCESS"}
+                      />
+                      <DeleteFileDialog
+                        file={file}
+                        disabled={file.uploadStatus === "PROCESSING"}
+                      />
+                    </>
                   </div>
                 </div>
               </li>
             ))}
         </ul>
       ) : isLoading ? (
-        <ul className="mt-8 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-8 mb-12 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Skeleton
             className="col-span-1 rounded-lg"
             inline={true}

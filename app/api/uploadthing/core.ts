@@ -1,5 +1,6 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { getServerSession } from "next-auth";
+import axios from "axios";
 
 import { getUserSubscriptionPlan } from "@/lib/creem";
 import { pinecone } from "@/lib/pinecone";
@@ -43,8 +44,11 @@ export const ourFileRouter = {
       });
 
       try {
-        const response = await fetch(file.ufsUrl);
-        const data = await response.arrayBuffer();
+        const response = await axios.get(file.ufsUrl, {
+          responseType: "arraybuffer",
+          timeout: 1 * 60 * 10000,
+        });
+        const data = await response.data;
 
         const { Document } = await import("mupdf");
 
@@ -83,7 +87,7 @@ export const ourFileRouter = {
 
         const pages = [];
 
-        for (let i = 1; i <= numberOfPages; i++)
+        for (let i = 0; i < numberOfPages; i++)
           pages.push(document.loadPage(i).toStructuredText().asText());
 
         const upsertRequest = pages.map((page, index) => ({

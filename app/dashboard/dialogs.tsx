@@ -26,6 +26,7 @@ interface DialogProps {
     id: string;
     name: string;
   };
+  disabled?: boolean;
 }
 
 const renameFileSchema = z.object({
@@ -42,7 +43,7 @@ const renameFileSchema = z.object({
 
 type RenameForm = z.infer<typeof renameFileSchema>;
 
-export function RenameFileDialog({ file }: DialogProps) {
+export function RenameFileDialog({ file, disabled }: DialogProps) {
   const utils = trpc.useUtils();
 
   const form = useForm<RenameForm>({
@@ -139,13 +140,14 @@ export function RenameFileDialog({ file }: DialogProps) {
             <span className="sr-only">Rename file name: {file.name}</span>
           </>
         ),
+        disabled,
       }}
       onConfirm={async () => await form.handleSubmit(onSubmit)()}
     />
   );
 }
 
-export function DeleteFileDialog({ file }: DialogProps) {
+export function DeleteFileDialog({ file, disabled }: DialogProps) {
   const utils = trpc.useUtils();
 
   const { mutateAsync: deleteFile } = trpc.deleteFile.useMutation({
@@ -202,6 +204,7 @@ export function DeleteFileDialog({ file }: DialogProps) {
             <span className="sr-only">Delete File: ({file.name})</span>
           </>
         ),
+        disabled,
       }}
       onConfirm={() => onSubmit()}
     />
