@@ -100,7 +100,7 @@ model File {
   updatedAt DateTime @updatedAt
 
   userId String?
-  User   User?   @relation(fields: [userId], references: [id])
+  User   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   messages Message[]
 }
@@ -115,8 +115,8 @@ model Message {
   updatedAt DateTime @updatedAt
 
   userId String?
-  User   User?   @relation(fields: [userId], references: [id])
+  User   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   fileId String?
-  File   File?   @relation(fields: [fileId], references: [id])
+  File   File?   @relation(fields: [fileId], references: [id], onDelete: Cascade)
 }

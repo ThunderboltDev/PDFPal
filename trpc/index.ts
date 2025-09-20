@@ -12,6 +12,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 import config, { CREEM_API_BASE } from "@/config";
+import { pinecone } from "@/lib/pinecone";
 
 type CreemCustomer = { id?: string; email?: string };
 
@@ -73,7 +74,7 @@ export const appRouter = router({
         },
       });
 
-      if (!file) return { status: "PENDING" as const };
+      if (!file) return { status: "PROCESSING" as const };
 
       return { status: file.uploadStatus };
     }),
@@ -164,6 +165,13 @@ export const appRouter = router({
 
       await utapi.deleteFiles(file.key);
 
+      const index = pinecone.index(
+        process.env.PINECONE_INDEX!,
+        process.env.PINECONE_HOST_URL
+      );
+
+      await index.deleteNamespace(file.id);
+
       return file;
     }),
 
@@ -176,10 +184,8 @@ export const appRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
+      const { fileId, cursor, limit } = input;
       const { userId } = ctx;
-
-      const { fileId, cursor } = input;
-      const limit = input.limit;
 
       const file = await db.file.findFirst({
         where: {
