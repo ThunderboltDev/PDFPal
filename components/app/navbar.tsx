@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 
+import { useHotkeys } from "react-hotkeys-hook";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -66,6 +67,11 @@ export default function Navbar() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  useHotkeys(["ctrl+b", "meta+b"], (e) => {
+    e.preventDefault();
+    setIsOpen((prev) => !prev);
+  });
 
   const excludedPaths = ["/auth", "/auth-callback", "/logout", "/thank-you"];
   if (excludedPaths.includes(pathname)) return null;
