@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "../_trpc/client";
 import config from "@/config";
+import { useRouter } from "next/navigation";
 
 const contactFormSchema = z.object({
   email: z.email("Invalid email"),
@@ -39,8 +40,9 @@ const contactFormSchema = z.object({
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export default function ContactPage() {
-  const captchaRef = useRef<HCaptcha>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
+  const router = useRouter();
 
   const { data: session } = useSession();
 
@@ -49,6 +51,7 @@ export default function ContactPage() {
       onSuccess: () => {
         captchaRef.current?.resetCaptcha();
         toast.success("Message sent successfully!");
+        router.push("/contact/success");
       },
       onError: () =>
         toast.error("Something went wrong! Please try again later!"),
