@@ -10,9 +10,12 @@ export default function AuthCallback() {
   const searchParams = useSearchParams();
   const origin = searchParams.get("origin");
 
-  const { error, isSuccess, isError } = trpc.authCallback.useQuery(undefined, {
-    retry: false,
-  });
+  const { error, isSuccess, isError } = trpc.auth.authCallback.useQuery(
+    undefined,
+    {
+      retry: false,
+    }
+  );
 
   useEffect(() => {
     if (isSuccess) {

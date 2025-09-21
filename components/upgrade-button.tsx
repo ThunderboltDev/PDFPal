@@ -17,19 +17,20 @@ export function UpgradeButton({
   className = "",
 }: UpgradeButtonProps) {
   const { mutate: createCheckoutSession, isPending } =
-    trpc.createCheckoutSession.useMutation({
+    trpc.subscription.createCheckoutSession.useMutation({
       onSuccess: ({ checkoutUrl }) => {
         if (checkoutUrl) window.location.href = checkoutUrl;
         else toast.error("Something went wrong!");
       },
     });
 
-  const { mutate: getBillingPortalUrl } = trpc.getBillingPortalUrl.useMutation({
-    onSuccess: ({ portalUrl }) => {
-      if (portalUrl) window.location.href = portalUrl;
-      else toast.error("Something went wrong!");
-    },
-  });
+  const { mutate: getBillingPortalUrl } =
+    trpc.subscription.getBillingPortalUrl.useMutation({
+      onSuccess: ({ portalUrl }) => {
+        if (portalUrl) window.location.href = portalUrl;
+        else toast.error("Something went wrong!");
+      },
+    });
 
   const handleClick = (e: FormEvent) => {
     e.preventDefault();

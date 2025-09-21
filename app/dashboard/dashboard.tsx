@@ -26,7 +26,7 @@ interface DashboardProps {
 export default function Dashboard({
   isSubscribed,
 }: PropsWithDbUser<DashboardProps>) {
-  const { data: files, isLoading } = trpc.getUserFiles.useQuery();
+  const { data: files, isLoading } = trpc.file.getUserFiles.useQuery();
 
   return (
     <main className="container-7xl mt-20">

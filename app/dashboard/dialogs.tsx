@@ -52,9 +52,9 @@ export function RenameFileDialog({ file, disabled }: DialogProps) {
     mode: "onChange",
   });
 
-  const { mutateAsync: renameFile } = trpc.renameFile.useMutation({
+  const { mutateAsync: renameFile } = trpc.file.renameFile.useMutation({
     onSuccess: () => {
-      utils.getUserFiles.invalidate();
+      utils.file.getUserFiles.invalidate();
       toast.success("File name updated");
     },
     onError: () => {
@@ -152,9 +152,9 @@ export function RenameFileDialog({ file, disabled }: DialogProps) {
 export function DeleteFileDialog({ file, disabled }: DialogProps) {
   const utils = trpc.useUtils();
 
-  const { mutateAsync: deleteFile } = trpc.deleteFile.useMutation({
+  const { mutateAsync: deleteFile } = trpc.file.deleteFile.useMutation({
     onSuccess: () => {
-      utils.getUserFiles.invalidate();
+      utils.file.getUserFiles.invalidate();
       toast.success("File successfully deleted!");
     },
     onError: () => {

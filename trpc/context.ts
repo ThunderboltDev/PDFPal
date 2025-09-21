@@ -1,13 +1,16 @@
-import { PrismaClient } from "@prisma/client";
+import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
 
-const prisma = new PrismaClient();
+export async function createContext({ req }: FetchCreateContextFnOptions) {
+  const session = await getServerSession(authOptions);
 
-export async function createContext() {
   return {
-    prisma,
+    db,
+    session,
+    req,
   };
 }
 
-export type Context = ReturnType<typeof createContext> extends Promise<infer T>
-  ? T
-  : never;
+export type Context = Awaited<ReturnType<typeof createContext>>;

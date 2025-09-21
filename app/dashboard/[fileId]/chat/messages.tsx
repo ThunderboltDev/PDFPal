@@ -20,7 +20,7 @@ export default function Messages({ fileId }: MessagesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, fetchNextPage, hasNextPage } =
-    trpc.getFileMessages.useInfiniteQuery(
+    trpc.chat.getFileMessages.useInfiniteQuery(
       {
         fileId,
       },

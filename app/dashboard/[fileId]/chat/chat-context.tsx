@@ -52,11 +52,11 @@ export default function ChatContextProvider({
       backupMessage.current = message;
       setMessage("");
 
-      await utils.getFileMessages.cancel();
+      await utils.chat.getFileMessages.cancel();
 
-      const previousMessages = utils.getFileMessages.getInfiniteData();
+      const previousMessages = utils.chat.getFileMessages.getInfiniteData();
 
-      utils.getFileMessages.setInfiniteData({ fileId }, (old) => {
+      utils.chat.getFileMessages.setInfiniteData({ fileId }, (old) => {
         if (!old)
           return {
             pages: [],
@@ -114,7 +114,7 @@ export default function ChatContextProvider({
         const chunk = decoder.decode(value);
         response += chunk;
 
-        utils.getFileMessages.setInfiniteData({ fileId }, (old) => {
+        utils.chat.getFileMessages.setInfiniteData({ fileId }, (old) => {
           if (!old)
             return {
               pages: [],
@@ -167,7 +167,7 @@ export default function ChatContextProvider({
 
     onError: (_error, _var, context) => {
       setMessage(backupMessage.current);
-      utils.getFileMessages.setData(
+      utils.chat.getFileMessages.setData(
         { fileId },
         { messages: context?.previousMessages ?? [], nextCursor: undefined }
       );
@@ -175,7 +175,7 @@ export default function ChatContextProvider({
 
     onSettled: async () => {
       setIsLoading(false);
-      await utils.getFileMessages.invalidate({ fileId });
+      await utils.chat.getFileMessages.invalidate({ fileId });
     },
   });
 

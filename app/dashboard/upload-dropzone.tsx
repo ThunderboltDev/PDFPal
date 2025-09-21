@@ -27,7 +27,7 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
 
   const { startUpload } = useUploadThing("pdfUploader");
 
-  const { mutate: startPolling } = trpc.getFile.useMutation({
+  const { mutate: startPolling } = trpc.file.getFile.useMutation({
     onSuccess: (file) => router.push(`/dashboard/${file.id}`),
     retry: true,
     retryDelay: 500,

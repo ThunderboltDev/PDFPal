@@ -1,9 +1,11 @@
 "use client";
 
 import { Send } from "lucide-react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import z from "zod";
@@ -37,14 +39,20 @@ const contactFormSchema = z.object({
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export default function ContactPage() {
+  const captchaRef = useRef<HCaptcha>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
   const { data: session } = useSession();
 
-  const { mutateAsync: sendMessage, isPending } = trpc.sendMessage.useMutation({
-    onError: () => toast.error("Something went wrong! Please try again later!"),
-    onSuccess: () => {
-      toast.success("Message sent successfully!");
-    },
-  });
+  const { mutateAsync: sendMessage, isPending } =
+    trpc.contact.sendMessage.useMutation({
+      onSuccess: () => {
+        captchaRef.current?.resetCaptcha();
+        toast.success("Message sent successfully!");
+      },
+      onError: () =>
+        toast.error("Something went wrong! Please try again later!"),
+    });
 
   const form = useForm<ContactFormValues>({
     mode: "onSubmit",
@@ -56,8 +64,14 @@ export default function ContactPage() {
   });
 
   const handleSubmit = async (values: ContactFormValues) => {
+    if (!captchaToken) {
+      toast.error("Please complete the CAPTCHA");
+      captchaRef.current?.execute();
+      return;
+    }
+
     try {
-      await sendMessage(values);
+      await sendMessage({ ...values, captchaToken });
     } catch (error) {
       console.error("Error while sending message: ", error);
       toast.error("Something went horribly wrong! Please try again later!");
@@ -134,6 +148,24 @@ export default function ContactPage() {
                 <FormError />
               </FormItem>
             )}
+          />
+          <HCaptcha
+            size="invisible"
+            ref={captchaRef}
+            sitekey={
+              process.env.NEXT_PUBLIC_ENV === "development"
+                ? "10000000-ffff-ffff-ffff-000000000001"
+                : process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!
+            }
+            onVerify={(token) => {
+              setCaptchaToken(token);
+            }}
+            onError={() => {
+              toast.error("CAPTCHA error, please try again.");
+            }}
+            onExpire={() => {
+              setCaptchaToken(null);
+            }}
           />
           <Button
             type="submit"

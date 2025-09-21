@@ -4,7 +4,7 @@ import { JSX } from "react";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
-type Messages = RouterOutput["getFileMessages"]["messages"];
+type Messages = RouterOutput["chat"]["getFileMessages"]["messages"];
 
 type OmitText = Omit<Messages[number], "text" | "createdAt">;
 
