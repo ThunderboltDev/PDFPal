@@ -1,12 +1,17 @@
-import withAuth from "@/hoc/with-auth";
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Dashboard from "./dashboard";
-import { getUserSubscriptionPlan } from "@/lib/creem";
+import { auth } from "@/lib/auth";
 
-export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function DashboardWrapper() {
-  const { isSubscribed } = await getUserSubscriptionPlan();
-  const ProtectedDashboard = withAuth(Dashboard, {origin: "/dashboard"});
+  const session = await auth();
 
-  return <ProtectedDashboard isSubscribed={isSubscribed} />;
+  if (!session || !session.user || !session.user.email)
+    return redirect(`/auth?callbackUrl=${encodeURIComponent("/dashboard")}`);
+
+  return <Dashboard />;
 }

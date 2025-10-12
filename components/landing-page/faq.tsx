@@ -107,7 +107,7 @@ export default function FAQ() {
         className="mx-auto max-w-2xl text-center"
       >
         <h2>Frequently Asked Questions</h2>
-        <p className="mt-3 text-secondary-foreground">
+        <p className="mt-3 text-center text-secondary-foreground">
           Quick answers to common questions.
         </p>
       </motion.div>

@@ -2,27 +2,19 @@
 
 import SuperJSON from "superjson";
 import { MotionConfig } from "framer-motion";
-import { SessionProvider } from "next-auth/react";
 import { PropsWithChildren, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { trpc } from "@/app/_trpc/client";
+import { SessionProvider } from "next-auth/react";
 import { httpBatchLink } from "@trpc/client";
-import { Session } from "next-auth";
+import { trpc } from "@/app/_trpc/client";
 
-interface ProvidersProps {
-  session: Session | null;
-}
-
-export default function Providers({
-  children,
-  session,
-}: PropsWithChildren<ProvidersProps>) {
+export default function Providers({ children }: PropsWithChildren) {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: `${process.env.NEXT_PUBLIC_APP_URL}/api/trpc`,
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/trpc`,
           transformer: SuperJSON,
           maxURLLength: 2000,
           maxItems: 1,
@@ -32,7 +24,7 @@ export default function Providers({
   );
 
   return (
-    <SessionProvider session={session}>
+    <SessionProvider>
       <trpc.Provider
         client={trpcClient}
         queryClient={queryClient}

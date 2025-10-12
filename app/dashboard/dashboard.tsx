@@ -14,29 +14,32 @@ import { format } from "date-fns";
 
 import { trpc } from "../_trpc/client";
 import UploadButton from "./upload-button";
-import Skeleton from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { PropsWithDbUser } from "@/hoc/with-auth";
 import { DeleteFileDialog, RenameFileDialog } from "./dialogs";
 
-interface DashboardProps {
-  isSubscribed: boolean;
-}
-
-export default function Dashboard({
-  isSubscribed,
-}: PropsWithDbUser<DashboardProps>) {
+export default function Dashboard() {
   const { data: files, isLoading } = trpc.file.getUserFiles.useQuery();
+  const { data: subscriptionPlan } =
+    trpc.subscription.getUserSubscriptionPlan.useQuery();
 
   return (
-    <main className="container-7xl mt-20">
+    <main className="container-7xl pt-20">
       <div className="flex flex-col items-start justify-between gap-2 pb-5 sm:flex-row sm:items-center sm:gap-0">
         <h2 className="mb-1">My Files</h2>
-        <UploadButton isSubscribed={isSubscribed} />
+        {subscriptionPlan ? (
+          <UploadButton isSubscribed={subscriptionPlan.isSubscribed} />
+        ) : (
+          <Skeleton
+            borderRadius={6}
+            width={126}
+            height={36}
+          />
+        )}
       </div>
       <Separator />
       {files && files.length !== 0 ? (
-        <ul className="mt-8 mb-12 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="ml-0 mt-8 mb-12 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {files
             .sort(
               (a, b) =>
@@ -46,7 +49,7 @@ export default function Dashboard({
             .map((file) => (
               <li
                 key={file.id}
-                className="col-span-1 divide-y divide-secondary rounded-lg bg-background shadow-md transition hover:shadow-lg"
+                className="col-span-1 divide-y divide-border rounded-lg bg-secondary shadow-md transition hover:shadow-lg"
               >
                 <Link
                   href={`/dashboard/${file.id}`}
@@ -60,7 +63,9 @@ export default function Dashboard({
                     <AlertCircle className="size-10 flex shrink-0 rounded-full text-danger/80 bg-danger/15" />
                   )}
                   <div className="flex-1 truncate">
-                    <h5 className="truncate text-foreground">{file.name}</h5>
+                    <h5 className="truncate text-secondary-foreground">
+                      {file.name}
+                    </h5>
                   </div>
                 </Link>
                 <div className="grid grid-cols-3 gap-6 px-3 py-1 h-10 text-xs text-muted-foreground">
@@ -102,12 +107,12 @@ export default function Dashboard({
             ))}
         </ul>
       ) : isLoading ? (
-        <ul className="mt-8 mb-12 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="ml-0 mt-8 mb-12 px-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Skeleton
             className="col-span-1 rounded-lg"
-            inline={true}
             borderRadius={10}
-            height={80}
+            inline={true}
+            height={105}
             count={4}
           />
         </ul>

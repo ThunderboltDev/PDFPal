@@ -27,7 +27,7 @@ export default function Hero() {
           </span>{" "}
           in seconds!
         </h1>
-        <p className="mt-5 text-secondary-foreground sm:text-lg">
+        <p className="mt-5 text-center text-balance text-secondary-foreground sm:text-lg">
           Ask questions, summarize, and extract info from PDFs — no setup
           required
         </p>

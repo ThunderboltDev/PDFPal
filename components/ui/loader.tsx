@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 
 export default function Loader({ children }: PropsWithChildren) {
   return (
-    <div className="h-view min-w-full flex flex-col gap-4 justify-center items-center text-center">
+    <div className="min-h-screen min-w-full flex flex-col gap-4 justify-center items-center text-center">
       <Loader2 className="size-10 animate-spin text-primary" />
       <div>{children}</div>
     </div>

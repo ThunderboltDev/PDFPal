@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
-import { db } from "@/lib/db";
 import * as crypto from "crypto";
+
+import { db } from "@/lib/db";
 
 const CREEM_WEBHOOK_SECRET = process.env.CREEM_WEBHOOK_SECRET!;
 
@@ -9,6 +10,7 @@ function verifyCreemSignature(payload: string, signature: string) {
     .createHmac("sha256", CREEM_WEBHOOK_SECRET)
     .update(payload)
     .digest("hex");
+
   return crypto.timingSafeEqual(
     Buffer.from(expected, "hex"),
     Buffer.from(signature, "hex")
@@ -30,6 +32,7 @@ export interface WebhookResponse {
       billing_type: string;
     };
     subscription: {
+      id: string;
       current_period_end_date: string;
     };
     status: string;
@@ -50,66 +53,104 @@ export async function POST(req: NextRequest) {
         success: false,
         message: "Invalid signature",
       },
-      { status: 400 }
+      {
+        status: 400,
+      }
     );
   }
 
-  const webhook = JSON.parse(rawBody) as WebhookResponse;
+  const { object, eventType } = JSON.parse(rawBody) as WebhookResponse;
 
-  const isSubscription = webhook.object.product.billing_type === "recurring";
+  const user = await db.user.findUnique({
+    where: {
+      id: object.metadata.userId,
+    },
+  });
 
-  if (isSubscription) {
-    if (
-      webhook.eventType === "subscription.paid" ||
-      webhook.eventType === "subscription.active"
-    ) {
-      await db.user.update({
-        where: { id: webhook.object.metadata.userId },
-        data: {
-          planId: "pro",
-          subscriptionStatus: "active",
-          subscriptionId: webhook.object.id,
-          customerId: webhook.object.customer.id,
-          currentPeriodEnd: new Date(webhook.object.current_period_end_date),
-        },
-      });
-    }
+  if (!user) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "User not found",
+      },
+      {
+        status: 404,
+      }
+    );
+  }
 
-    if (webhook.eventType === "subscription.canceled") {
-      await db.user.update({
-        where: { id: webhook.object.metadata.userId },
-        data: {
-          subscriptionStatus: "canceled",
-          subscriptionId: webhook.object.id,
-          customerId: webhook.object.customer.id,
-          currentPeriodEnd: new Date(webhook.object.current_period_end_date),
-        },
-      });
-    }
-
-    if (webhook.eventType === "subscription.expired") {
-      await db.user.update({
-        where: { id: webhook.object.metadata.userId },
-        data: {
-          subscriptionStatus: "paused",
-          subscriptionId: webhook.object.id,
-          currentPeriodEnd: new Date(webhook.object.current_period_end_date),
-        },
-      });
-    }
-
-    if (webhook.eventType === "checkout.completed") {
+  switch (eventType) {
+    case "checkout.completed":
       await db.user.update({
         where: {
-          id: webhook.object.metadata.userId,
+          id: object.metadata.userId,
         },
         data: {
+          customerId: object.customer.id,
+          subscriptionId: object.subscription.id,
           currentPeriodEnd: new Date(
-            webhook.object.subscription.current_period_end_date
+            object.subscription.current_period_end_date
           ),
         },
       });
-    }
+      break;
+
+    case "subscription.active":
+      await db.user.update({
+        where: {
+          id: object.metadata.userId,
+        },
+        data: {
+          customerId: object.customer.id,
+          subscriptionId: object.id,
+        },
+      });
+      break;
+
+    case "subscription.paid":
+      await db.user.update({
+        where: {
+          id: object.metadata.userId,
+        },
+        data: {
+          customerId: object.customer.id,
+          subscriptionId: object.id,
+          currentPeriodEnd: new Date(
+            object.subscription.current_period_end_date
+          ),
+        },
+      });
+      break;
+
+    case "subscription.trialing":
+    case "subscription.update":
+    case "subscription.paused":
+      await db.user.update({
+        where: {
+          id: object.metadata.userId,
+        },
+        data: {
+          customerId: object.customer.id,
+          subscriptionId: object.id,
+          currentPeriodEnd: new Date(object.current_period_end_date),
+        },
+      });
+      break;
+
+    case "refund.created":
+    case "dispute.created":
+      await db.user.update({
+        where: {
+          id: object.metadata.userId,
+        },
+        data: {
+          customerId: object.customer.id,
+          subscriptionId: object.subscription.id,
+          currentPeriodEnd: new Date(
+            object.subscription.current_period_end_date
+          ),
+        },
+      });
   }
 
   return NextResponse.json({

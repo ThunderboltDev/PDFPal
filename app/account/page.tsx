@@ -1,53 +1,18 @@
-import { db } from "@/lib/db";
-
-import Account from "./account";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { getUserSubscriptionPlan } from "@/lib/creem";
+
+import { auth } from "@/lib/auth";
+import Account from "./account";
+
+export const metadata: Metadata = {
+  title: "Account",
+};
 
 export default async function AccountWrapper() {
-  const session = await getServerSession();
-  const subscriptionPlan = await getUserSubscriptionPlan();
+  const session = await auth();
 
   if (!session || !session.user || !session.user.email)
-    return redirect("/auth");
+    return redirect(`/auth?callbackUrl=${encodeURIComponent("/account")}`);
 
-  const usage = await db.user.findUnique({
-    where: {
-      email: session.user.email,
-    },
-    select: {
-      _count: {
-        select: {
-          File: true,
-          Message: true,
-        },
-      },
-    },
-  });
-
-  const userWithAccounts = await db.user.findUnique({
-    where: { email: session.user.email },
-    select: {
-      displayName: true,
-      email: true,
-      avatarUrl: true,
-      subscriptionId: true,
-      accounts: {
-        select: {
-          provider: true,
-          createdAt: true,
-        },
-      },
-    },
-  });
-
-  return (
-    <Account
-      subscriptionPlan={subscriptionPlan}
-      userWithAccounts={userWithAccounts}
-      filesUploaded={usage?._count.File ?? 0}
-      messages={usage?._count.Message ?? 0}
-    />
-  );
+  return <Account session={session} />;
 }

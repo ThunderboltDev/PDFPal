@@ -29,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import "simplebar-react/dist/simplebar.min.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+
 import PDFFullScreen from "./full-screen";
 
 function Loader() {
@@ -39,10 +40,7 @@ function Loader() {
   );
 }
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 export interface PDFRendererProps {
   fileUrl: string;
@@ -111,11 +109,11 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
   }, [scale, rotation, currentPage]);
 
   return (
-    <div className="w-full bg-background/50 rounded-md shadow flex flex-col items-center">
-      <div className="h-14 w-full border-b border-secondary flex items-center justify-between px-4">
+    <div className="w-full h-full max-h-screen rounded-md flex flex-col items-center">
+      <div className="w-full bg-secondary border-b border-border flex items-center justify-between py-2 px-4">
         <form
           onSubmit={handleSubmit(handlePageSubmit)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1"
           aria-label="Page Navigation"
         >
           <Input
@@ -126,7 +124,7 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
             aria-invalid={!!errors.pageNumber}
             className="w-12 h-7 text-sm ml-2"
           />
-          <p className="text-muted-foreground text-sm space-x-1">
+          <p className="text-muted-foreground text-sm space-x-1 ml-1 mr-2">
             <span>/</span>
             <span>{numberOfPages || "?"}</span>
           </p>
@@ -201,12 +199,12 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
       </div>
 
       <div
-        className="flex-1 w-full max-h-screen"
+        className="flex-1 w-full h-full"
         ref={resizeContainerRef}
       >
-        <div className="h-full min-h-[calc(100vh-8rem)] relative">
+        <div className="h-full relative">
           {isRendering && <Loader />}
-          <SimpleBar className="max-h-[calc(100vh-8rem)]">
+          <SimpleBar className="h-full">
             <Document
               file={fileUrl}
               loading={<Loader />}

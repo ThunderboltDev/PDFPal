@@ -1,10 +1,8 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { getServerSession } from "next-auth";
 import axios from "axios";
 
-import { getUserSubscriptionPlan } from "@/lib/creem";
 import { pinecone } from "@/lib/pinecone";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import config from "@/config";
 
@@ -17,45 +15,56 @@ export const ourFileRouter = {
     pdf: {},
   })
     .middleware(async () => {
-      const session = await getServerSession(authOptions);
+      const session = await auth();
 
-      if (!session || !session.user?.id) throw new Error("Unauthorized");
+      if (!session) throw new Error("Unauthorized");
 
-      const subscriptionPlan = await getUserSubscriptionPlan();
-      const limits = subscriptionPlan.isSubscribed
+      const user = await db.user.findUnique({
+        where: {
+          id: session.userId,
+        },
+        select: {
+          currentPeriodEnd: true,
+        },
+      });
+
+      if (!user) throw new Error("User not found");
+
+      const isSubscribed =
+        user.currentPeriodEnd && user.currentPeriodEnd > new Date();
+
+      const limits = isSubscribed
         ? { maxFileSize: config.plans.pro.maxFileSize, maxFileCount: 1 }
         : { maxFileSize: config.plans.free.maxFileSize, maxFileCount: 1 };
 
       return {
-        userId: session.user.id,
-        subscriptionPlan,
+        userId: session.userId,
         fileConfig: limits,
+        isSubscribed,
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
+      const { userId, isSubscribed } = metadata;
       const createdFile = await db.file.create({
         data: {
           key: file.key,
           name: file.name,
-          userId: metadata.userId,
+          userId: userId,
           url: file.ufsUrl,
           uploadStatus: "PROCESSING",
         },
       });
 
       try {
-        const response = await axios.get(file.ufsUrl, {
+        const { data } = await axios.get(file.ufsUrl, {
           responseType: "arraybuffer",
-          timeout: 1 * 60 * 10000,
+          timeout: 5 * 60 * 10000,
         });
-        const data = await response.data;
 
         const { Document } = await import("mupdf");
 
         const document = Document.openDocument(data, "application/pdf");
         const numberOfPages = document.countPages();
-
-        const { isSubscribed } = metadata.subscriptionPlan;
 
         const plan = isSubscribed ? "pro" : "free";
 
@@ -107,7 +116,7 @@ export const ourFileRouter = {
           },
           where: {
             id: createdFile.id,
-            userId: metadata.userId,
+            userId: userId,
           },
         });
       } catch (error) {
@@ -118,7 +127,7 @@ export const ourFileRouter = {
           },
           where: {
             id: createdFile.id,
-            userId: metadata.userId,
+            userId: userId,
           },
         });
       }

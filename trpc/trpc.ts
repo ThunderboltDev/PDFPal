@@ -4,7 +4,8 @@ import superjson from "superjson";
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { User } from "@prisma/client";
+
+import { User } from "@/prisma/generated/prisma-client";
 import { db } from "@/lib/db";
 
 const redis = Redis.fromEnv();
@@ -19,19 +20,26 @@ const t = initTRPC
     transformer: superjson,
   });
 
-export function createRateLimit(max: number, durationSeconds: number) {
+export function createRateLimit(
+  max: number,
+  durationSeconds: number,
+  routeName?: string
+) {
   const limiter = new Ratelimit({
     redis,
-    limiter: Ratelimit.fixedWindow(max, `${durationSeconds} s`),
+    limiter: Ratelimit.slidingWindow(max, `${durationSeconds} s`),
   });
 
-  return t.middleware(async ({ ctx, next }) => {
+  return t.middleware(async ({ ctx, next, path }) => {
     const identifier =
-      ctx.session?.user.id ??
+      ctx.session?.user?.id ??
       ctx.user?.id ??
       ctx.req?.headers.get("x-forwarded-for") ??
       "anon";
-    const { success } = await limiter.limit(identifier);
+
+    const key = `${routeName ?? path}:${identifier}`;
+
+    const { success } = await limiter.limit(key);
 
     if (!success) {
       throw new TRPCError({
@@ -62,7 +70,6 @@ export const isAuthenticated = t.middleware(async ({ ctx, next }) => {
     ctx: {
       ...ctx,
       userId: user?.id,
-      user,
     },
   });
 });
@@ -71,12 +78,3 @@ export const router = t.router;
 
 export const publicProcedure = t.procedure;
 export const privateProcedure = t.procedure.use(isAuthenticated);
-
-export const authProcedure = publicProcedure.use(createRateLimit(3, 60));
-export const contactProcedure = publicProcedure.use(createRateLimit(1, 86400));
-
-export const chatProcedure = privateProcedure.use(createRateLimit(25, 60));
-export const filesProcedure = privateProcedure.use(createRateLimit(10, 5 * 60));
-export const subscriptionProcedure = privateProcedure.use(
-  createRateLimit(1, 60)
-);

@@ -1,4 +1,4 @@
-import { router, filesProcedure } from "@/trpc/trpc";
+import { router, privateProcedure, createRateLimit } from "@/trpc/trpc";
 import { utapi } from "@/app/server/uploadthing";
 import { pinecone } from "@/lib/pinecone";
 import { TRPCError } from "@trpc/server";
@@ -6,36 +6,40 @@ import { db } from "@/lib/db";
 import z from "zod";
 
 export const filesRouter = router({
-  getUserFiles: filesProcedure.input(z.void()).query(async ({ ctx }) => {
-    const { userId } = ctx;
-    const files = await db.file.findMany({
-      where: {
-        userId: userId,
-      },
-    });
+  getUserFiles: privateProcedure
+    .use(createRateLimit(10, 5 * 60, "get-user-files"))
+    .input(z.void())
+    .query(async ({ ctx }) => {
+      const { userId } = ctx;
+      const files = await db.file.findMany({
+        where: {
+          userId: userId,
+        },
+      });
 
-    const messageCounts = files.length
-      ? await db.message.groupBy({
-          by: ["fileId"],
-          where: { fileId: { in: files.map((f) => f.id) } },
-          _count: { id: true },
-        })
-      : [];
+      const messageCounts = files.length
+        ? await db.message.groupBy({
+            by: ["fileId"],
+            where: { fileId: { in: files.map((f) => f.id) } },
+            _count: { id: true },
+          })
+        : [];
 
-    const countsMap: Record<string, number> = {};
+      const countsMap: Record<string, number> = {};
 
-    messageCounts.forEach((messageCount) => {
-      const fileId = messageCount.fileId;
-      if (fileId) countsMap[fileId] = messageCount._count.id;
-    });
+      messageCounts.forEach((messageCount) => {
+        const fileId = messageCount.fileId;
+        if (fileId) countsMap[fileId] = messageCount._count.id;
+      });
 
-    return files.map((file) => ({
-      ...file,
-      messageCount: countsMap[file.id] ?? 0,
-    }));
-  }),
+      return files.map((file) => ({
+        ...file,
+        messageCount: countsMap[file.id] ?? 0,
+      }));
+    }),
 
-  getFileUploadStatus: filesProcedure
+  getFileUploadStatus: privateProcedure
+    .use(createRateLimit(1, 10, "get-file-upload-status"))
     .input(z.object({ fileId: z.string() }))
     .query(async ({ ctx, input }) => {
       const file = await db.file.findFirst({
@@ -50,7 +54,8 @@ export const filesRouter = router({
       return { status: file.uploadStatus };
     }),
 
-  getFile: filesProcedure
+  getFile: privateProcedure
+    .use(createRateLimit(1, 15, "get-file"))
     .input(z.object({ key: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
@@ -67,7 +72,8 @@ export const filesRouter = router({
       return file;
     }),
 
-  renameFile: filesProcedure
+  renameFile: privateProcedure
+    .use(createRateLimit(1, 10, "rename-file"))
     .input(
       z.object({
         id: z.string(),
@@ -112,7 +118,8 @@ export const filesRouter = router({
       return file;
     }),
 
-  deleteFile: filesProcedure
+  deleteFile: privateProcedure
+    .use(createRateLimit(1, 15, "delete-file"))
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;

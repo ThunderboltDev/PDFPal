@@ -179,8 +179,8 @@ export default function ChatContextProvider({
     },
   });
 
-  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
+  const handleInputChange = (_e: ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(_e.target.value);
   };
 
   const addMessage = () => sendMessage({ message });

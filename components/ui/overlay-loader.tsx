@@ -2,14 +2,14 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { PropsWithChildren } from "react";
 
-interface OverlayLoader extends PropsWithChildren {
+interface OverlayLoaderProps extends PropsWithChildren {
   isLoading?: boolean;
 }
 
 export default function OverlayLoader({
   children,
   isLoading = true,
-}: OverlayLoader) {
+}: OverlayLoaderProps) {
   return (
     <div
       className={cn(

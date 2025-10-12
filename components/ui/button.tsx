@@ -8,7 +8,7 @@ import Link from "next/link";
 const baseClass =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md " +
   "text-sm font-medium transition-all " +
-  "shadow-md " +
+  "shadow-sm " +
   "no-underline " +
   "disabled:cursor-not-allowed disabled:opacity-50 " +
   "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 " +
@@ -21,7 +21,9 @@ const buttonVariants = cva(baseClass, {
   variants: {
     variant: {
       default:
-        "bg-background bg-background/90 text-foreground focus-visible:ring-primary/50",
+        "bg-secondary hover:bg-secondary/80 text-foreground hover:text-secondary-foreground focus-visible:ring-primary/50",
+      muted:
+        "bg-muted hover:bg-muted/80 text-foreground hover:text-secondary-foreground focus-visible:ring-primary/50",
       primary:
         "bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary/50",
       accent:
@@ -34,13 +36,15 @@ const buttonVariants = cva(baseClass, {
       warning:
         "bg-warning text-white hover:bg-warning/90 focus-visible:ring-warning/50",
       ghost:
-        "bg-transparent hover:bg-background text-foreground shadow-none focus-visible:ring-primary/50",
+        "bg-transparent hover:bg-muted text-foreground shadow-none focus-visible:ring-primary/50",
     },
     size: {
       default: "h-9 px-4 py-2 has-[>svg]:px-3",
       sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
       lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
       icon: "size-9",
+      responsive:
+        "h-9 px-4 py-2 has-[>svg]:px-3 md:h-8 md:rounded-md md:gap-1.5 md:px-3 md:has-[>svg]:px-2.5",
     },
   },
   defaultVariants: {

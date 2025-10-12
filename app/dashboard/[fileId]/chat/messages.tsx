@@ -5,7 +5,7 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { useIntersection } from "@mantine/hooks";
 
 import { trpc } from "@/app/_trpc/client";
-import Skeleton from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ChatContext } from "./chat-context";
 import Message from "./message";
 import { cn } from "@/lib/utils";
@@ -61,8 +61,7 @@ export default function Messages({ fileId }: MessagesProps) {
     <div
       ref={containerRef}
       className={cn(
-        "flex flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto",
-        "max-h-[calc(100vh-10.5rem)] border-zinc-200",
+        "flex flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto h-full",
         {
           "cursor-pointer": isLoading,
         }
@@ -92,10 +91,8 @@ export default function Messages({ fileId }: MessagesProps) {
               isUserMessage: index % 2 === 1,
               text: (
                 <Skeleton
+                  variant={index % 2 === 1 ? "muted" : "default"}
                   width={(containerRef.current?.clientWidth ?? 100) * 0.65}
-                  className={cn({
-                    "opacity-30": index % 2 === 1,
-                  })}
                   count={Math.floor(
                     Math.random() * (index % 2 === 1 ? 2 : 4) + 1
                   )}

@@ -5,11 +5,11 @@ import { ChevronLeft, XCircle, Zap } from "lucide-react";
 import { trpc } from "@/app/_trpc/client";
 import Loader from "@/components/ui/loader";
 import { LinkButton } from "@/components/ui/button";
-
-import Messages from "./messages";
-import ChatInput from "./chat-input";
-import ChatContextProvider from "./chat-context";
 import config from "@/config";
+
+import ChatContextProvider from "./chat-context";
+import ChatInput from "./chat-input";
+import Messages from "./messages";
 
 const plans = config.plans;
 
@@ -35,7 +35,7 @@ export default function ChatWrapper({
 
   if (data?.status.includes("FAILED")) {
     return (
-      <div className="min-h-[calc(100vh-8rem)] flex flex-col justify-center items-center">
+      <div className="min-h-full flex flex-col justify-center items-center">
         <XCircle className="size-16 text-danger" />
         <div className="text-center mt-4">
           <h4>Processing Failed</h4>
@@ -98,27 +98,29 @@ export default function ChatWrapper({
 
   return (
     <ChatContextProvider fileId={fileId}>
-      <div className="relative w-full min-h-full flex divide-y divide-secondary flex-col justify-between gap-2">
-        {isLoading ? (
-          <Loader>
-            <h4>Loading...</h4>
-            <p className="text-muted-foreground text-sm">
-              Prepraring your PDF file
-            </p>
-          </Loader>
-        ) : data?.status === "PROCESSING" ? (
-          <Loader>
-            <h4>Processing...</h4>
-            <p className="text-muted-foreground text-sm">
-              Processing your PDF file
-            </p>
-          </Loader>
-        ) : (
-          <div className="flex-1 justify-between flex flex-col mb-28">
+      <div className="relative w-full h-full flex flex-col">
+        <div className="flex-1 min-h-0">
+          {isLoading ? (
+            <Loader>
+              <h4>Loading...</h4>
+              <p className="text-muted-foreground text-sm">
+                Prepraring your PDF file
+              </p>
+            </Loader>
+          ) : data?.status === "PROCESSING" ? (
+            <Loader>
+              <h4>Processing...</h4>
+              <p className="text-muted-foreground text-sm">
+                Processing your PDF file
+              </p>
+            </Loader>
+          ) : (
             <Messages fileId={fileId} />
-          </div>
-        )}
-        <ChatInput isLoading={isLoading} />
+          )}
+        </div>
+        <div className="flex-shrink-0 border-t border-border bg-secondary">
+          <ChatInput isLoading={isLoading} />
+        </div>
       </div>
     </ChatContextProvider>
   );

@@ -122,12 +122,12 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border mx-4 h-64 border-dashed border-muted rounded-lg"
+          className="border mx-4 h-64 border-dashed border-gray-400 rounded-lg"
         >
           <div className="flex items-center justify-center size-full">
-            <div className="flex flex-col items-center justify-center size-full rounded-lg cursor-pointer bg-background/50 hover:bg-background/75">
+            <div className="flex flex-col items-center justify-center size-full rounded-lg cursor-pointer bg-secondary/50 hover:bg-secondary/100">
               {isUploading && acceptedFiles && acceptedFiles[0] && (
-                <div className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-zinc-200 divide-x divide-zinc-200">
+                <div className="max-w-xs bg-muted flex items-center rounded-md overflow-hidden outline outline-gray-300 divide-x divide-gray-300">
                   <div className="px-3 py-2 h-full grid place-items-center">
                     <File className="size-4 text-primary" />
                   </div>
@@ -156,7 +156,10 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Cloud className="size-12 text-secondary-foreground mb-2" />
+                  <Cloud
+                    strokeWidth={1.5}
+                    className="size-12 fill-muted text-secondary-foreground mb-2"
+                  />
                   <p className="mb-1 text-secondary-foreground">
                     <span className="font-semibold">Click to upload</span> or
                     drag and drop

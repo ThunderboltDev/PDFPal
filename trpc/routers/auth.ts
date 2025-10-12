@@ -1,15 +1,16 @@
-import { router, authProcedure } from "@/trpc/trpc";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { router, publicProcedure, createRateLimit } from "@/trpc/trpc";
 import { TRPCError } from "@trpc/server";
+import { auth } from "@/lib/auth";
 
 export const authRouter = router({
-  authCallback: authProcedure.query(async () => {
-    const session = await getServerSession(authOptions);
+  authCallback: publicProcedure
+    .use(createRateLimit(9, 5 * 60, "auth-callback"))
+    .query(async () => {
+      const session = await auth();
 
-    if (!session || !session.user?.email || !session.user?.id)
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!session || !session.user?.email || !session.user?.id)
+        throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    return { success: true };
-  }),
+      return { success: true };
+    }),
 });

@@ -1,11 +1,12 @@
 "use client";
 
 import { Loader2, ReceiptText, Zap } from "lucide-react";
-
-import { trpc } from "@/app/_trpc/client";
-import { Button } from "./ui/button";
-import { toast } from "sonner";
 import { FormEvent } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { trpc } from "@/app/_trpc/client";
+import { cn } from "@/lib/utils";
 
 interface UpgradeButtonProps {
   className?: string;
@@ -40,7 +41,7 @@ export function UpgradeButton({
 
   return (
     <Button
-      className={className}
+      className={cn("group", className)}
       onClick={handleClick}
       variant="primary"
       disabled={isPending}
@@ -48,17 +49,18 @@ export function UpgradeButton({
     >
       {isPending ? (
         <>
-          <Loader2 className="size-4 mr-4 animate-spin" />
+          <Loader2 className="size-4 animate-spin" />
           Redirecting...
         </>
       ) : isSubscribed ? (
         <>
-          <ReceiptText />
+          <ReceiptText className="" />
           Manage Subscription
         </>
       ) : (
         <>
-          <Zap /> Upgrade to Pro
+          <Zap className="fill-white/25 group-hover:rotate-10 group-hover:scale-125 transition-all duration-300" />{" "}
+          Upgrade to Pro
         </>
       )}
     </Button>

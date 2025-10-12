@@ -15,6 +15,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { AlertCircle } from "lucide-react";
 
 const Form = FormProvider;
 
@@ -45,7 +46,9 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
+
   const { getFieldState } = useFormContext();
+
   const formState = useFormState({ name: fieldContext.name });
   const fieldState = getFieldState(fieldContext.name, formState);
 
@@ -162,6 +165,26 @@ function FormError({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
+function FormSubmitError({
+  className,
+  error,
+  ...props
+}: { error: string | null } & React.ComponentProps<"div">) {
+  if (!error) return;
+  return (
+    <div
+      className={cn(
+        "text-sm text-danger bg-danger/15 px-3 py-2 rounded-sm text-left",
+        className
+      )}
+      {...props}
+    >
+      <AlertCircle className="size-4.5 inline mr-2" />
+      {error}
+    </div>
+  );
+}
+
 export {
   useFormField,
   Form,
@@ -171,4 +194,5 @@ export {
   FormDescription,
   FormError,
   FormField,
+  FormSubmitError,
 };

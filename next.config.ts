@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
+
+    config.module.rules.push({
+      test: /pdf\.worker\.(min\.)?mjs$/,
+      type: "asset/resource",
+    });
+
     return config;
   },
   images: {

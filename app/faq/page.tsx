@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Metadata } from "next";
 
 import {
   Accordion,
@@ -7,6 +8,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import config from "@/config";
+
+export const metadata: Metadata = {
+  title: "FAQ",
+};
 
 const plans = config.plans;
 
@@ -84,9 +89,9 @@ const faqs = [
 
 export default function FAQ() {
   return (
-    <div className="container-7xl mt-20">
-      <h2 className="text-center mb-8">Frequently Asked Questions</h2>
-      <p>
+    <div className="container-2xl mt-20">
+      <h2 className="md:text-center mb-4">Frequently Asked Questions</h2>
+      <p className="md:text-center">
         We&apos;ve answered some of the common questions about PDF Pal. If you{" "}
         still have questions, feel free to{" "}
         <Link
@@ -97,22 +102,23 @@ export default function FAQ() {
         </Link>
         .
       </p>
-      <Accordion
-        type="single"
-        className="mt-10"
-        collapsible
-      >
-        {faqs.map((faq, index) => (
-          <AccordionItem
-            key={index}
-            value={`faq-${index}`}
-          >
-            <AccordionTrigger>{faq.question}</AccordionTrigger>
-            <AccordionContent>{faq.answer}</AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-      <p className="mt-4 mb-12">
+      <main className="my-6">
+        <Accordion
+          type="single"
+          collapsible
+        >
+          {faqs.map((faq, index) => (
+            <AccordionItem
+              key={index}
+              value={`faq-${index}`}
+            >
+              <AccordionTrigger>{faq.question}</AccordionTrigger>
+              <AccordionContent>{faq.answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </main>
+      <p className="mb-12">
         Still can&apos;t find the answer you&apos;re looking for?{" "}
         <Link href="/contact">Contact us</Link> or email us at{" "}
         <Link

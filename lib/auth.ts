@@ -1,25 +1,70 @@
-import { createTransport } from "nodemailer";
+import axios from "axios";
+import NextAuth from "next-auth";
+import Email from "next-auth/providers/email";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 
-import EmailProvider from "next-auth/providers/email";
-import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
-
-import { NextAuthOptions } from "next-auth";
+import { cookies } from "next/headers";
+import { Adapter } from "@auth/core/adapters";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { createTransport } from "nodemailer";
 
 import { db } from "@/lib/db";
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
-  providers: [
-    EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
-      maxAge: 15 * 60,
-      async sendVerificationRequest(params) {
-        const { identifier, url, provider } = params;
-        const { host } = new URL(url);
+type GeoResponse = {
+  status: "success" | "fail";
+  timezone?: string;
+  country?: string;
+  city?: string;
+};
 
+function CustomAdapter() {
+  const prisma = PrismaAdapter(db);
+
+  return {
+    ...prisma,
+    async updateUser(data) {
+      if ("emailVerified" in data) delete data.emailVerified;
+      return prisma.updateUser!(data);
+    },
+    async createVerificationToken(verificationToken) {
+      const { identifier, token, expires } = verificationToken;
+
+      return await db.verificationToken.upsert({
+        where: {
+          identifier_token: { identifier, token },
+        },
+        update: {
+          token,
+          expires,
+        },
+        create: {
+          identifier,
+          token,
+          expires,
+        },
+      });
+    },
+  } as Adapter;
+}
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: CustomAdapter(),
+  providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    }),
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID!,
+      clientSecret: process.env.AUTH_GITHUB_SECRET!,
+    }),
+    Email({
+      maxAge: 60 * 60,
+      from: process.env.EMAIL_FROM,
+      server: process.env.EMAIL_SERVER,
+      async sendVerificationRequest({ identifier, url, provider }) {
+        const { host } = new URL(url);
         const transport = createTransport(provider.server);
 
         const result = await transport.sendMail({
@@ -31,103 +76,120 @@ export const authOptions: NextAuthOptions = {
         });
 
         const failed = result.rejected.concat(result.pending).filter(Boolean);
+
         if (failed.length) {
           throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
         }
       },
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID!,
-      clientSecret: process.env.GOOGLE_SECRET!,
-    }),
-    GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
   ],
   callbacks: {
-    async signIn({ user, account, email }) {
-      if (!user.email) return "Email is not provided";
+    async signIn({ email, profile, user }) {
       if (email?.verificationRequest) return true;
+      if (!user.email) return false;
 
       const existingUser = await db.user.findUnique({
         where: { email: user.email },
-        include: { accounts: true },
       });
 
       if (existingUser) {
-        if (!account) return "Account cannot be found!";
-        const linked = existingUser.accounts.find(
-          (acc) => acc.provider === account?.provider
-        );
-
-        if (!linked) {
-          await db.account.create({
-            data: {
-              userId: existingUser.id,
-              type: account.type,
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-              refreshToken: account.refresh_token,
-              accessToken: account.access_token,
-              expiresAt: account.expires_at
-                ? new Date(account.expires_at * 1000)
-                : null,
-
-              tokenType: account.token_type,
-              idToken: account.id_token,
-              scope: account.scope,
-              sessionState: account.session_state,
-            },
-          });
-        }
+        await db.user.update({
+          where: { email: user.email },
+          data: {
+            lastLogin: new Date(),
+          },
+        });
       } else {
         await db.user.create({
           data: {
             id: user.id,
-            displayName: user.name,
-            avatarUrl: user.image,
+            name: user.name ?? profile?.name,
             email: user.email,
+            image: user.image ?? (profile?.image as string | undefined),
+            lastLogin: new Date(),
           },
         });
       }
 
       return true;
     },
-    async jwt({ token, user }) {
-      try {
-        if (user?.id) token.id = user.id;
-        return token;
-      } catch (err) {
-        console.error("jwt callback error:", err, { token, user });
-        return token;
-      }
-    },
-    async session({ session, token, user }) {
-      try {
-        if (!session?.user) return session;
+    async session({ session }) {
+      const cookieStore = await cookies();
 
-        const userId = token?.id ?? token?.sub ?? user?.id;
-        if (userId) session.user.id = String(userId);
+      const userAgent = cookieStore.get("client-ua")?.value || null;
+      const ipAddress = cookieStore.get("client-ip")?.value || null;
 
-        return session;
-      } catch (error) {
-        console.error("session callback error:", error, {
-          session,
-          token,
-          user,
+      const sessionRecord = await db.session.findUnique({
+        where: { sessionToken: session.sessionToken },
+      });
+
+      if (!sessionRecord) return session;
+
+      if (sessionRecord.userAgent !== userAgent) {
+        await db.session.updateMany({
+          where: {
+            sessionToken: session.sessionToken,
+          },
+          data: {
+            userAgent,
+          },
         });
-        return session;
       }
+
+      if (
+        Date.now() - new Date(sessionRecord.lastActivity).getTime() >
+        10 * 60_000
+      ) {
+        await db.session.updateMany({
+          where: {
+            sessionToken: session.sessionToken,
+          },
+          data: {
+            lastActivity: new Date(),
+          },
+        });
+      }
+
+      if (ipAddress) {
+        const fields = "country,city,timezone,status";
+        const url = `http://ip-api.com/json/${ipAddress}?fields=${fields}`;
+
+        try {
+          const response = await axios.get(url);
+          const data: GeoResponse = response.data;
+
+          if (data && data.status === "success") {
+            await db.session.updateMany({
+              where: {
+                sessionToken: session.sessionToken,
+              },
+              data: {
+                timezone: data.timezone,
+                country: data.country,
+                city: data.city,
+              },
+            });
+          }
+        } catch (error) {
+          console.error("Unable to use ip geolocation:", error);
+        }
+      }
+
+      return session;
     },
   },
   pages: {
-    signOut: "/logout",
+    newUser: "/dashboard",
     signIn: "/auth",
+    signOut: "/logout",
     error: "/auth",
   },
-  session: { strategy: "jwt" },
-};
+  session: {
+    strategy: "database",
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+  },
+});
 
 function text({ url, host }: { url: string; host: string }) {
   return `Verify your email: ${host}\n${url}\n\n`;

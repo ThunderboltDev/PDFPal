@@ -74,9 +74,10 @@ export default function ActionDialog({
           </DialogHeader>
           <form onSubmit={async (e) => await handleSubmit(e)}>
             {dialog.children}
-            <DialogFooter>
+            <DialogFooter className="gap-4">
               <DialogClose asChild>
                 <Button
+                  size="responsive"
                   variant="default"
                   disabled={isLoading}
                 >
@@ -84,6 +85,7 @@ export default function ActionDialog({
                 </Button>
               </DialogClose>
               <Button
+                size="responsive"
                 type="submit"
                 {...(dialog.button ? dialog.button : button)}
                 disabled={isLoading || dialog.button?.disabled}

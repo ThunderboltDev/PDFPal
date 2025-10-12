@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated/prisma-client"
 }
 
 datasource db {
@@ -8,70 +9,78 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum SubscriptionStatus {
+  PAID
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  UNPAID
+}
+
 model User {
-  id          String  @id @default(cuid())
-  displayName String?
-  email       String  @unique
-  avatarUrl   String?
+  id    String  @id @default(cuid())
+  name  String?
+  image String?
+  email String  @unique
 
   lastLogin DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  planId             PlanId?
-  customerId         String?
-  subscriptionId     String?
-  subscriptionStatus SubscriptionStatus?
-  currentPeriodEnd   DateTime?
+  customerId       String?
+  subscriptionId   String?
+  currentPeriodEnd DateTime?
 
   accounts Account[]
+  sessions Session[]
 
   File    File[]
   Message Message[]
 }
 
 model Account {
-  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refreshToken      String? @db.Text
-  accessToken       String? @db.Text
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
-  expiresAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  tokenType    String?
-  scope        String?
-  idToken      String? @db.Text
-  sessionState String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  userAgent String?
+  timezone  String?
+  country   String?
+  city      String?
+
+  createdAt    DateTime @default(now())
+  lastActivity DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
   identifier String
-  token      String   @unique
+  token      String
   expires    DateTime
 
   @@id([identifier, token])
-}
-
-enum PlanId {
-  free
-  pro
-}
-
-enum SubscriptionStatus {
-  active
-  canceled
-  trialing
-  unpaid
-  paused
 }
 
 enum AuthProvider {

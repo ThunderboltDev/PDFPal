@@ -1,8 +1,10 @@
-import { getUserSubscriptionPlan } from "@/lib/creem";
+import { Metadata } from "next";
 import Billing from "./billing";
 
-export default async function BillingPage() {
-  const subscriptionPlan = await getUserSubscriptionPlan();
+export const metadata: Metadata = {
+  title: "Billing",
+};
 
-  return <Billing subscriptionPlan={subscriptionPlan} />;
+export default async function BillingPage() {
+  return <Billing />;
 }

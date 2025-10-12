@@ -1,56 +1,57 @@
 "use client";
 
-import { Mail, Trash, User } from "lucide-react";
+import { Loader2, LogOut, Trash, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { UAParser } from "ua-parser-js";
+import { Session } from "next-auth";
 import { format } from "date-fns";
-import Image from "next/image";
+import { toast } from "sonner";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { UpgradeButton } from "@/components/upgrade-button";
 import ActionDialog from "@/components/ui/action-dialog";
 import { Separator } from "@/components/ui/separator";
-import Skeleton from "@/components/ui/skeleton";
-import { SubscriptionPlan } from "@/lib/creem";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { trpc } from "@/app/_trpc/client";
 import config from "@/config";
-import { UpgradeButton } from "@/components/upgrade-button";
-
-const providers = {
-  google: {
-    name: "Google",
-    image: "/providers/google.webp",
-  },
-  github: {
-    name: "GitHub",
-    image: "/providers/github.webp",
-  },
-  email: {
-    name: "Email",
-    icon: <Mail />,
-  },
-} as const;
 
 const plans = config.plans;
 
 interface AccountProps {
-  userWithAccounts: {
-    displayName: string | null;
-    email: string;
-    avatarUrl: string | null;
-    accounts: {
-      createdAt: Date;
-      provider: string;
-    }[];
-  } | null;
-  subscriptionPlan: SubscriptionPlan;
-  filesUploaded: number;
-  messages: number;
+  session: Session | null;
 }
 
-export default function Account({
-  userWithAccounts,
-  subscriptionPlan,
-  filesUploaded,
-  messages,
-}: AccountProps) {
-  const { name, isSubscribed, isCanceled, currentPeriodEnd } = subscriptionPlan;
+export default function Account({ session: currentSession }: AccountProps) {
+  const router = useRouter();
+  const utils = trpc.useUtils();
+
+  const { data: sessions } = trpc.user.getUserSessions.useQuery();
+  const { data: totalUsage } = trpc.user.getTotalUsage.useQuery();
+  const { data: userWithAccounts } = trpc.user.getUserWithAccounts.useQuery();
+
+  const { data: subscriptionPlan } =
+    trpc.subscription.getUserSubscriptionPlan.useQuery();
+
+  const { mutateAsync: deleteAccount } = trpc.user.deleteAccount.useMutation({
+    onSuccess: () => {
+      router.replace("/auth?callbackUrl=/account");
+    },
+    onError: () => {
+      toast.error("Something went wrong while deleting your account!");
+    },
+  });
+
+  const { mutateAsync: deleteSession } =
+    trpc.user.deleteUserSession.useMutation({
+      onSuccess: () => {
+        utils.user.getUserSessions.invalidate();
+        toast.success("Device removed!");
+      },
+      onError: () => {
+        toast.error("Failed to remove device!");
+      },
+    });
 
   return (
     <div className="container-2xl mt-20">
@@ -59,14 +60,12 @@ export default function Account({
       <h6 className="mt-6">Profile</h6>
       <Separator />
       <div className="flex items-center justify-start gap-4 mt-3">
-        <Avatar className="size-16">
-          {userWithAccounts?.avatarUrl ? (
+        <Avatar className="size-16 shadow-sm">
+          {userWithAccounts && (
             <AvatarImage
-              src={userWithAccounts.avatarUrl ?? ""}
+              src={userWithAccounts.image ?? ""}
               alt="Your profile avatar"
             />
-          ) : (
-            <Skeleton className="size-16" />
           )}
           <AvatarFallback className="text-2xl bg-secondary">
             <User className="size-10 text-muted-foreground" />
@@ -75,88 +74,197 @@ export default function Account({
         <div>
           {userWithAccounts ? (
             <p className="text-lg font-semibold">
-              {userWithAccounts.displayName}
+              {userWithAccounts.name ?? "You"}
             </p>
           ) : (
-            <Skeleton />
+            <Skeleton width={160} />
           )}
-          {userWithAccounts ? (
-            <p className="text-sm text-muted-foreground">
-              {userWithAccounts.email}
-            </p>
-          ) : (
-            <Skeleton />
-          )}
+          <p className="text-sm text-muted-foreground">
+            {userWithAccounts ? (
+              <>{userWithAccounts.email}</>
+            ) : (
+              <Skeleton width={80} />
+            )}
+          </p>
         </div>
-      </div>
-      <h6 className="mt-8">Accounts</h6>
-      <Separator />
-      <div className="mt-2 space-y-1">
-        {userWithAccounts?.accounts.map((account) => {
-          const provider = account.provider as keyof typeof providers;
-          const providerName = providers[provider].name;
-          return (
-            <div
-              key={account.provider}
-              className="flex flex-row gap-2 items-center"
-            >
-              {provider === "email" ? (
-                providers[provider].icon
-              ) : (
-                <Image
-                  src={providers[provider].image}
-                  alt={`Provider: ${providerName}`}
-                  className="size-5"
-                  width={128}
-                  height={128}
-                  loading="lazy"
-                />
-              )}
-              <span className="font-medium">{providerName}</span>
-              <span className="text-muted-foreground">
-                {format(new Date(account.createdAt), "dd/MM/yyyy")}
-              </span>
-            </div>
-          );
-        })}
       </div>
       <h6 className="mt-8">Subscription</h6>
       <Separator />
       <div className="mt-2 flex flex-row gap-6 items-center justify-between">
         <div>
-          <p>
-            You are currently on the{" "}
-            <span className="font-medium">{name} Plan</span>
+          {subscriptionPlan ? (
+            <p>
+              You are currently on the{" "}
+              <span className="font-medium">{subscriptionPlan.name} Plan</span>
+            </p>
+          ) : (
+            <Skeleton width={256} />
+          )}
+          <p className="text-sm text-muted-foreground">
+            {subscriptionPlan ? (
+              subscriptionPlan?.isSubscribed &&
+              subscriptionPlan?.currentPeriodEnd ? (
+                <>
+                  {subscriptionPlan.isCanceled
+                    ? "Your plan will be canceled on "
+                    : "Your plan renews on "}
+                  {format(subscriptionPlan.currentPeriodEnd, "dd/MM/yyyy")}
+                </>
+              ) : (
+                <>
+                  Upgrade to <span className="font-medium">Pro Plan</span> for
+                  more features
+                </>
+              )
+            ) : (
+              <Skeleton width={200} />
+            )}
           </p>
-          {isSubscribed && currentPeriodEnd && (
-            <p className="text-xs text-muted-foreground">
-              {isCanceled
-                ? "Your plan will be canceled on "
-                : "Your plan renews on "}
-              {format(currentPeriodEnd, "dd/MM/yyyy")}
-            </p>
-          )}
-          {!isSubscribed && !isCanceled && (
-            <p className="text-sm text-muted-foreground">
-              Upgrade to <span className="font-medium">Pro Plan</span> for more
-              features
-            </p>
-          )}
         </div>
         <div>
-          <UpgradeButton isSubscribed={isSubscribed} />
+          {subscriptionPlan ? (
+            <UpgradeButton isSubscribed={subscriptionPlan.isSubscribed} />
+          ) : (
+            <Skeleton
+              borderRadius={6}
+              width={150}
+              height={36}
+            />
+          )}
         </div>
       </div>
       <h6 className="mt-8">Total Usage</h6>
       <Separator />
       <div className="mt-2">
         <p>
-          <span className="font-medium">Files Uploaded:</span> {filesUploaded} /{" "}
-          {isSubscribed ? plans.pro.maxFiles : plans.free.maxFiles}
+          <span className="font-medium">Files Uploaded:</span>{" "}
+          {totalUsage ? (
+            <span>
+              {totalUsage.files} /{" "}
+              {subscriptionPlan?.isSubscribed
+                ? plans.pro.maxFiles
+                : plans.free.maxFiles}
+            </span>
+          ) : (
+            <Skeleton
+              className="inline"
+              width={50}
+            />
+          )}
         </p>
         <p>
-          <span className="font-medium">Total Messages:</span> {messages}
+          <span className="font-medium">Total Messages:</span>{" "}
+          {totalUsage?.messages ?? (
+            <Skeleton
+              className="inline"
+              width={35}
+            />
+          )}
         </p>
+      </div>
+      <h6 className="mt-8">Active Devices</h6>
+      <Separator />
+      <div className="mt-2 space-y-3">
+        {sessions && sessions.length > 0 ? (
+          sessions.map((session, index) => {
+            const parser = new UAParser(session.userAgent ?? "");
+            const deviceName = `${parser.getOS().name ?? "Unknown OS"} ${
+              parser.getOS().version ?? "- Unknown Version"
+            }`;
+            const isCurrent =
+              session.sessionToken === currentSession?.sessionToken;
+            return (
+              <div
+                key={index}
+                className="flex flex-row justify-between items-center"
+              >
+                <div className="text-muted-foreground text-sm">
+                  <p className="text-secondary-foreground text-base font-semibold flex flex-row gap-2 items-center">
+                    {deviceName}
+                    {isCurrent && <Badge variant="primary">You</Badge>}
+                  </p>
+                  <p>
+                    {session.country && session.city ? (
+                      <>
+                        {session.city}, {session.country}
+                      </>
+                    ) : session.country ? (
+                      <>{session.country}</>
+                    ) : session.city ? (
+                      <>{session.city}</>
+                    ) : (
+                      <></>
+                    )}
+                  </p>
+                  <p>
+                    {parser.getBrowser().name ?? "Unknown Browser"}{" "}
+                    {parser.getBrowser().version ?? "- Unknown Version"}
+                  </p>
+                  <p>
+                    {format(
+                      new Date(session.lastActivity),
+                      "dd/MM/yyyy hh:mm a"
+                    )}
+                  </p>
+                </div>
+                <div>
+                  {!isCurrent && (
+                    <ActionDialog
+                      dialog={{
+                        title: "Remove Device",
+                        description: (
+                          <>
+                            Are you sure you want to remove{" "}
+                            <strong>{deviceName}</strong>? This will log the
+                            device out.
+                          </>
+                        ),
+                        button: {
+                          variant: "danger",
+                          children: (
+                            <>
+                              <LogOut className="size-4" />
+                              Remove Device
+                            </>
+                          ),
+                        },
+                        buttonChildrenWhenLoading: (
+                          <>
+                            <Loader2 className="size-4 animate-spin" />
+                            Removing...
+                          </>
+                        ),
+                      }}
+                      button={{
+                        children: (
+                          <>
+                            <LogOut className="size-4" /> Remove
+                          </>
+                        ),
+                        variant: "danger",
+                        size: "sm",
+                      }}
+                      onConfirm={async () => {
+                        await deleteSession({
+                          sessionToken: session.sessionToken,
+                        });
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="flex flex-col gap-3 mt-4">
+            <Skeleton
+              className="h-18 w-full"
+              borderRadius={12}
+              inline={true}
+              count={2}
+            />
+          </div>
+        )}
       </div>
       <h6 className="mt-8">Danger Zone</h6>
       <Separator />
@@ -168,25 +276,42 @@ export default function Account({
           </p>
         </div>
         <ActionDialog
-          button={{
-            children: (
-              <>
-                <Trash /> Delete
-              </>
-            ),
-            variant: "danger",
-          }}
           dialog={{
             title: "Delete Account",
             description: (
               <>
                 Are you sure you want to delete your account? All of your user
-                data, PDF files and chat history will be deleted{" "}
-                <strong>permanently</strong>!
+                data, PDF files and chat history will be{" "}
+                <strong>permanently</strong> deleted!
+              </>
+            ),
+            button: {
+              variant: "danger",
+              children: (
+                <>
+                  <Trash className="size-4" />
+                  Delete Account
+                </>
+              ),
+            },
+            buttonChildrenWhenLoading: (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Deleting...
               </>
             ),
           }}
-          onConfirm={() => {}}
+          button={{
+            variant: "danger",
+            children: (
+              <>
+                <Trash /> Delete
+              </>
+            ),
+          }}
+          onConfirm={async () => {
+            await deleteAccount();
+          }}
         />
       </div>
     </div>

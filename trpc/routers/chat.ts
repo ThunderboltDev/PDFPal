@@ -1,10 +1,11 @@
-import { router, chatProcedure } from "@/trpc/trpc";
+import { router, privateProcedure, createRateLimit } from "@/trpc/trpc";
 import { TRPCError } from "@trpc/server";
 import { db } from "@/lib/db";
 import z from "zod";
 
 export const chatRouter = router({
-  getFileMessages: chatProcedure
+  getFileMessages: privateProcedure
+    .use(createRateLimit(10, 60, "get-file-messages"))
     .input(
       z.object({
         limit: z.number().min(1).max(25).default(15),

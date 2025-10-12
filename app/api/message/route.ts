@@ -1,19 +1,18 @@
-import { getServerSession } from "next-auth";
 import { NextRequest } from "next/server";
 
 import { InferenceClient } from "@huggingface/inference";
 
 import { MessageValidator } from "./message-validation";
 import { pinecone } from "@/lib/pinecone";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { authOptions } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
-  if (!session || !session.user.id)
+  if (!session || !session.user?.id)
     return new Response("Unauthorized", { status: 401 });
 
   const userId = session.user.id;

@@ -9,6 +9,7 @@ export default function Logout() {
       await signOut({
         callbackUrl: "/auth",
       });
+
     logout();
   });
 
