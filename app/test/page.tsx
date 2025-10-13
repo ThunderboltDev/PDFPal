@@ -5,7 +5,7 @@ export default function Test() {
     <div className="flex flex-col gap-10 mt-18">
       <div className="flex flex-col gap-0 mx-8">
         <Skeleton
-          variant="dark"
+          variant="default"
           height={60}
           count={4}
         />

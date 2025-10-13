@@ -19,6 +19,7 @@
 
 # production
 /build
+/prisma/generated/
 
 # misc
 .DS_Store
@@ -40,9 +41,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/prisma/generated/
-
-# ai
+# misc
 .qodo
 .cursorignore
+.vscode
