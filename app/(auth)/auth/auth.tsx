@@ -76,7 +76,6 @@ export default function Auth() {
 
     try {
       const result = await signIn(provider, {
-        redirectTo: callbackUrl,
         redirect: false,
       });
 
