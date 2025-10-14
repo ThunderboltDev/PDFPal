@@ -2,13 +2,11 @@ import type { Adapter } from "@auth/core/adapters";
 import GitHub from "@auth/core/providers/github";
 import Google from "@auth/core/providers/google";
 import Nodemailer from "@auth/core/providers/nodemailer";
-
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import axios from "axios";
 import { cookies } from "next/headers";
 import NextAuth from "next-auth";
 import { createTransport } from "nodemailer";
-
 import { db } from "@/lib/db";
 
 export const runtime = "node";
@@ -135,7 +133,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (
         Date.now() - new Date(sessionRecord.lastActivity).getTime() >
-        10 * 60_000
+        15 * 60_000
       ) {
         await db.session.updateMany({
           where: {
@@ -147,7 +145,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
       }
 
-      if (ipAddress) {
+      if (
+        ipAddress &&
+        !(sessionRecord.city && sessionRecord.country && sessionRecord.timezone)
+      ) {
         const fields = "country,city,timezone,status";
         const url = `http://ip-api.com/json/${ipAddress}?fields=${fields}`;
 

@@ -8,7 +8,7 @@
   --color-secondary-foreground: oklch(25% 0 0);
 
   --color-muted: oklch(100% 0 0);
-  --color-muted-foreground: oklch(35% 0 0);
+  --color-muted-foreground: oklch(40% 0 0);
 
   --color-accent: var(--color-purple-600);
   --color-accent-foreground: oklch(97% 0 0);
