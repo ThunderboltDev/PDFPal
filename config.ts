@@ -4,10 +4,10 @@ const config = {
   name: "PDF Pal",
   id: "saas",
   description:
-    "A web platform that lets you to interact with your PDFs using AI. Summarise, chat or get valuable insights instantly!",
+    "A web platform that lets you to interact with your PDFs using AI. Summarize, chat or get valuable insights instantly!",
   url,
   creator: "Thunderbolt",
-  themeColor: "#0088ff",
+  themeColor: "#402080",
   gtag: "G-",
   adsense: "",
   socials: {
@@ -32,11 +32,12 @@ const config = {
     "PDF tools",
     "document AI",
     "chat with PDF",
+    "AI chat for PDF",
     "AI PDF assistant",
     "AI PDF chatbot",
     "AI PDF summarizer",
     "AI PDF analyzer",
-    "AI chat for PDF",
+    "AI PDF workspace",
     "AI PDF summariser",
   ],
   plans: {

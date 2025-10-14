@@ -4,14 +4,19 @@ import Loader from "@/components/ui/loader";
 import AuthCallback from "./auth-callback";
 
 export const metadata: Metadata = {
-	title: "Auth Callback",
-	description: "Redirecting you to your destination!",
+  title: "Redirecting...",
+  description:
+    "Verifying your PDF Pal account. You will be redirected shortly.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function AuthCallbackPage() {
-	return (
-		<Suspense fallback={<Loader />}>
-			<AuthCallback />
-		</Suspense>
-	);
+  return (
+    <Suspense fallback={<Loader />}>
+      <AuthCallback />
+    </Suspense>
+  );
 }

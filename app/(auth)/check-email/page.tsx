@@ -6,9 +6,13 @@ import { auth } from "@/lib/auth";
 import CheckEmail from "./check-email";
 
 export const metadata: Metadata = {
-  title: "Check your email",
+  title: "Verify your email",
   description:
-    "Check your email to complete email verification and start using our services right away!",
+    "Check your email to verify your PDF Pal account and continue using amazing AI PDF tools!",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function CheckEmailWrapper() {

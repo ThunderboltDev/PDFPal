@@ -138,7 +138,7 @@ export default function Billing() {
           </div>
         </CardFooter>
       </Card>
-      <h3 className="mt-8 mb-4">Transaction History</h3>
+      <h3 className="mt-6 mb-4 md:mt-10">Transaction History</h3>
       {isLoading ? (
         <div>
           <Skeleton
