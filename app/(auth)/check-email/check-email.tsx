@@ -1,0 +1,42 @@
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import { FaRotateLeft } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+
+export default function CheckEmail() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+
+  if (!email) {
+    router.replace("/auth");
+    return;
+  }
+
+  return (
+    <div className="grid h-screen place-items-center bg-linear-110 from-primary/25 via-background to-accent/25 p-4">
+      <div className="container-md flex flex-col rounded-lg bg-secondary p-6 text-center shadow-2xl">
+        <h2>Check your email</h2>
+        <p className="my-2 text-center text-sm">
+          We sent a magic sign-in link to <strong>{email}</strong>.
+        </p>
+        <p className="text-center text-sm">
+          Didn&apos;t receive it? Check your spam folder or try again.
+        </p>
+        <div className="mt-4 flex justify-center gap-2">
+          <Button
+            className="hover:[&_svg]:-rotate-360"
+            onClick={() =>
+              router.replace(`/auth?email=${encodeURIComponent(email)}`)
+            }
+            variant="primary"
+          >
+            <FaRotateLeft className="transition-transform duration-500" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

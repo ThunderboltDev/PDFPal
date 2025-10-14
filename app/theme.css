@@ -102,6 +102,22 @@
   }
 }
 
+@utility scrollbar-* {
+  &::-webkit-scrollbar {
+    @apply bg-black/10;
+    width: calc(--value(number) * var(--spacing));
+    height: calc(--value(number) * var(--spacing));
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-primary/75 rounded-full;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/85;
+  }
+}
+
 @utility h-view {
   height: calc(100vh - 5rem);
   max-height: calc(100vh - 5rem);

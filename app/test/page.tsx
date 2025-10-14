@@ -1,29 +1,17 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Test() {
-  return (
-    <div className="flex flex-col gap-10 mt-18">
-      <div className="flex flex-col gap-0 mx-8">
-        <Skeleton
-          variant="default"
-          height={60}
-          count={4}
-        />
-      </div>
-      <div className="flex flex-col gap-0 mx-8">
-        <Skeleton
-          variant="secondary"
-          height={60}
-          count={4}
-        />
-      </div>
-      <div className="flex flex-col gap-0 mx-8">
-        <Skeleton
-          variant="muted"
-          height={60}
-          count={4}
-        />
-      </div>
-    </div>
-  );
+	return (
+		<div className="mt-18 flex flex-col gap-10">
+			<div className="mx-8 flex flex-col gap-0">
+				<Skeleton count={4} height={60} variant="default" />
+			</div>
+			<div className="mx-8 flex flex-col gap-0">
+				<Skeleton count={4} height={60} variant="secondary" />
+			</div>
+			<div className="mx-8 flex flex-col gap-0">
+				<Skeleton count={4} height={60} variant="muted" />
+			</div>
+		</div>
+	);
 }

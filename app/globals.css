@@ -14,30 +14,12 @@
     @apply transition-colors duration-200 ease-in outline-ring/50;
   }
 
-  ::-webkit-scrollbar {
-    @apply size-2 bg-border;
-  }
-
-  ::-webkit-scrollbar-thumb,
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary rounded-xl;
-  }
-
   ::selection {
     @apply bg-primary/25;
   }
 
-  textarea::-webkit-scrollbar,
-  textarea::-webkit-scrollbar-thumb {
-    @apply size-1.5;
-  }
-
-  textarea::-webkit-scrollbar-corner {
-    @apply bg-muted border-none outline-none;
-  }
-
   html {
-    @apply scroll-pt-24 scroll-smooth;
+    @apply scroll-pt-24 scroll-smooth scrollbar-2;
   }
 
   body {
@@ -143,5 +125,9 @@
 
   input[type="number"] {
     appearance: none;
+  }
+
+  textarea {
+    @apply scrollbar-1.5;
   }
 }

@@ -1,0 +1,30 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"linter": {
+		"rules": {
+			"style": {
+				"noMagicNumbers": "off",
+				"useNodejsImportProtocol": "off"
+			},
+			"correctness": {
+				"useUniqueElementIds": "off"
+			}
+		}
+	},
+	"files": {
+		"includes": [
+			"**",
+			"!**/*.css",
+			"!node_modules",
+			"!prisma",
+			"!next-env.d.ts",
+			"!.vscode",
+			"!.github",
+			"!.next",
+			"!.cursor",
+			"!.husky",
+			"!.env",
+			"!.gitignore"
+		]
+	}
+}

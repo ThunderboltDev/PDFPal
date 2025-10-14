@@ -1,40 +1,38 @@
 "use client";
 
 import {
-  Info,
-  Loader2,
-  BadgeCheck,
-  CircleAlert,
-  AlertTriangle,
+	AlertTriangle,
+	BadgeCheck,
+	CircleAlert,
+	Info,
+	Loader2,
 } from "lucide-react";
-import { Toaster as Sonner, ToasterProps } from "sonner";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
-const Toaster = ({ ...props }: ToasterProps) => {
-  return (
-    <Sonner
-      position="top-center"
-      theme="light"
-      gap={12}
-      closeButton={true}
-      icons={{
-        info: <Info className="text-info size-5" />,
-        error: <CircleAlert className="text-danger size-5" />,
-        success: <BadgeCheck className="text-success size-5" />,
-        warning: <AlertTriangle className="text-warning size-5" />,
-        loading: (
-          <Loader2 className="text-secondary-foreground animate-spin size-5" />
-        ),
-      }}
-      toastOptions={{
-        classNames: {
-          title: "text-[15px] font-normal text-secondary-foreground",
-          toast: "!py-2 !px-4 gap-3 items-center",
-          closeButton: "text-danger",
-        },
-      }}
-      {...props}
-    />
-  );
-};
+const Toaster = ({ ...props }: ToasterProps) => (
+	<Sonner
+		closeButton={true}
+		gap={12}
+		icons={{
+			info: <Info className="size-5 text-info" />,
+			error: <CircleAlert className="size-5 text-danger" />,
+			success: <BadgeCheck className="size-5 text-success" />,
+			warning: <AlertTriangle className="size-5 text-warning" />,
+			loading: (
+				<Loader2 className="size-5 animate-spin text-secondary-foreground" />
+			),
+		}}
+		position="top-center"
+		theme="light"
+		toastOptions={{
+			classNames: {
+				title: "text-[15px] font-normal text-secondary-foreground",
+				toast: "!py-2 !px-4 gap-3 items-center",
+				closeButton: "text-danger",
+			},
+		}}
+		{...props}
+	/>
+);
 
 export { Toaster };

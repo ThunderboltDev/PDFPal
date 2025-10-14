@@ -42,6 +42,11 @@ yarn-error.log*
 next-env.d.ts
 
 # misc
-.qodo
 .cursorignore
 .vscode
+
+/.husky
+
+# ai
+/.github
+/.cursor

@@ -1,24 +1,24 @@
-import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
+import { cn } from "@/lib/utils";
 
 interface OverlayLoaderProps extends PropsWithChildren {
-  isLoading?: boolean;
+	isLoading?: boolean;
 }
 
 export default function OverlayLoader({
-  children,
-  isLoading = true,
+	children,
+	isLoading = true,
 }: OverlayLoaderProps) {
-  return (
-    <div
-      className={cn(
-        "fixed z-1000 top-0 left-0 h-full min-w-full bg-black/25 backdrop-blur-[2px] flex flex-col gap-4 justify-center items-center text-center cursor-progress",
-        isLoading ? "opacity-100" : "opacity-0 -z-100"
-      )}
-    >
-      <Loader2 className="size-10 animate-spin text-primary" />
-      <div>{children}</div>
-    </div>
-  );
+	return (
+		<div
+			className={cn(
+				"fixed top-0 left-0 z-1000 flex h-full min-w-full cursor-progress flex-col items-center justify-center gap-4 bg-black/25 text-center backdrop-blur-[2px]",
+				isLoading ? "opacity-100" : "-z-100 opacity-0",
+			)}
+		>
+			<Loader2 className="size-10 animate-spin text-primary" />
+			<div>{children}</div>
+		</div>
+	);
 }

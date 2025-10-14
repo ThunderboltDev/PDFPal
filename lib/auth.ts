@@ -1,15 +1,17 @@
-import axios from "axios";
-import NextAuth from "next-auth";
-import Email from "next-auth/providers/email";
-import GitHub from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
+import type { Adapter } from "@auth/core/adapters";
+import GitHub from "@auth/core/providers/github";
+import Google from "@auth/core/providers/google";
+import Nodemailer from "@auth/core/providers/nodemailer";
 
-import { cookies } from "next/headers";
-import { Adapter } from "@auth/core/adapters";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import axios from "axios";
+import { cookies } from "next/headers";
+import NextAuth from "next-auth";
 import { createTransport } from "nodemailer";
 
 import { db } from "@/lib/db";
+
+export const runtime = "node";
 
 type GeoResponse = {
   status: "success" | "fail";
@@ -25,7 +27,8 @@ function CustomAdapter() {
     ...prisma,
     async updateUser(data) {
       if ("emailVerified" in data) delete data.emailVerified;
-      return prisma.updateUser!(data);
+      if (!prisma.updateUser) throw new Error("prisma adapter error");
+      return prisma.updateUser(data);
     },
     async createVerificationToken(verificationToken) {
       const { identifier, token, expires } = verificationToken;
@@ -51,15 +54,9 @@ function CustomAdapter() {
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: CustomAdapter(),
   providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    }),
-    GitHub({
-      clientId: process.env.AUTH_GITHUB_ID!,
-      clientSecret: process.env.AUTH_GITHUB_SECRET!,
-    }),
-    Email({
+    Google({}),
+    GitHub({}),
+    Nodemailer({
       maxAge: 60 * 60,
       from: process.env.EMAIL_FROM,
       server: process.env.EMAIL_SERVER,

@@ -1,10 +1,10 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Billing from "./billing";
 
 export const metadata: Metadata = {
-  title: "Billing",
+	title: "Billing",
 };
 
 export default async function BillingPage() {
-  return <Billing />;
+	return <Billing />;
 }

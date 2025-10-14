@@ -1,68 +1,67 @@
 "use client";
 
 import { Loader2, ReceiptText, Zap } from "lucide-react";
-import { FormEvent } from "react";
+import type { FormEvent } from "react";
 import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
 import { trpc } from "@/app/_trpc/client";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface UpgradeButtonProps {
-  className?: string;
-  isSubscribed: boolean;
+	className?: string;
+	isSubscribed: boolean;
 }
 
 export function UpgradeButton({
-  isSubscribed,
-  className = "",
+	isSubscribed,
+	className = "",
 }: UpgradeButtonProps) {
-  const { mutate: createCheckoutSession, isPending } =
-    trpc.subscription.createCheckoutSession.useMutation({
-      onSuccess: ({ checkoutUrl }) => {
-        if (checkoutUrl) window.location.href = checkoutUrl;
-        else toast.error("Something went wrong!");
-      },
-    });
+	const { mutate: createCheckoutSession, isPending } =
+		trpc.subscription.createCheckoutSession.useMutation({
+			onSuccess: ({ checkoutUrl }) => {
+				if (checkoutUrl) window.location.href = checkoutUrl;
+				else toast.error("Something went wrong!");
+			},
+		});
 
-  const { mutate: getBillingPortalUrl } =
-    trpc.subscription.getBillingPortalUrl.useMutation({
-      onSuccess: ({ portalUrl }) => {
-        if (portalUrl) window.location.href = portalUrl;
-        else toast.error("Something went wrong!");
-      },
-    });
+	const { mutate: getBillingPortalUrl } =
+		trpc.subscription.getBillingPortalUrl.useMutation({
+			onSuccess: ({ portalUrl }) => {
+				if (portalUrl) window.location.href = portalUrl;
+				else toast.error("Something went wrong!");
+			},
+		});
 
-  const handleClick = (e: FormEvent) => {
-    e.preventDefault();
-    if (isSubscribed) getBillingPortalUrl();
-    else createCheckoutSession({});
-  };
+	const handleClick = (e: FormEvent) => {
+		e.preventDefault();
+		if (isSubscribed) getBillingPortalUrl();
+		else createCheckoutSession({});
+	};
 
-  return (
-    <Button
-      className={cn("group", className)}
-      onClick={handleClick}
-      variant="primary"
-      disabled={isPending}
-      aria-busy={isPending}
-    >
-      {isPending ? (
-        <>
-          <Loader2 className="size-4 animate-spin" />
-          Redirecting...
-        </>
-      ) : isSubscribed ? (
-        <>
-          <ReceiptText className="" />
-          Manage Subscription
-        </>
-      ) : (
-        <>
-          <Zap className="fill-white/25 group-hover:rotate-10 group-hover:scale-125 transition-all duration-300" />{" "}
-          Upgrade to Pro
-        </>
-      )}
-    </Button>
-  );
+	return (
+		<Button
+			aria-busy={isPending}
+			className={cn("group", className)}
+			disabled={isPending}
+			onClick={handleClick}
+			variant="primary"
+		>
+			{isPending ? (
+				<>
+					<Loader2 className="size-4 animate-spin" />
+					Redirecting...
+				</>
+			) : isSubscribed ? (
+				<>
+					<ReceiptText className="" />
+					Manage Subscription
+				</>
+			) : (
+				<>
+					<Zap className="fill-white/25 transition-all duration-300 group-hover:rotate-10 group-hover:scale-125" />{" "}
+					Upgrade to Pro
+				</>
+			)}
+		</Button>
+	);
 }

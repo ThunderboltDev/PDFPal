@@ -1,39 +1,26 @@
-"use client";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import Loader from "@/components/ui/loader";
+import { auth } from "@/lib/auth";
+import CheckEmail from "./check-email";
 
-import { FaRotateLeft } from "react-icons/fa6";
-import { Button } from "@/components/ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
+export const metadata: Metadata = {
+  title: "Check your email",
+  description:
+    "Check your email to complete email verification and start using our services right away!",
+};
 
-export default function CheckEmail() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+export default async function CheckEmailWrapper() {
+  const session = await auth();
 
-  if (!email) return router.replace("/auth");
+  if (session) {
+    redirect("/dashboard");
+  }
 
   return (
-    <div className="h-screen grid place-items-center bg-linear-110 from-primary/25 via-background to-accent/25 p-4">
-      <div className="container-md text-center flex flex-col shadow-2xl p-6 rounded-lg bg-secondary">
-        <h2>Check your email</h2>
-        <p className="my-2 text-sm text-center">
-          We sent a magic sign-in link to <strong>{email}</strong>.
-        </p>
-        <p className="text-sm text-center">
-          Didn&apos;t receive it? Check your spam folder or try again.
-        </p>
-        <div className="mt-4 flex justify-center gap-2">
-          <Button
-            className="hover:[&_svg]:-rotate-360"
-            variant="primary"
-            onClick={() =>
-              router.replace(`/auth?email=${encodeURIComponent(email)}`)
-            }
-          >
-            <FaRotateLeft className="transition-transform duration-500" />
-            Try Again
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Suspense fallback={<Loader />}>
+      <CheckEmail />
+    </Suspense>
   );
 }

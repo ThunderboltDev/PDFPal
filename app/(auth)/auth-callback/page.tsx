@@ -1,17 +1,17 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
-import AuthCallback from "./auth-callback";
 import Loader from "@/components/ui/loader";
-import { Metadata } from "next";
+import AuthCallback from "./auth-callback";
 
 export const metadata: Metadata = {
-  title: "Auth Callback",
-  description: "Redirecting you to your destination!",
+	title: "Auth Callback",
+	description: "Redirecting you to your destination!",
 };
 
 export default function AuthCallbackPage() {
-  return (
-    <Suspense fallback={<Loader />}>
-      <AuthCallback />
-    </Suspense>
-  );
+	return (
+		<Suspense fallback={<Loader />}>
+			<AuthCallback />
+		</Suspense>
+	);
 }
