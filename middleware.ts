@@ -13,68 +13,74 @@ const PUBLIC_ROUTES = [
   "/terms-of-service",
 ];
 
-const authCookieRegex = /(authjs.csrf-token|authjs.session-token=)/;
+const sessionCookieRegex = /\b(?:__Secure-)?authjs\.session-token=/;
 
 export default function middleware(req: Request & { nextUrl: URL }) {
   const { pathname, searchParams } = req.nextUrl;
 
   const cookieHeader = req.headers.get("cookie") || "";
-  const isAuthenticated = authCookieRegex.test(cookieHeader);
+  const isAuthenticated = sessionCookieRegex.test(cookieHeader);
 
-  if (!isAuthenticated && AUTH_ROUTES.includes(pathname)) {
-    return NextResponse.next();
-  }
-
-  if (isAuthenticated && AUTH_ROUTES.includes(pathname)) {
-    const callbackUrl = searchParams.get("callbackUrl");
-
-    if (!callbackUrl || AUTH_ROUTES.includes(callbackUrl)) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
-
-    return NextResponse.redirect(new URL(callbackUrl, req.url));
-  }
-
-  if (isAuthenticated) {
-    const res = NextResponse.next();
-
-    const userAgent = req.headers.get("user-agent") || "Unknown User Agent";
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0] ??
-      req.headers.get("x-real-ip")?.split(",")[0] ??
-      req.headers.get("cf-connecting-ip")?.split(",")[0] ??
-      "Unknown IP";
-
-    res.cookies.set("client-ip", ip, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/",
-    });
-
-    res.cookies.set("client-ua", userAgent, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/",
-    });
-
-    return res;
-  }
-
-  if (
+  const isAuthRoute = AUTH_ROUTES.includes(pathname);
+  const isPublicRoute =
     PUBLIC_ROUTES.includes(pathname) ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/_next/static") ||
-    pathname.startsWith("/_next/image")
-  ) {
-    return NextResponse.next();
+    pathname.startsWith("/_next/image");
+
+  if (!isAuthenticated) {
+    if (isAuthRoute) {
+      const res = NextResponse.next();
+      res.cookies.delete("authjs.session-token");
+      res.cookies.delete("__Secure-authjs.session-token");
+      return res;
+    }
+
+    if (isPublicRoute) {
+      return NextResponse.next();
+    }
+
+    const redirectUrl = new URL("/auth", req.url);
+    redirectUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
-  const redirectUrl = new URL("/auth", req.url);
-  redirectUrl.searchParams.set("callbackUrl", pathname);
-  return NextResponse.redirect(redirectUrl);
+  if (AUTH_ROUTES.includes(pathname)) {
+    const callbackUrl = searchParams.get("callbackUrl");
+
+    if (!callbackUrl || AUTH_ROUTES.includes(callbackUrl)) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    } else {
+      return NextResponse.redirect(new URL(callbackUrl, req.url));
+    }
+  }
+
+  const res = NextResponse.next();
+
+  const userAgent = req.headers.get("user-agent") || "Unknown User Agent";
+
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0] ??
+    req.headers.get("x-real-ip")?.split(",")[0] ??
+    req.headers.get("cf-connecting-ip")?.split(",")[0] ??
+    "Unknown IP";
+
+  res.cookies.set("client-ip", ip, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+  });
+
+  res.cookies.set("client-ua", userAgent, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+  });
+
+  return res;
 }
 
 export const config = {

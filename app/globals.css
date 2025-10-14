@@ -19,6 +19,7 @@
   }
 
   html {
+    @apply bg-background;
     @apply scroll-pt-24 scroll-smooth scrollbar-2;
   }
 
@@ -78,7 +79,7 @@
   h2 + p,
   h3 + p,
   h4 + p {
-    @apply mt-3;
+    @apply mt-1;
   }
 
   section p {

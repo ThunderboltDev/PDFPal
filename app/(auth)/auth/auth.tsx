@@ -75,15 +75,7 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      const result = await signIn(provider, {
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError("Unable to authenticate right now! Try again later.");
-      } else {
-        router.replace(callbackUrl);
-      }
+      await signIn(provider, { redirectTo: callbackUrl });
     } catch (error) {
       console.error(error);
       setError("Something went wrong! Please try again later");
@@ -98,7 +90,6 @@ export default function Auth() {
 
     try {
       const result = await signIn("nodemailer", {
-        redirectTo: callbackUrl,
         redirect: false,
         email,
       });

@@ -1,11 +1,11 @@
 import type { Adapter } from "@auth/core/adapters";
-import GitHub from "@auth/core/providers/github";
-import Google from "@auth/core/providers/google";
-import Nodemailer from "@auth/core/providers/nodemailer";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import axios from "axios";
 import { cookies } from "next/headers";
 import NextAuth from "next-auth";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
+import Nodemailer from "next-auth/providers/nodemailer";
 import { createTransport } from "nodemailer";
 import { db } from "@/lib/db";
 
@@ -46,14 +46,41 @@ function CustomAdapter() {
         },
       });
     },
+    async deleteSession(sessionToken) {
+      await db.session.deleteMany({
+        where: {
+          sessionToken,
+        },
+      });
+    },
+    async linkAccount(account) {
+      if (!prisma.linkAccount) return;
+      return prisma.linkAccount(account);
+    },
+
+    async unlinkAccount({ provider, providerAccountId }) {
+      if (!prisma.unlinkAccount) return;
+      return prisma.unlinkAccount({ provider, providerAccountId });
+    },
+
+    async getAccount(providerAccountId, provider) {
+      if (!prisma.getAccount) return;
+      return prisma.getAccount(providerAccountId, provider);
+    },
   } as Adapter;
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: CustomAdapter(),
   providers: [
-    Google({}),
-    GitHub({}),
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    }),
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID,
+      clientSecret: process.env.AUTH_GITHUB_SECRET,
+    }),
     Nodemailer({
       maxAge: 60 * 60,
       from: process.env.EMAIL_FROM,
@@ -79,9 +106,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ email, profile, user }) {
+    async signIn({ email, profile, account, user }) {
       if (email?.verificationRequest) return true;
-      if (!user.email) return false;
+      if (!user.email || !user.id) return false;
 
       const existingUser = await db.user.findUnique({
         where: { email: user.email },
@@ -104,6 +131,47 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             lastLogin: new Date(),
           },
         });
+      }
+
+      const existingAccount = await db.account.findFirst({
+        where: {
+          provider: account?.provider,
+          providerAccountId: account?.providerAccountId,
+        },
+      });
+
+      if (!existingAccount) {
+        if (account) {
+          await db.account.create({
+            data: {
+              userId: user.id,
+              type: account.type ?? "oauth",
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              refresh_token: account.refresh_token,
+              access_token: account.access_token,
+              expires_at: account.expires_at,
+              token_type: account.token_type,
+              scope: account.scope,
+              id_token: account.id_token,
+            },
+          });
+        } else {
+          await db.account.create({
+            data: {
+              userId: user.id,
+              type: "email",
+              provider: "email",
+              providerAccountId: user.email,
+              refresh_token: null,
+              access_token: null,
+              expires_at: null,
+              token_type: null,
+              scope: null,
+              id_token: null,
+            },
+          });
+        }
       }
 
       return true;
