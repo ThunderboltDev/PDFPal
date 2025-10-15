@@ -1,3 +1,5 @@
+"use client";
+
 import { useIntersection } from "@mantine/hooks";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Loader2, MessageSquare } from "lucide-react";

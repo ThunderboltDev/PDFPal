@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { sendGAEvent } from "@next/third-parties/google";
 import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -74,6 +75,10 @@ export default function Auth() {
     setError(null);
     setIsLoading(true);
 
+    sendGAEvent(`login-${provider}-initiated`, {
+      value: 1,
+    });
+
     try {
       await signIn(provider, { redirectTo: callbackUrl });
     } catch (error) {
@@ -87,6 +92,10 @@ export default function Auth() {
   const handleSubmit = async ({ email }: FormValues) => {
     setError(null);
     setIsLoading(true);
+
+    sendGAEvent("login-email-initiated", {
+      value: 1,
+    });
 
     try {
       const result = await signIn("nodemailer", {

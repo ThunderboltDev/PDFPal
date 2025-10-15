@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import { motion } from "framer-motion";
 import { SendHorizonal } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
@@ -36,6 +37,13 @@ export default function Hero() {
             href="/dashboard"
             size="lg"
             variant="accent"
+            onClick={() =>
+              sendGAEvent("hero_cta_click", {
+                value: 1,
+                button_name: "Start Chatting",
+                page_path: window.location.pathname,
+              })
+            }
           >
             Start Chatting <SendHorizonal strokeWidth={3} />
           </LinkButton>

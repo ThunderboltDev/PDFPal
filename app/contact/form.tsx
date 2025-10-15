@@ -2,6 +2,7 @@
 
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { sendGAEvent } from "@next/third-parties/google";
 import { Send } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -56,12 +57,21 @@ export default function ContactPage({ session }: ContactProps) {
   const { mutateAsync: sendMessage, isPending } =
     trpc.contact.sendMessage.useMutation({
       onSuccess: () => {
+        sendGAEvent("contact-form-submitted", {
+          value: 1,
+          user_id: session?.userId,
+        });
         captchaRef.current?.resetCaptcha();
         toast.success("Message sent successfully!");
         router.replace("/contact/success");
       },
-      onError: () =>
-        toast.error("Something went wrong! Please try again later!"),
+      onError: () => {
+        sendGAEvent("contact-form-submission-failed", {
+          value: 1,
+          user_id: session?.userId,
+        });
+        toast.error("Something went wrong! Please try again later!");
+      },
     });
 
   const form = useForm<ContactFormValues>({

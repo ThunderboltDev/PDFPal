@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import { Expand, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Document, Page } from "react-pdf";
@@ -31,7 +32,10 @@ export default function PDFFullScreen({ fileUrl }: FullScreenProps) {
   const [numberOfPages, setNumberOfPages] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const { width, ref: resizeContainerRef } = useResizeDetector();
+  const { width, ref: resizeContainerRef } = useResizeDetector({
+    refreshMode: "debounce",
+    refreshRate: 300,
+  });
 
   return (
     <Dialog
@@ -44,6 +48,12 @@ export default function PDFFullScreen({ fileUrl }: FullScreenProps) {
           className="gap-1.5"
           size="icon"
           variant="ghost"
+          onClick={() => {
+            sendGAEvent("pdf-action", {
+              action_name: "toggle-full-screen",
+              value: 1,
+            });
+          }}
         >
           <Expand className="size-4" />
           <span className="sr-only">Full screen</span>

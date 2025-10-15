@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import { Loader2, ReceiptText, Zap } from "lucide-react";
 import type { FormEvent } from "react";
 import { toast } from "sonner";
@@ -19,6 +20,11 @@ export function UpgradeButton({
   const { mutate: createCheckoutSession, isPending } =
     trpc.subscription.createCheckoutSession.useMutation({
       onSuccess: ({ checkoutUrl }) => {
+        sendGAEvent("upgrade-button-click", {
+          value: 1,
+          button_name: "Upgrade Button",
+          page_path: window.location.pathname,
+        });
         if (checkoutUrl) window.location.href = checkoutUrl;
         else toast.error("Something went wrong!");
       },

@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import { format } from "date-fns";
 import {
   AlertCircle,
@@ -47,6 +48,13 @@ export default function Dashboard() {
                 <Link
                   className="flex items-center justify-center gap-3 px-4 py-3 no-underline"
                   href={`/dashboard/${file.id}`}
+                  onClick={() =>
+                    sendGAEvent("dashboard-action", {
+                      value: 1,
+                      action_name: "file-click",
+                      subscription_plan: subscriptionPlan?.name,
+                    })
+                  }
                 >
                   {file.uploadStatus === "SUCCESS" ? (
                     <div className="flex size-10 shrink-0 rounded-full bg-gradient-to-br from-cyan-500 to-accent" />
@@ -85,10 +93,12 @@ export default function Dashboard() {
                   </div>
                   <div className="flex flex-row items-center justify-end gap-1">
                     <RenameFileDialog
+                      subscriptionPlan={subscriptionPlan?.name}
                       disabled={file.uploadStatus !== "SUCCESS"}
                       file={file}
                     />
                     <DeleteFileDialog
+                      subscriptionPlan={subscriptionPlan?.name}
                       disabled={file.uploadStatus === "PROCESSING"}
                       file={file}
                     />

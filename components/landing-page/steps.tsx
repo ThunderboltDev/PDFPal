@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -92,6 +93,13 @@ export default function Steps() {
             href="/dashboard"
             size="lg"
             variant="primary"
+            onClick={() =>
+              sendGAEvent("steps_cta_click", {
+                value: 1,
+                button_name: "Start for free",
+                page_path: window.location.pathname,
+              })
+            }
           >
             Start for free <ArrowRight className="size-4.5" />
           </LinkButton>

@@ -37,6 +37,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import PDFFullScreen from "./full-screen";
 
 function Loader() {
@@ -87,34 +88,68 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
     handleSubmit,
     formState: { errors },
   } = useForm<PageNumberValidator>({
+    resolver: zodResolver(pageNumberValidator),
+    mode: "onChange",
     defaultValues: {
       pageNumber: "1",
     },
-    resolver: zodResolver(pageNumberValidator),
-    mode: "onChange",
   });
 
   const { width, ref: resizeContainerRef } = useResizeDetector({
     refreshMode: "debounce",
-    refreshRate: 250,
+    refreshRate: 300,
   });
 
+  const handlePageNavigate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    setValue("pageNumber", String(pageNumber), { shouldValidate: true });
+    sendGAEvent("pdf-action", {
+      action_name: "page-navigate",
+      value: 1,
+    });
+  };
+
   const handlePageSubmit = ({ pageNumber }: PageNumberValidator) => {
-    setCurrentPage(Number(pageNumber));
+    handlePageNavigate(Number(pageNumber));
   };
 
   const handleNextPage = () => {
     if (currentPage < numberOfPages) {
-      setCurrentPage((prev) => prev + 1);
-      setValue("pageNumber", String(currentPage + 1), { shouldValidate: true });
+      handlePageNavigate(currentPage + 1);
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
-      setValue("pageNumber", String(currentPage - 1), { shouldValidate: true });
+      handlePageNavigate(currentPage - 1);
     }
+  };
+
+  const handleZoom = (zoom: number) => {
+    if (zoom >= 0.5 && zoom <= 2) {
+      setScale(zoom);
+      sendGAEvent("pdf-action", {
+        action_name: "zoom-in",
+        zoom_level: zoom,
+        value: 1,
+      });
+    }
+  };
+
+  const rotateClockwise = () => {
+    setRotation((prev) => (prev + 90) % 360);
+    sendGAEvent("pdf-action", {
+      action_name: "rotate-clockwise",
+      value: 1,
+    });
+  };
+
+  const rotateCounterClockwise = () => {
+    setRotation((prev) => (prev + 270) % 360);
+    sendGAEvent("pdf-action", {
+      action_name: "rotate-counter-clockwise",
+      value: 1,
+    });
   };
 
   useHotkeys(
@@ -133,16 +168,18 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
     [handlePrevPage]
   );
 
-  useHotkeys("home", () => {
-    setCurrentPage(1);
-    setValue("pageNumber", "1");
-  });
+  useHotkeys(
+    "home",
+    () => {
+      handlePageNavigate(1);
+    },
+    []
+  );
 
   useHotkeys(
     "end",
     () => {
-      setCurrentPage(numberOfPages);
-      setValue("pageNumber", String(numberOfPages));
+      handlePageNavigate(numberOfPages);
     },
     [numberOfPages]
   );
@@ -154,20 +191,30 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
 
   useHotkeys(["z"], () => {
     setScale((prev) => Math.min(Number((prev + 0.1).toFixed(2)), 2));
+    sendGAEvent("pdf-action", {
+      action_name: "zoom-in",
+      value: 1,
+    });
   });
 
   useHotkeys(["shift+z"], () => {
     setScale((prev) => Math.max(Number((prev - 0.1).toFixed(2)), 0.5));
+    sendGAEvent("pdf-action", {
+      action_name: "zoom-out",
+      value: 1,
+    });
   });
 
-  useHotkeys("x", () => setScale(1));
+  useHotkeys("x", () => {
+    handleZoom(1);
+  });
 
   useHotkeys("r", () => {
-    setRotation((prev) => (prev + 90) % 360);
+    rotateClockwise();
   });
 
   useHotkeys("shift+r", () => {
-    setRotation((prev) => (prev + 270) % 360);
+    rotateCounterClockwise();
   });
 
   return (
@@ -234,25 +281,25 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={() => setScale(1)}>
+              <DropdownMenuItem onSelect={() => handleZoom(0.5)}>
                 50%
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(1)}>
+              <DropdownMenuItem onSelect={() => handleZoom(0.75)}>
                 75%
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(1)}>
+              <DropdownMenuItem onSelect={() => handleZoom(1)}>
                 100%
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(1.25)}>
+              <DropdownMenuItem onSelect={() => handleZoom(1.25)}>
                 125%
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(1.5)}>
+              <DropdownMenuItem onSelect={() => handleZoom(1.5)}>
                 150%
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(1.75)}>
+              <DropdownMenuItem onSelect={() => handleZoom(1.75)}>
                 175%
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(2)}>
+              <DropdownMenuItem onSelect={() => handleZoom(2)}>
                 200%
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -260,7 +307,7 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
 
           <Button
             aria-label="Rotate 90 degrees clockwise"
-            onClick={() => setRotation((prev) => prev + 90)}
+            onClick={() => rotateClockwise()}
             size="icon"
             variant="ghost"
           >
@@ -278,6 +325,12 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
                 size="icon"
                 type="button"
                 variant="ghost"
+                onClick={() => {
+                  sendGAEvent("pdf-action", {
+                    action_name: "view-keyboard-shortcuts",
+                    value: 1,
+                  });
+                }}
               >
                 <Keyboard className="size-4" />
                 <span className="sr-only">Keyboard Shortcuts</span>

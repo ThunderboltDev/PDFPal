@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import { AnimatePresence, motion } from "framer-motion";
 import {
 	ArrowRight,
@@ -19,7 +20,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useHotkeys } from "react-hotkeys-hook";
-
 import { Button, LinkButton } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import config from "@/config";
@@ -82,6 +82,7 @@ function AuthActionButton({
 	if (status === "loading") {
 		return <Skeleton height={36} width={208} />;
 	}
+
 	const isAuthenticated = status === "authenticated";
 
 	return (
@@ -95,6 +96,15 @@ function AuthActionButton({
 			href={isAuthenticated ? "/logout" : "/auth"}
 			size={size}
 			variant={isAuthenticated ? "ghost" : "primary"}
+			onClick={() => {
+				if (!isAuthenticated) {
+					sendGAEvent("nav_cta_click", {
+						value: 1,
+						button_name: "Get Started",
+						page_path: window.location.pathname,
+					});
+				}
+			}}
 		>
 			{isAuthenticated ? (
 				<>
@@ -136,6 +146,7 @@ export default function Navbar() {
 		"/logout",
 		"/thank-you",
 	];
+
 	if (excludedPaths.includes(pathname)) return null;
 
 	return (

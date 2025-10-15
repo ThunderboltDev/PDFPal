@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGAEvent } from "@next/third-parties/google";
 import { format } from "date-fns";
 import { BanknoteX, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -16,6 +17,11 @@ export default function CancelSubscriptionButton({
   const { mutateAsync: cancelSubscription } =
     trpc.subscription.cancelSubscription.useMutation({
       onSuccess: () => {
+        sendGAEvent("cancel_subscription", {
+          value: 1,
+          button_name: "Cancel Subscription",
+          page_path: window.location.pathname,
+        });
         toast.success("Subscription canceled");
       },
       onError: ({ message }) => {
