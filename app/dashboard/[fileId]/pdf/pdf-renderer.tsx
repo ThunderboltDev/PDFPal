@@ -104,8 +104,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
     setCurrentPage(pageNumber);
     setValue("pageNumber", String(pageNumber), { shouldValidate: true });
     sendGTMEvent({
-      event: "pdf-action",
-      action_name: "page-navigate",
+      event: "pdf_action",
+      action: "page_navigate",
       value: 1,
     });
   };
@@ -130,8 +130,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
     if (zoom >= 0.5 && zoom <= 2) {
       setScale(zoom);
       sendGTMEvent({
-        event: "pdf-action",
-        action_name: "zoom-in",
+        event: "pdf_action",
+        action: "zoom_in",
         zoom_level: zoom,
         value: 1,
       });
@@ -141,8 +141,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
   const rotateClockwise = () => {
     setRotation((prev) => (prev + 90) % 360);
     sendGTMEvent({
-      event: "pdf-action",
-      action_name: "rotate-clockwise",
+      event: "pdf_action",
+      action: "rotate_clockwise",
       value: 1,
     });
   };
@@ -150,8 +150,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
   const rotateCounterClockwise = () => {
     setRotation((prev) => (prev + 270) % 360);
     sendGTMEvent({
-      event: "pdf-action",
-      action_name: "rotate-counter-clockwise",
+      event: "pdf_action",
+      action: "rotate_counter_clockwise",
       value: 1,
     });
   };
@@ -196,8 +196,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
   useHotkeys(["z"], () => {
     setScale((prev) => Math.min(Number((prev + 0.1).toFixed(2)), 2));
     sendGTMEvent({
-      event: "pdf-action",
-      action_name: "zoom-in",
+      event: "pdf_action",
+      action: "zoom_in",
       value: 1,
     });
   });
@@ -205,8 +205,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
   useHotkeys(["shift+z"], () => {
     setScale((prev) => Math.max(Number((prev - 0.1).toFixed(2)), 0.5));
     sendGTMEvent({
-      event: "pdf-action",
-      action_name: "zoom-out",
+      event: "pdf_action",
+      action: "zoom_out",
       value: 1,
     });
   });
@@ -333,8 +333,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
                 variant="ghost"
                 onClick={() => {
                   sendGTMEvent({
-                    event: "pdf-action",
-                    action_name: "view-keyboard-shortcuts",
+                    event: "pdf_action",
+                    action: "view_keyboard_shortcuts",
                     value: 1,
                   });
                 }}

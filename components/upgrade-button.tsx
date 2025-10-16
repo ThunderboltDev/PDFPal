@@ -22,7 +22,8 @@ export function UpgradeButton({
       onSuccess: ({ checkoutUrl }) => {
         sendGTMEvent({
           value: 1,
-          event: "upgrade-button-click",
+          event: "subscription_action",
+          action: "upgrade",
           button_name: "Upgrade Button",
           page_path: window.location.pathname,
         });
@@ -37,6 +38,13 @@ export function UpgradeButton({
   const { mutate: getBillingPortalUrl } =
     trpc.subscription.getBillingPortalUrl.useMutation({
       onSuccess: ({ portalUrl }) => {
+        sendGTMEvent({
+          value: 1,
+          event: "subscription_action",
+          action: "manage_subscription",
+          button_name: "Manage Subscription",
+          page_path: window.location.pathname,
+        });
         if (portalUrl) window.location.href = portalUrl;
         else toast.error("Something went wrong!");
       },

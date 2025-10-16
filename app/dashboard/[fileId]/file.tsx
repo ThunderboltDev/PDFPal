@@ -64,9 +64,9 @@ export default function FileView({ file, isSubscribed }: FileViewProps) {
               variant="accent"
               onClick={() => {
                 sendGTMEvent({
-                  event: "chat-action",
                   value: 1,
-                  action_name: "open-chat",
+                  event: "chat_action",
+                  action: "open_chat",
                   subscription_plan: isSubscribed ? "pro" : "free",
                 });
               }}

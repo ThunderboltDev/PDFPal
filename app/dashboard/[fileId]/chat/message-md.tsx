@@ -50,9 +50,9 @@ export default function MessageMarkdown({ children }: MessageMarkdownProps) {
     navigator.clipboard.writeText(code);
 
     sendGTMEvent({
-      event: "chat-action",
       value: 1,
-      action_name: "copy-code",
+      event: "chat_action",
+      action: "copy_code",
     });
 
     setIsCopied(true);

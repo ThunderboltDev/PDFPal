@@ -52,8 +52,9 @@ export default function Account({ session: currentSession }: AccountProps) {
   const { mutateAsync: deleteAccount } = trpc.user.deleteAccount.useMutation({
     onSuccess: () => {
       sendGTMEvent({
-        event: "delete-account",
         value: 1,
+        event: "account_action",
+        action: "delete_account",
         user_id: userWithAccounts?.id,
         subscription_plan: subscriptionPlan?.name,
       });
@@ -61,8 +62,9 @@ export default function Account({ session: currentSession }: AccountProps) {
     },
     onError: () => {
       sendGTMEvent({
-        event: "delete-account-failed",
         value: 1,
+        event: "account_action",
+        action: "delete_account_failed",
         user_id: userWithAccounts?.id,
         subscription_plan: subscriptionPlan?.name,
       });
@@ -74,8 +76,9 @@ export default function Account({ session: currentSession }: AccountProps) {
     trpc.user.deleteUserSession.useMutation({
       onSuccess: () => {
         sendGTMEvent({
-          event: "delete-session",
           value: 1,
+          event: "account_action",
+          action: "delete_session",
           user_id: userWithAccounts?.id,
           subscription_plan: subscriptionPlan?.name,
         });
@@ -84,8 +87,9 @@ export default function Account({ session: currentSession }: AccountProps) {
       },
       onError: () => {
         sendGTMEvent({
-          event: "delete-session-failed",
           value: 1,
+          event: "account_action",
+          action: "delete_session_failed",
           user_id: userWithAccounts?.id,
           subscription_plan: subscriptionPlan?.name,
         });

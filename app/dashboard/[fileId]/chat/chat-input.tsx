@@ -30,8 +30,8 @@ export default function ChatInput({ isLoading }: ChatInputProps) {
       inputRef.current?.focus();
 
       sendGTMEvent({
-        event: "chat-action",
-        action_name: "message-sent",
+        event: "chat_action",
+        action: "message_sent",
         value: 1,
       });
     }

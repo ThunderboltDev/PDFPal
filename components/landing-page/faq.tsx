@@ -17,7 +17,10 @@ const faqs = [
       <>
         <span className="font-semibold">Nope</span>! You can start for free{" "}
         without entering any payment details. Just{" "}
-        <Link href="/auth">create an account</Link> and you&apos;re good to go!
+        <Link href="/auth?utm_source=faq_section&utm_medium=link&utm_campaign=signup">
+          create an account
+        </Link>{" "}
+        and you&apos;re good to go!
       </>
     ),
   },
@@ -122,7 +125,7 @@ export default function FAQ() {
             key={faq.question}
             value={`faq-${index}`}
           >
-            <AccordionTrigger className="">{faq.question}</AccordionTrigger>
+            <AccordionTrigger>{faq.question}</AccordionTrigger>
             <AccordionContent>{faq.answer}</AccordionContent>
           </AccordionItem>
         ))}

@@ -58,21 +58,24 @@ export default function ContactPage({ session }: ContactProps) {
     trpc.contact.sendMessage.useMutation({
       onSuccess: () => {
         sendGTMEvent({
-          event: "contact-form-submitted",
           value: 1,
+          event: "contact_form_action",
+          action: "submission_successful",
           user_id: session?.userId,
         });
         captchaRef.current?.resetCaptcha();
         toast.success("Message sent successfully!");
         router.replace("/contact/success");
       },
-      onError: () => {
+      onError: ({ message }) => {
         sendGTMEvent({
-          event: "contact-form-submission-failed",
           value: 1,
+          event: "contact_form_action",
+          action: "submission_failed",
+          error: message,
           user_id: session?.userId,
         });
-        toast.error("Something went wrong! Please try again later!");
+        toast.error(message);
       },
     });
 
@@ -100,7 +103,6 @@ export default function ContactPage({ session }: ContactProps) {
       });
     } catch (error) {
       console.error("Error while sending message: ", error);
-      toast.error("Something went horribly wrong! Please try again later!");
     }
   };
 

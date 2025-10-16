@@ -19,7 +19,8 @@ export default function CancelSubscriptionButton({
       onSuccess: () => {
         sendGTMEvent({
           value: 1,
-          event: "cancel_subscription",
+          event: "subscription_action",
+          action: "cancel_subscription",
           button_name: "Cancel Subscription",
           page_path: window.location.pathname,
         });

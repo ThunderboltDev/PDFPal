@@ -98,17 +98,28 @@ function AuthActionButton({
         },
         className
       )}
-      href={isAuthenticated ? "/logout" : "/auth"}
+      href={
+        isAuthenticated
+          ? "/logout"
+          : "/auth&utm_source=navbar&utm_medium=button&utm_campaign=signup"
+      }
       size={size}
       variant={isAuthenticated ? "ghost" : "primary"}
       onClick={() => {
-        if (!isAuthenticated) {
+        if (isAuthenticated) {
+          sendGTMEvent({
+            value: 1,
+            event: "auth",
+            action: "logout",
+            page_location: window.location.pathname,
+          });
+        } else {
           sendGTMEvent({
             value: 1,
             event: "cta_click",
             place: "navbar",
             button_name: "Get Started",
-            page_path: window.location.pathname,
+            page_location: window.location.pathname,
           });
         }
       }}

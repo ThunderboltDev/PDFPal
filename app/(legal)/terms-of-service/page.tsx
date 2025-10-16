@@ -80,9 +80,15 @@ export default function TermsOfService() {
         <h3>Payments and Billing</h3>
         <p>
           Payments for Pro subscriptions are processed through our third-party
-          payment provider (<Link href="https://creem.io">Creem</Link>). By
-          subscribing, you authorize us to charge the selected payment method
-          for the subscription fee on a recurring basis.
+          payment provider (
+          <Link
+            href="https://creem.io"
+            target="_blank"
+          >
+            Creem
+          </Link>
+          ). By subscribing, you authorize us to charge the selected payment
+          method for the subscription fee on a recurring basis.
         </p>
         <p>
           If you purchase anything, you must provide complete and accurate

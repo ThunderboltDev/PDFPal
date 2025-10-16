@@ -76,13 +76,23 @@ export default function Auth() {
     setIsLoading(true);
 
     sendGTMEvent({
-      event: `login-${provider}-initiated`,
+      event: "auth",
+      action: "login_attempt",
+      provider: provider,
       value: 1,
     });
 
     try {
       await signIn(provider, { redirectTo: callbackUrl });
     } catch (error) {
+      sendGTMEvent({
+        event: "auth",
+        action: "login_failed",
+        error: error,
+        provider: provider,
+        value: 1,
+      });
+
       console.error(error);
       setError("Something went wrong! Please try again later");
     } finally {
@@ -95,7 +105,9 @@ export default function Auth() {
     setIsLoading(true);
 
     sendGTMEvent({
-      event: "login-email-initiated",
+      event: "auth",
+      action: "login_attempt",
+      provider: "email",
       value: 1,
     });
 
@@ -106,11 +118,27 @@ export default function Auth() {
       });
 
       if (result?.error) {
+        sendGTMEvent({
+          event: "auth",
+          action: "login_failed",
+          provider: "email",
+          error: result.code,
+          value: 1,
+        });
+
         setError("Unable to authenticate right now! Try again later.");
       } else {
         router.push(`/check-email?email=${encodeURIComponent(email)}`);
       }
     } catch (error) {
+      sendGTMEvent({
+        event: "auth",
+        action: "login_failed",
+        provider: "email",
+        error: "unknown",
+        value: 1,
+      });
+
       console.error("signIn error:", error);
       setError("Something went wrong! Please try again later.");
     } finally {

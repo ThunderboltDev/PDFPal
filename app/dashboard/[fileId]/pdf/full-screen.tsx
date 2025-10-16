@@ -50,8 +50,8 @@ export default function PDFFullScreen({ fileUrl }: FullScreenProps) {
           variant="ghost"
           onClick={() => {
             sendGTMEvent({
-              event: "pdf-action",
-              action_name: "toggle-full-screen",
+              event: "pdf_action",
+              action: "toggle_full_screen",
               value: 1,
             });
           }}

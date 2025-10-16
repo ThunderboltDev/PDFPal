@@ -41,7 +41,7 @@ export default function Hero() {
               sendGTMEvent({
                 value: 1,
                 event: "cta_click",
-                place: "hero_sectinon",
+                place: "hero_section",
                 button_name: "Start Chatting",
                 page_path: window.location.pathname,
               })

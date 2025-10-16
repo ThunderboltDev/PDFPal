@@ -50,9 +50,9 @@ export default function Dashboard() {
                   href={`/dashboard/${file.id}`}
                   onClick={() =>
                     sendGTMEvent({
-                      event: "dashboard-action",
                       value: 1,
-                      action_name: "file-click",
+                      event: "dashboard_action",
+                      action: "file_click",
                       subscription_plan: subscriptionPlan?.name,
                     })
                   }

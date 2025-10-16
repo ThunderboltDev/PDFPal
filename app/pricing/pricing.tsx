@@ -234,7 +234,7 @@ export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
                   ) : (
                     <LinkButton
                       className="w-full rounded-full"
-                      href="/auth"
+                      href="/auth?utm_source=pricing&utm_medium=button&utm_campaign=signup"
                       variant="primary"
                     >
                       <UserPlus />

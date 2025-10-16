@@ -61,9 +61,9 @@ export function RenameFileDialog({
       utils.file.getUserFiles.invalidate();
       toast.success("File name updated");
       sendGTMEvent({
-        event: "dashboard-action",
         value: 1,
-        action_name: "rename-file",
+        event: "dashboard_action",
+        action: "rename_file",
         subscription_plan: subscriptionPlan,
       });
     },
@@ -172,9 +172,9 @@ export function DeleteFileDialog({
       toast.success("File successfully deleted!");
 
       sendGTMEvent({
-        event: "dashboard-action",
         value: 1,
-        action_name: "delete-file",
+        event: "dashboard_action",
+        action: "delete_file",
         subscription_plan: subscriptionPlan,
       });
     },

@@ -27,8 +27,8 @@ export default function UploadButton({
         <Button
           onClick={() =>
             sendGTMEvent({
-              event: "dashboard-action",
-              action_name: "upload-dialog",
+              event: "dashboard_action",
+              action: "open_upload_dialog",
               value: 1,
             })
           }
