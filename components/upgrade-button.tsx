@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Loader2, ReceiptText, Zap } from "lucide-react";
 import type { FormEvent } from "react";
 import { toast } from "sonner";
@@ -20,8 +20,9 @@ export function UpgradeButton({
   const { mutate: createCheckoutSession, isPending } =
     trpc.subscription.createCheckoutSession.useMutation({
       onSuccess: ({ checkoutUrl }) => {
-        sendGAEvent("upgrade-button-click", {
+        sendGTMEvent({
           value: 1,
+          event: "upgrade-button-click",
           button_name: "Upgrade Button",
           page_path: window.location.pathname,
         });

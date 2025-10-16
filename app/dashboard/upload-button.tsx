@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,8 @@ export default function UploadButton({
       <DialogTrigger asChild>
         <Button
           onClick={() =>
-            sendGAEvent("dashboard-action", {
+            sendGTMEvent({
+              event: "dashboard-action",
               action_name: "upload-dialog",
               value: 1,
             })

@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { MessageCircleMore } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -63,7 +63,8 @@ export default function FileView({ file, isSubscribed }: FileViewProps) {
               size="icon"
               variant="accent"
               onClick={() => {
-                sendGAEvent("chat-action", {
+                sendGTMEvent({
+                  event: "chat-action",
                   value: 1,
                   action_name: "open-chat",
                   subscription_plan: isSubscribed ? "pro" : "free",

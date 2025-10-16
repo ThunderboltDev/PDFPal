@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Cloud, File, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -104,7 +104,8 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
         setIsUploading(true);
         setError(null);
 
-        sendGAEvent("file-upload-started", {
+        sendGTMEvent({
+          event: "file-upload-started",
           value: 1,
           plan: plan,
           file_size: bytesToMB(file.size),
@@ -126,7 +127,8 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
 
         startPolling({ key });
 
-        sendGAEvent("file-upload-complete", {
+        sendGTMEvent({
+          event: "file-upload-complete",
           value: 1,
           plan: plan,
           file_size: bytesToMB(file.size),

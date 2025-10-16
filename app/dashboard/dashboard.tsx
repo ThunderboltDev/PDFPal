@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { format } from "date-fns";
 import {
   AlertCircle,
@@ -49,7 +49,8 @@ export default function Dashboard() {
                   className="flex items-center justify-center gap-3 px-4 py-3 no-underline"
                   href={`/dashboard/${file.id}`}
                   onClick={() =>
-                    sendGAEvent("dashboard-action", {
+                    sendGTMEvent({
+                      event: "dashboard-action",
                       value: 1,
                       action_name: "file-click",
                       subscription_plan: subscriptionPlan?.name,

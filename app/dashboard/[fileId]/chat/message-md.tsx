@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Check, Copy } from "lucide-react";
 import { type ReactNode, useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -49,7 +49,8 @@ export default function MessageMarkdown({ children }: MessageMarkdownProps) {
   const copyToClipboard = useCallback(async (code: string) => {
     navigator.clipboard.writeText(code);
 
-    sendGAEvent("chat-action", {
+    sendGTMEvent({
+      event: "chat-action",
       value: 1,
       action_name: "copy-code",
     });

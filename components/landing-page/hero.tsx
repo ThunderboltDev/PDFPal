@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { motion } from "framer-motion";
 import { SendHorizonal } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
@@ -38,8 +38,10 @@ export default function Hero() {
             size="lg"
             variant="accent"
             onClick={() =>
-              sendGAEvent("hero_cta_click", {
+              sendGTMEvent({
                 value: 1,
+                event: "cta_click",
+                place: "hero_sectinon",
                 button_name: "Start Chatting",
                 page_path: window.location.pathname,
               })

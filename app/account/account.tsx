@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { format } from "date-fns";
 import { Loader2, LogOut, Mail, Trash, User } from "lucide-react";
 import Image from "next/image";
@@ -51,7 +51,8 @@ export default function Account({ session: currentSession }: AccountProps) {
 
   const { mutateAsync: deleteAccount } = trpc.user.deleteAccount.useMutation({
     onSuccess: () => {
-      sendGAEvent("delete-account", {
+      sendGTMEvent({
+        event: "delete-account",
         value: 1,
         user_id: userWithAccounts?.id,
         subscription_plan: subscriptionPlan?.name,
@@ -59,7 +60,8 @@ export default function Account({ session: currentSession }: AccountProps) {
       router.replace("/auth?callbackUrl=/account");
     },
     onError: () => {
-      sendGAEvent("delete-account-failed", {
+      sendGTMEvent({
+        event: "delete-account-failed",
         value: 1,
         user_id: userWithAccounts?.id,
         subscription_plan: subscriptionPlan?.name,
@@ -71,7 +73,8 @@ export default function Account({ session: currentSession }: AccountProps) {
   const { mutateAsync: deleteSession } =
     trpc.user.deleteUserSession.useMutation({
       onSuccess: () => {
-        sendGAEvent("delete-session", {
+        sendGTMEvent({
+          event: "delete-session",
           value: 1,
           user_id: userWithAccounts?.id,
           subscription_plan: subscriptionPlan?.name,
@@ -80,7 +83,8 @@ export default function Account({ session: currentSession }: AccountProps) {
         toast.success("Device removed!");
       },
       onError: () => {
-        sendGAEvent("delete-session-failed", {
+        sendGTMEvent({
+          event: "delete-session-failed",
           value: 1,
           user_id: userWithAccounts?.id,
           subscription_plan: subscriptionPlan?.name,

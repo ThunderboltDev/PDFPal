@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Expand, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Document, Page } from "react-pdf";
@@ -49,7 +49,8 @@ export default function PDFFullScreen({ fileUrl }: FullScreenProps) {
           size="icon"
           variant="ghost"
           onClick={() => {
-            sendGAEvent("pdf-action", {
+            sendGTMEvent({
+              event: "pdf-action",
               action_name: "toggle-full-screen",
               value: 1,
             });

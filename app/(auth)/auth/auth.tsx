@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -75,7 +75,8 @@ export default function Auth() {
     setError(null);
     setIsLoading(true);
 
-    sendGAEvent(`login-${provider}-initiated`, {
+    sendGTMEvent({
+      event: `login-${provider}-initiated`,
       value: 1,
     });
 
@@ -93,7 +94,8 @@ export default function Auth() {
     setError(null);
     setIsLoading(true);
 
-    sendGAEvent("login-email-initiated", {
+    sendGTMEvent({
+      event: "login-email-initiated",
       value: 1,
     });
 

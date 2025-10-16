@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Loader2, Pencil, Save, Trash } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -60,7 +60,8 @@ export function RenameFileDialog({
     onSuccess: () => {
       utils.file.getUserFiles.invalidate();
       toast.success("File name updated");
-      sendGAEvent("dashboard-action", {
+      sendGTMEvent({
+        event: "dashboard-action",
         value: 1,
         action_name: "rename-file",
         subscription_plan: subscriptionPlan,
@@ -170,7 +171,8 @@ export function DeleteFileDialog({
       utils.file.getUserFiles.invalidate();
       toast.success("File successfully deleted!");
 
-      sendGAEvent("dashboard-action", {
+      sendGTMEvent({
+        event: "dashboard-action",
         value: 1,
         action_name: "delete-file",
         subscription_plan: subscriptionPlan,

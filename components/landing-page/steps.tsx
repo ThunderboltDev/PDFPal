@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -94,8 +94,10 @@ export default function Steps() {
             size="lg"
             variant="primary"
             onClick={() =>
-              sendGAEvent("steps_cta_click", {
+              sendGTMEvent({
                 value: 1,
+                event: "cta_click",
+                place: "steps_section",
                 button_name: "Start for free",
                 page_path: window.location.pathname,
               })

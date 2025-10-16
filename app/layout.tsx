@@ -79,7 +79,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       lang="en"
       suppressHydrationWarning
     >
-      <GoogleTagManager gtmId={config.gtag} />
+      <head>
+        <meta
+          name="google-site-verification"
+          content="c7IzeYfMHu6s2EryNuQs5O8PrvHGzAkIhz1pT9jG_Dc"
+        />
+        <GoogleTagManager gtmId={config.gtmId} />
+      </head>
       <body
         className={cn("min-h-screen font-sans antialiased", inter.className)}
       >

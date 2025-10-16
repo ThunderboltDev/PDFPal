@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { format } from "date-fns";
 import { BanknoteX, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -17,8 +17,9 @@ export default function CancelSubscriptionButton({
   const { mutateAsync: cancelSubscription } =
     trpc.subscription.cancelSubscription.useMutation({
       onSuccess: () => {
-        sendGAEvent("cancel_subscription", {
+        sendGTMEvent({
           value: 1,
+          event: "cancel_subscription",
           button_name: "Cancel Subscription",
           page_path: window.location.pathname,
         });

@@ -2,7 +2,7 @@
 
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Send } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -57,7 +57,8 @@ export default function ContactPage({ session }: ContactProps) {
   const { mutateAsync: sendMessage, isPending } =
     trpc.contact.sendMessage.useMutation({
       onSuccess: () => {
-        sendGAEvent("contact-form-submitted", {
+        sendGTMEvent({
+          event: "contact-form-submitted",
           value: 1,
           user_id: session?.userId,
         });
@@ -66,7 +67,8 @@ export default function ContactPage({ session }: ContactProps) {
         router.replace("/contact/success");
       },
       onError: () => {
-        sendGAEvent("contact-form-submission-failed", {
+        sendGTMEvent({
+          event: "contact-form-submission-failed",
           value: 1,
           user_id: session?.userId,
         });

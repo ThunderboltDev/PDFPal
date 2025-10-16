@@ -8,7 +8,7 @@ const config = {
   url,
   creator: "Thunderbolt",
   themeColor: "#402080",
-  gtag: "GTM-MJ8WM9MT",
+  gtmId: "GTM-MJ8WM9MT",
   socials: {
     github: "https://github.com/ThunderboltDev",
     discord: "https://discord.com/",

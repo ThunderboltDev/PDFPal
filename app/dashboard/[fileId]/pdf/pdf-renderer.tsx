@@ -37,7 +37,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google";
 import PDFFullScreen from "./full-screen";
 
 function Loader() {
@@ -103,7 +103,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
   const handlePageNavigate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
     setValue("pageNumber", String(pageNumber), { shouldValidate: true });
-    sendGAEvent("pdf-action", {
+    sendGTMEvent({
+      event: "pdf-action",
       action_name: "page-navigate",
       value: 1,
     });
@@ -128,7 +129,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
   const handleZoom = (zoom: number) => {
     if (zoom >= 0.5 && zoom <= 2) {
       setScale(zoom);
-      sendGAEvent("pdf-action", {
+      sendGTMEvent({
+        event: "pdf-action",
         action_name: "zoom-in",
         zoom_level: zoom,
         value: 1,
@@ -138,7 +140,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
 
   const rotateClockwise = () => {
     setRotation((prev) => (prev + 90) % 360);
-    sendGAEvent("pdf-action", {
+    sendGTMEvent({
+      event: "pdf-action",
       action_name: "rotate-clockwise",
       value: 1,
     });
@@ -146,7 +149,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
 
   const rotateCounterClockwise = () => {
     setRotation((prev) => (prev + 270) % 360);
-    sendGAEvent("pdf-action", {
+    sendGTMEvent({
+      event: "pdf-action",
       action_name: "rotate-counter-clockwise",
       value: 1,
     });
@@ -191,7 +195,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
 
   useHotkeys(["z"], () => {
     setScale((prev) => Math.min(Number((prev + 0.1).toFixed(2)), 2));
-    sendGAEvent("pdf-action", {
+    sendGTMEvent({
+      event: "pdf-action",
       action_name: "zoom-in",
       value: 1,
     });
@@ -199,7 +204,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
 
   useHotkeys(["shift+z"], () => {
     setScale((prev) => Math.max(Number((prev - 0.1).toFixed(2)), 0.5));
-    sendGAEvent("pdf-action", {
+    sendGTMEvent({
+      event: "pdf-action",
       action_name: "zoom-out",
       value: 1,
     });
@@ -326,7 +332,8 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
                 type="button"
                 variant="ghost"
                 onClick={() => {
-                  sendGAEvent("pdf-action", {
+                  sendGTMEvent({
+                    event: "pdf-action",
                     action_name: "view-keyboard-shortcuts",
                     value: 1,
                   });

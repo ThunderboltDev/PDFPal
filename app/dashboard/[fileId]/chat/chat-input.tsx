@@ -1,4 +1,6 @@
-import { sendGAEvent } from "@next/third-parties/google";
+"use client";
+
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Loader2, Send } from "lucide-react";
 import { type KeyboardEvent, useContext, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -27,9 +29,10 @@ export default function ChatInput({ isLoading }: ChatInputProps) {
 
       inputRef.current?.focus();
 
-      sendGAEvent("chat-action", {
-        value: 1,
+      sendGTMEvent({
+        event: "chat-action",
         action_name: "message-sent",
+        value: 1,
       });
     }
   };
