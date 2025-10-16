@@ -18,13 +18,13 @@
     @apply bg-primary/25;
   }
 
-  html {
-    @apply bg-background;
-    @apply scroll-pt-24 scroll-smooth scrollbar-2;
-  }
-
+  html,
   body {
     @apply bg-background text-foreground overflow-x-hidden;
+  }
+
+  html {
+    @apply scroll-pt-24 scroll-smooth scrollbar-2;
   }
 
   h1,

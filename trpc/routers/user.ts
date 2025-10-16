@@ -63,6 +63,7 @@ export const userRouter = router({
     .use(createRateLimit(1, 60, "get-total-usage"))
     .query(async ({ ctx }) => {
       const { userId } = ctx;
+
       const totalUsage = await db.user.findUnique({
         where: {
           id: userId,

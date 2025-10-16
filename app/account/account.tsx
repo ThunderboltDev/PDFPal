@@ -123,7 +123,7 @@ export default function Account({ session: currentSession }: AccountProps) {
           ) : (
             <Skeleton width={160} />
           )}
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-sm break-all">
             {userWithAccounts ? (
               userWithAccounts.email
             ) : (
