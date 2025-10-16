@@ -213,8 +213,7 @@
 }
 
 @utility container-* {
-  @apply mx-auto;
-  width: calc(100vw - 3rem);
+  @apply mx-auto w-[calc(100vw-1.8rem)] sm:w-[calc(100vw-3rem)];
   max-width: --value(--container- *, integer);
 }
 
