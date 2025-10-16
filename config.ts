@@ -1,3 +1,9 @@
+export const isTestMode = process.env.CREEM_TEST_MODE === "isTestMode";
+
+export const CREEM_API_BASE = isTestMode
+  ? "https://test-api.creem.io/v1"
+  : "https://api.creem.io/v1";
+
 const url = "https://pdf-pal-pro.vercel.app";
 
 const config = {
@@ -66,8 +72,12 @@ const config = {
         yearly: 99.99,
       },
       productId: {
-        monthly: "prod_4ZtlEyxvUyIIMxSraQ7ZcT",
-        yearly: "prod_7G9AC88XkORnOM3vNiS3m4",
+        monthly: isTestMode
+          ? "prod_4ZtlEyxvUyIIMxSraQ7ZcT"
+          : "prod_39PGhjrtoKxvMiRjyfkfct",
+        yearly: isTestMode
+          ? "prod_7G9AC88XkORnOM3vNiS3m4"
+          : "prod_2ucrc2OavaNR9bRPpbKcd3",
       },
       maxFileSize: "16MB",
       maxFileSizeInBytes: 4 * 1024 * 1024,
@@ -76,10 +86,5 @@ const config = {
     },
   },
 } as const;
-
-export const CREEM_API_BASE =
-  process.env.CREEM_TEST_MODE === "true"
-    ? "https://test-api.creem.io/v1"
-    : "https://api.creem.io/v1";
 
 export default config;

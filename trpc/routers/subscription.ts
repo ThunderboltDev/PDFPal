@@ -14,7 +14,7 @@ const creemApiKey = process.env.CREEM_API_KEY;
 
 export const subscriptionRouter = router({
   createCheckoutSession: privateProcedure
-    .use(createRateLimit(1, 2 * 60, "create-checkout-sessions"))
+    .use(createRateLimit(1, 2 * 60, "create-checkout-session"))
     .input(
       z.object({
         productId: z
@@ -44,7 +44,7 @@ export const subscriptionRouter = router({
         });
       }
 
-      const returnUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/billing`;
+      const returnUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/thank-you`;
 
       const { checkoutUrl } = await creem.createCheckout({
         createCheckoutRequest: {
