@@ -43,7 +43,6 @@ export default function Hero() {
                 event: "cta_click",
                 place: "hero_section",
                 button_name: "Start Chatting",
-                page_path: window.location.pathname,
               })
             }
           >

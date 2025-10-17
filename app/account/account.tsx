@@ -259,7 +259,7 @@ export default function Account({ session: currentSession }: AccountProps) {
       <div className="mt-3 flex flex-col gap-2">
         {sessions && sessions.length > 0 ? (
           sessions.map((session) => {
-            const parser = new UAParser(session.userAgent ?? "");
+            const parser = new UAParser(session.sessionToken ?? "");
             const deviceName = `${parser.getOS().name ?? "Unknown OS"} ${
               parser.getOS().version ?? "- Unknown Version"
             }`;
@@ -276,14 +276,10 @@ export default function Account({ session: currentSession }: AccountProps) {
                     {isCurrent && <Badge variant="primary">You</Badge>}
                   </p>
                   <p>
-                    {session.country && session.city ? (
+                    {session.country && session.city && (
                       <>
                         {session.city}, {session.country}
                       </>
-                    ) : session.country ? (
-                      session.country
-                    ) : (
-                      !!session.city && session.city
                     )}
                   </p>
                   <p>

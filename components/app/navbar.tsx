@@ -111,7 +111,6 @@ function AuthActionButton({
             value: 1,
             event: "auth",
             action: "logout",
-            page_location: window.location.pathname,
           });
         } else {
           sendGTMEvent({
@@ -119,7 +118,6 @@ function AuthActionButton({
             event: "cta_click",
             place: "navbar",
             button_name: "Get Started",
-            page_location: window.location.pathname,
           });
         }
       }}

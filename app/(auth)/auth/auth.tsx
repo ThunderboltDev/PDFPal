@@ -122,7 +122,7 @@ export default function Auth() {
           event: "auth",
           action: "login_failed",
           provider: "email",
-          error: result.code,
+          error: result.error,
           value: 1,
         });
 

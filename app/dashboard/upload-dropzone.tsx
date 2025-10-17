@@ -105,9 +105,10 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
         setError(null);
 
         sendGTMEvent({
-          event: "file-upload-started",
           value: 1,
-          plan: plan,
+          event: "dashboard_action",
+          action: "file_upload_started",
+          subscription_plan: plan,
           file_size: bytesToMB(file.size),
           number_of_pages: numberOfPages,
         });
@@ -128,9 +129,10 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
         startPolling({ key });
 
         sendGTMEvent({
-          event: "file-upload-complete",
           value: 1,
-          plan: plan,
+          event: "dashboard",
+          action: "file_upload_complete",
+          subscription_plan: plan,
           file_size: bytesToMB(file.size),
           number_of_pages: numberOfPages,
         });

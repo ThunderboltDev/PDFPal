@@ -36,7 +36,7 @@
   h4,
   h5,
   h6 {
-    @apply font-semibold text-pretty;
+    @apply font-semibold text-pretty text-secondary-foreground;
   }
 
   h1 {
@@ -94,6 +94,10 @@
     @apply mt-6;
   }
 
+  section ul {
+    @apply list-disc ml-6 pt-1 pb-3;
+  }
+
   a {
     @apply text-primary hover:text-primary/90;
     @apply underline-offset-3 hover:underline;
@@ -101,10 +105,6 @@
     @apply focus-visible:outline-none focus-visible:ring-current;
     @apply focus-visible:ring-2 focus-visible:ring-offset-2;
     @apply rounded-[1px];
-  }
-
-  section ul {
-    @apply list-disc ml-6 pt-1 pb-3;
   }
 
   button,

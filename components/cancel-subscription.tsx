@@ -22,7 +22,6 @@ export default function CancelSubscriptionButton({
           event: "subscription_action",
           action: "cancel_subscription",
           button_name: "Cancel Subscription",
-          page_path: window.location.pathname,
         });
         toast.success("Subscription canceled");
       },

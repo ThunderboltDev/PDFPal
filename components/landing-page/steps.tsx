@@ -74,7 +74,7 @@ export default function Steps() {
                 <step.icon className="aspect-square" />
                 <h6 className="text-left font-semibold">{step.title}</h6>
               </div>
-              <span className="mt-1 text-zinc-700 md:text-[15px]">
+              <span className="mt-1 text-muted-foreground md:text-[15px]">
                 {step.description}
               </span>
             </div>
@@ -99,7 +99,6 @@ export default function Steps() {
                 event: "cta_click",
                 place: "steps_section",
                 button_name: "Start for free",
-                page_path: window.location.pathname,
               })
             }
           >

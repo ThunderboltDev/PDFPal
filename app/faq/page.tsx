@@ -103,13 +103,7 @@ export default function FAQ() {
       <p className="md:text-center">
         We&apos;ve answered some of the common questions about PDF Pal. If you{" "}
         still have questions, feel free to{" "}
-        <Link
-          className="underline"
-          href="/contact"
-        >
-          contact us
-        </Link>
-        .
+        <Link href="/contact">contact us</Link>.
       </p>
       <main className="my-6">
         <Accordion

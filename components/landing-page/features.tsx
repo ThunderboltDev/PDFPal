@@ -41,7 +41,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="container-6xl my-12">
+    <div className="container-6xl my-12">
       <motion.div
         className="px-6 lg:px-8"
         initial={{ opacity: 0, y: "50%", filter: "blur(5px)" }}
@@ -64,7 +64,7 @@ export default function Features() {
           </p>
         </div>
       </motion.div>
-      <ul className="grid grid-cols-1 gap-8 py-10 md:grid-cols-2 md:gap-6">
+      <ul className="grid grid-cols-1 gap-8 py-10 xs:mx-2 sm:mx-4 md:grid-cols-2 md:gap-6">
         {features.map((feature) => (
           <motion.div
             className="relative z-1"
@@ -89,6 +89,7 @@ export default function Features() {
               <motion.div
                 transition={feature.transition}
                 whileHover={feature.whileHover}
+                whileTap={feature.whileHover}
               >
                 <feature.icon
                   className={cn("size-12 text-foreground", feature.iconClass)}
@@ -103,6 +104,6 @@ export default function Features() {
           </motion.div>
         ))}
       </ul>
-    </section>
+    </div>
   );
 }

@@ -25,7 +25,6 @@ export function UpgradeButton({
           event: "subscription_action",
           action: "upgrade",
           button_name: "Upgrade Button",
-          page_path: window.location.pathname,
         });
         if (checkoutUrl) window.location.href = checkoutUrl;
         else toast.error("Something went wrong!");
@@ -43,7 +42,6 @@ export function UpgradeButton({
           event: "subscription_action",
           action: "manage_subscription",
           button_name: "Manage Subscription",
-          page_path: window.location.pathname,
         });
         if (portalUrl) window.location.href = portalUrl;
         else toast.error("Something went wrong!");
