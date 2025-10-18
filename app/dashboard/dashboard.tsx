@@ -24,8 +24,8 @@ export default function Dashboard() {
 
   return (
     <main className="container-7xl pt-20">
-      <div className="flex flex-col items-start justify-between gap-2 pb-5 sm:flex-row sm:items-center sm:gap-0">
-        <h2 className="mb-1">My Files</h2>
+      <div className="flex flex-col items-start justify-between gap-3 pb-5 xs:pb-3 xs:flex-row xs:items-center xs:gap-0">
+        <h2>My Files</h2>
         <UploadButton
           isLoading={!subscriptionPlan}
           isSubscribed={!!subscriptionPlan?.isSubscribed}
