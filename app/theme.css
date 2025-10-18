@@ -28,7 +28,7 @@
   --color-warning: var(--color-yellow-600);
 
   --color-border: oklch(80% 0 0);
-  --color-input: oklch(80%% 0 0);
+  --color-input: oklch(80% 0 0);
   --color-ring: var(--color-primary);
 
   --radius-sm: 0.25rem;
