@@ -259,7 +259,7 @@ export default function Account({ session: currentSession }: AccountProps) {
       <div className="mt-3 flex flex-col gap-2">
         {sessions && sessions.length > 0 ? (
           sessions.map((session) => {
-            const parser = new UAParser(session.sessionToken ?? "");
+            const parser = new UAParser(session.userAgent ?? "");
             const deviceName = `${parser.getOS().name ?? "Unknown OS"} ${
               parser.getOS().version ?? "- Unknown Version"
             }`;
@@ -268,7 +268,7 @@ export default function Account({ session: currentSession }: AccountProps) {
             return (
               <div
                 className="flex flex-row items-center justify-between"
-                key={session.userAgent}
+                key={`${session.userAgent}-${session.lastActivity}`}
               >
                 <div className="text-muted-foreground text-sm">
                   <p className="flex flex-row items-center gap-2 font-semibold text-base text-secondary-foreground">
