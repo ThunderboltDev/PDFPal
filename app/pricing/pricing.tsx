@@ -41,7 +41,7 @@ const pricingItems = [
         available: true,
       },
       {
-        text: "Higher-quality responses",
+        text: "High Quality Responses",
         footnote: "Enhanced responses and higher token limit",
         available: false,
       },
@@ -72,7 +72,7 @@ const pricingItems = [
         available: true,
       },
       {
-        text: "Higher-quality responses",
+        text: "High Quality Responses",
         footnote: "Better algorithmic responses and higher token limit",
         available: true,
       },
@@ -163,7 +163,7 @@ export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
                   </p>
                 </div>
 
-                <div className="flex h-14 items-center justify-center border-gray-300 border-y bg-gray-50">
+                <div className="flex h-12 xs:h-14 items-center justify-center border-gray-300 border-y bg-gray-50">
                   <div className="flex items-center space-x-1">
                     <p>{maxFiles} PDFs included</p>
                     <Tooltip>
@@ -177,7 +177,7 @@ export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
                   </div>
                 </div>
 
-                <ul className="my-8 space-y-3 px-8">
+                <ul className="my-6 xs:my-8 space-y-2 xs:space-y-3 px-6 xs:px-8">
                   {features.map((feature) => (
                     <li
                       className="flex space-x-3"
@@ -214,7 +214,7 @@ export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
                 </ul>
 
                 <div className="border-gray-200 border-t" />
-                <div className="p-5">
+                <div className="p-3 xs:p-5">
                   {isAuthenticated ? (
                     name === "Free" ? (
                       <LinkButton
