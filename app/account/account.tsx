@@ -182,7 +182,7 @@ export default function Account({ session: currentSession }: AccountProps) {
       </div>
       <h6 className="mt-8">Subscription</h6>
       <Separator />
-      <div className="mt-2 flex flex-row items-center justify-between gap-6">
+      <div className="mt-2 flex flex-col justify-between gap-4 xs:flex-row xs:items-center xs:gap-6">
         <div>
           {subscriptionPlan ? (
             <p>
@@ -260,8 +260,8 @@ export default function Account({ session: currentSession }: AccountProps) {
         {sessions && sessions.length > 0 ? (
           sessions.map((session) => {
             const parser = new UAParser(session.userAgent ?? "");
-            const deviceName = `${parser.getOS().name ?? "Unknown OS"} ${
-              parser.getOS().version ?? "- Unknown Version"
+            const deviceName = `${parser.getOS().name ?? "???"} ${
+              parser.getOS().version ?? "- X.X.X"
             }`;
             const isCurrent =
               session.sessionToken === currentSession?.sessionToken;
@@ -284,7 +284,7 @@ export default function Account({ session: currentSession }: AccountProps) {
                   </p>
                   <p>
                     {parser.getBrowser().name ?? "Unknown Browser"}{" "}
-                    {parser.getBrowser().version ?? "- Unknown Version"}
+                    {parser.getBrowser().version ?? "- X.X.X"}
                   </p>
                   <p>
                     {format(
@@ -353,7 +353,7 @@ export default function Account({ session: currentSession }: AccountProps) {
       </div>
       <h6 className="mt-8">Danger Zone</h6>
       <Separator />
-      <div className="mt-2 mb-12 flex flex-row items-center justify-between gap-6">
+      <div className="mt-2 mb-12 flex flex-col justify-between gap-4 xs:flex-row xs:items-center xs:gap-6">
         <div>
           <p>Delete your account</p>
           <p className="text-muted-foreground text-sm">
