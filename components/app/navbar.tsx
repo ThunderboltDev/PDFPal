@@ -81,10 +81,18 @@ function AuthActionButton({
 }) {
   if (status === "loading") {
     return (
-      <Skeleton
-        height={36}
-        width={208}
-      />
+      <>
+        <Skeleton
+          className="!hidden md:!inline-flex -translate-y-2"
+          height={32}
+          width={95}
+        />
+        <Skeleton
+          className="md:!hidden"
+          height={36}
+          width={208}
+        />
+      </>
     );
   }
 
