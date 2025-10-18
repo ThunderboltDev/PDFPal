@@ -3,7 +3,7 @@
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { sendGTMEvent } from "@next/third-parties/google";
-import { Send } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Session } from "next-auth";
@@ -206,12 +206,21 @@ export default function ContactPage({ session }: ContactProps) {
           />
           <Button
             className="mt-2 w-full"
-            disabled={isPending}
             type="submit"
             variant="primary"
+            disabled={isPending}
           >
-            <Send />
-            Send Message
+            {isPending ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send />
+                Send Message
+              </>
+            )}
           </Button>
         </form>
       </Form>

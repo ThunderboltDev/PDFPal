@@ -22,7 +22,7 @@ export default function Billing() {
     trpc.subscription.getTransactionHistory.useQuery();
 
   return (
-    <main className="container-3xl mt-18">
+    <main className="container-3xl mt-20">
       <h2>Billing</h2>
       <p>
         View and manage your subscription, payment method, and billing history
@@ -64,7 +64,7 @@ export default function Billing() {
                   </span>
                 </>
               ) : (
-                <Skeleton width={100} />
+                <Skeleton width={120} />
               )}
             </p>
             <p className="text-base">
@@ -76,7 +76,7 @@ export default function Billing() {
                   </span>
                 </>
               ) : (
-                <Skeleton width={100} />
+                <Skeleton width={140} />
               )}
             </p>
           </CardDescription>
@@ -95,18 +95,11 @@ export default function Billing() {
                 )}
               </>
             ) : (
-              <>
-                <Skeleton
-                  borderRadius={6}
-                  height={36}
-                  width={150}
-                />
-                <Skeleton
-                  borderRadius={6}
-                  height={36}
-                  width={183}
-                />
-              </>
+              <Skeleton
+                borderRadius={6}
+                height={36}
+                width={150}
+              />
             )}
           </div>
           <div className="flex flex-col items-start space-y-1 text-sm md:items-end">
