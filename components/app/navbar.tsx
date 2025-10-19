@@ -109,7 +109,7 @@ function AuthActionButton({
       href={
         isAuthenticated
           ? "/logout"
-          : "/auth&utm_source=navbar&utm_medium=button&utm_campaign=signup"
+          : "/auth?utm_source=navbar&utm_medium=button&utm_campaign=signup"
       }
       size={size}
       variant={isAuthenticated ? "ghost" : "primary"}

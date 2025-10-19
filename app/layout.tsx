@@ -2,10 +2,10 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import type { PropsWithChildren } from "react";
-
 import Footer from "@/components/app/footer";
 import Navbar from "@/components/app/navbar";
 import Providers from "@/components/app/providers";
+import CookieBanner from "@/components/cookie-consent/banner";
 import { Toaster } from "@/components/ui/sonner";
 import config from "@/config";
 import { cn } from "@/lib/utils";
@@ -90,10 +90,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         className={cn("min-h-screen font-sans antialiased", inter.className)}
       >
         <Providers>
+          <Toaster />
           <Navbar />
           {children}
           <Footer />
-          <Toaster />
+          <CookieBanner />
         </Providers>
       </body>
     </html>
