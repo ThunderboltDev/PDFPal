@@ -47,7 +47,7 @@ export const metadata: Metadata = {
         url: config.preview.url,
         width: config.preview.width,
         height: config.preview.height,
-        alt: `${config.name} Preview`,
+        alt: `${config.name} Dashboard Preview`,
       },
     ],
   },

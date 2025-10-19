@@ -30,6 +30,11 @@ const config = {
     width: 1200,
     height: 630,
   },
+  landing: {
+    url: "/landing-page.webp",
+    width: 1200,
+    height: 630,
+  },
   keywords: [
     "PDF pal",
     "PDF chat",

@@ -61,7 +61,7 @@ export default function Messages({ fileId }: MessagesProps) {
   return (
     <div
       className={cn(
-        "mb-2 flex h-full flex-1 flex-col-reverse gap-4 overflow-y-auto p-3",
+        "mb-2 flex h-full flex-1 flex-col-reverse gap-4 overflow-y-auto p-3 scrollbar-2",
         {
           "cursor-pointer": isLoading,
         }
