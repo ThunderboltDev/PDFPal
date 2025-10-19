@@ -7,6 +7,7 @@ import CookiePreferences from "@/components/cookie-consent/preferences";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import config from "@/config";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 const currentYear = new Date().getFullYear();
 
@@ -62,7 +63,15 @@ export default function Footer() {
               <li>
                 <Link
                   className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-                  href="/pricing"
+                  href="/pricing?utm_source=app&utm_medium=link&utm_campaign=footer#billing-period-toggle"
+                  onClick={() =>
+                    sendGTMEvent({
+                      value: 1,
+                      event: "subscription_action",
+                      action: "pricing_click",
+                      button_name: "Pricing",
+                    })
+                  }
                 >
                   Pricing
                 </Link>

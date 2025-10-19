@@ -17,7 +17,7 @@ function verifyCreemSignature(payload: string, signature: string) {
 
   return crypto.timingSafeEqual(
     Buffer.from(expected, "hex"),
-    Buffer.from(signature, "hex"),
+    Buffer.from(signature, "hex")
   );
 }
 
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       },
       {
         status: 400,
-      },
+      }
     );
   }
 
@@ -79,82 +79,92 @@ export async function POST(req: NextRequest) {
       },
       {
         status: 404,
-      },
+      }
     );
   }
 
-  switch (eventType) {
-    case "checkout.completed":
-      await db.user.update({
-        where: {
-          id: object.metadata.userId,
-        },
-        data: {
-          customerId: object.customer.id,
-          subscriptionId: object.subscription.id,
-          currentPeriodEnd: new Date(
-            object.subscription.current_period_end_date,
-          ),
-        },
-      });
-      break;
+  try {
+    switch (eventType) {
+      case "checkout.completed":
+        await db.user.update({
+          where: {
+            id: object.metadata.userId,
+          },
+          data: {
+            customerId: object.customer.id,
+            subscriptionId: object.subscription.id,
+            currentPeriodEnd: new Date(
+              object.subscription.current_period_end_date
+            ),
+          },
+        });
+        break;
 
-    case "subscription.active":
-      await db.user.update({
-        where: {
-          id: object.metadata.userId,
-        },
-        data: {
-          customerId: object.customer.id,
-          subscriptionId: object.id,
-        },
-      });
-      break;
+      case "subscription.active":
+        await db.user.update({
+          where: {
+            id: object.metadata.userId,
+          },
+          data: {
+            customerId: object.customer.id,
+            subscriptionId: object.id,
+          },
+        });
+        break;
 
-    case "subscription.paid":
-      await db.user.update({
-        where: {
-          id: object.metadata.userId,
-        },
-        data: {
-          customerId: object.customer.id,
-          subscriptionId: object.id,
-          currentPeriodEnd: new Date(
-            object.subscription.current_period_end_date,
-          ),
-        },
-      });
-      break;
+      case "subscription.paid":
+        await db.user.update({
+          where: {
+            id: object.metadata.userId,
+          },
+          data: {
+            customerId: object.customer.id,
+            subscriptionId: object.id,
+            currentPeriodEnd: new Date(object.current_period_end_date),
+          },
+        });
+        break;
 
-    case "subscription.trialing":
-    case "subscription.update":
-    case "subscription.paused":
-      await db.user.update({
-        where: {
-          id: object.metadata.userId,
-        },
-        data: {
-          customerId: object.customer.id,
-          subscriptionId: object.id,
-          currentPeriodEnd: new Date(object.current_period_end_date),
-        },
-      });
-      break;
+      case "subscription.trialing":
+      case "subscription.update":
+      case "subscription.paused":
+        await db.user.update({
+          where: {
+            id: object.metadata.userId,
+          },
+          data: {
+            customerId: object.customer.id,
+            subscriptionId: object.id,
+            currentPeriodEnd: new Date(object.current_period_end_date),
+          },
+        });
+        break;
 
-    case "refund.created":
-    case "dispute.created":
-      await db.user.update({
-        where: {
-          id: object.metadata.userId,
-        },
-        data: {
-          customerId: object.customer.id,
-          subscriptionId: object.subscription.id,
-          currentPeriodEnd: new Date(
-            object.subscription.current_period_end_date,
-          ),
-        },
-      });
+      case "refund.created":
+      case "dispute.created":
+        await db.user.update({
+          where: {
+            id: object.metadata.userId,
+          },
+          data: {
+            customerId: object.customer.id,
+            subscriptionId: object.subscription.id,
+            currentPeriodEnd: new Date(
+              object.subscription.current_period_end_date
+            ),
+          },
+        });
+    }
+  } catch (error) {
+    console.error(`❌ Error handling ${eventType}:`, error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal error during event handling",
+        error: String(error),
+      },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({

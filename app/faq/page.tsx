@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import config from "@/config";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -50,8 +51,21 @@ const faqs = [
     answer: (
       <>
         Currently, users can only upload {plans.free.maxFiles} PDFs. However,
-        you can upgrade to the <Link href="/pricing#pro-plan">Pro Plan</Link> to
-        increase this limit to {plans.pro.maxFiles}.
+        you can upgrade to the{" "}
+        <Link
+          href="/pricing?utm_source=app&utm_medium=link&utm_campaign=faq-page#billing-period-toggle"
+          onClick={() =>
+            sendGTMEvent({
+              value: 1,
+              event: "subscription_action",
+              action: "pricing_click",
+              button_name: "Pro Plan",
+            })
+          }
+        >
+          Pro Plan
+        </Link>{" "}
+        to increase this limit to {plans.pro.maxFiles}.
       </>
     ),
   },
@@ -81,7 +95,10 @@ const faqs = [
         You can contact support by going to the{" "}
         <Link href="/contact">Contact Page</Link>. Or you can reach out to use
         by emailing{" "}
-        <Link href={`mailto:${config.socials.email}`} target="_blank">
+        <Link
+          href={`mailto:${config.socials.email}`}
+          target="_blank"
+        >
           {config.socials.email}
         </Link>
       </>
@@ -103,9 +120,15 @@ export default function FAQ() {
         <Link href="/contact">contact us</Link>.
       </p>
       <main className="my-6">
-        <Accordion collapsible type="single">
+        <Accordion
+          collapsible
+          type="single"
+        >
           {faqs.map((faq, index) => (
-            <AccordionItem key={faq.question} value={`faq-${index}`}>
+            <AccordionItem
+              key={faq.question}
+              value={`faq-${index}`}
+            >
               <AccordionTrigger>{faq.question}</AccordionTrigger>
               <AccordionContent>{faq.answer}</AccordionContent>
             </AccordionItem>
@@ -115,7 +138,10 @@ export default function FAQ() {
       <p className="mb-12">
         Still can&apos;t find the answer you&apos;re looking for?{" "}
         <Link href="/contact">Contact us</Link> or email us at{" "}
-        <Link href={`mailto:${config.socials.email}`} target="_blank">
+        <Link
+          href={`mailto:${config.socials.email}`}
+          target="_blank"
+        >
           {config.socials.email}
         </Link>
       </p>

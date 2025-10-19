@@ -22,7 +22,7 @@ export const subscriptionRouter = router({
           .optional()
           .default(config.plans.pro.productId.monthly),
         discountCode: z.string().optional().default(""),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
@@ -50,6 +50,9 @@ export const subscriptionRouter = router({
         createCheckoutRequest: {
           customer: {
             email: user.email,
+          },
+          metadata: {
+            userId,
           },
           discountCode: input.discountCode,
           productId: input.productId,
@@ -165,15 +168,20 @@ export const subscriptionRouter = router({
         },
       });
 
-      if (!user?.subscriptionId) {
+      if (
+        !user?.subscriptionId ||
+        !user.customerId ||
+        !user.currentPeriodEnd ||
+        user.currentPeriodEnd < new Date()
+      ) {
         return {
           ...plans.free,
-          status: "Active",
+          status: "active",
           customerId: null,
           subscriptionId: null,
           isCanceled: false,
           isSubscribed: false,
-          billingPeriod: "Lifetime",
+          billingPeriod: "lifetime",
           currentPeriodEnd: null,
         };
       }
@@ -200,7 +208,7 @@ export const subscriptionRouter = router({
       } catch {
         return {
           ...plans.pro,
-          status: "Active",
+          status: "active",
           customerId: user.customerId,
           subscriptionId: user.subscriptionId,
           isCanceled: false,

@@ -4,10 +4,24 @@ declare module "next-auth" {
   interface Session {
     sessionToken: string;
     userId: string;
-    expires: string;
+    expires: Date;
+
     userAgent?: string;
+    timezone?: string;
+    country?: string;
+    city?: string;
+
     createdAt: Date;
-    updatedAt: Date;
-    user: DefaultSession["user"];
+    lastActivity: Date;
+
+    user: DefaultSession["user"] & {
+      createdAt: Date;
+      updatedAt: Date;
+      lastLogin: Date;
+
+      customerId?: string;
+      subscriptionId?: string;
+      currentPeriodEnd?: Date;
+    };
   }
 }

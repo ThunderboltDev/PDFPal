@@ -16,8 +16,35 @@ const steps = [
     title: "Create an account",
     description: (
       <>
-        Sign up using the <Link href="/pricing/#free-plan">Free Plan</Link> or
-        choose <Link href="/pricing/#pro-plan">Pro Plan</Link> later.
+        Sign up using the{" "}
+        <Link
+          href="/pricing?utm_source=app&utm_medium=link&utm_campaign=steps-section#billing-period-toggle"
+          onClick={() =>
+            sendGTMEvent({
+              value: 1,
+              event: "subscription_action",
+              action: "pricing_click",
+              button_name: "Free Plan",
+            })
+          }
+        >
+          Free Plan
+        </Link>{" "}
+        or choose{" "}
+        <Link
+          href="/pricing?utm_source=app&utm_medium=link&utm_campaign=steps-section#billing-period-toggle"
+          onClick={() =>
+            sendGTMEvent({
+              value: 1,
+              event: "subscription_action",
+              action: "pricing_click",
+              button_name: "Pro Plan",
+            })
+          }
+        >
+          Pro Plan
+        </Link>{" "}
+        later.
       </>
     ),
     icon: UserPlus,

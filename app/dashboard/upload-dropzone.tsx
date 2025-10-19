@@ -77,11 +77,24 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
               Your PDF has {numberOfPages} pages but the limit is {maxPages}.{" "}
               {!isSubscribed && (
                 <>
-                  Upgrade to <Link href="/pricing#pro-plan">Pro Plan</Link> to
-                  increase this limit!
+                  Upgrade to{" "}
+                  <Link
+                    href="/pricing?utm_source=app&utm_medium=link&utm_campaign=upload-dropzone#billing-period-toggle"
+                    onClick={() =>
+                      sendGTMEvent({
+                        value: 1,
+                        event: "subscription_action",
+                        action: "pricing_click",
+                        button_name: "Pro Plan",
+                      })
+                    }
+                  >
+                    Pro Plan
+                  </Link>{" "}
+                  to increase this limit!
                 </>
               )}
-            </>,
+            </>
           );
         }
 
@@ -93,11 +106,24 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
               File size is larger than {config.plans[plan].maxFileSize}.{" "}
               {!isSubscribed && (
                 <>
-                  Upgrade to <Link href="/pricing#pro-plan">Pro Plan</Link> to
-                  increase file size limit!
+                  Upgrade to{" "}
+                  <Link
+                    href="/pricing?utm_source=app&utm_medium=link&utm_campaign=upload-dropzone#billing-period-toggle"
+                    onClick={() =>
+                      sendGTMEvent({
+                        value: 1,
+                        event: "subscription_action",
+                        action: "pricing_click",
+                        button_name: "Pro Plan",
+                      })
+                    }
+                  >
+                    Pro Plan
+                  </Link>{" "}
+                  to increase file size limit!
                 </>
               )}
-            </>,
+            </>
           );
         }
 

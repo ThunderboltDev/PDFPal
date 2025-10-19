@@ -10,6 +10,7 @@ import config from "@/config";
 import ChatContextProvider from "./chat-context";
 import ChatInput from "./chat-input";
 import Messages from "./messages";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 const plans = config.plans;
 
@@ -29,7 +30,7 @@ export default function ChatWrapper({
     {
       refetchInterval: (query) =>
         query.state.data?.status !== "PROCESSING" ? false : 500,
-    },
+    }
   );
 
   const plan = isSubscribed ? "pro" : "free";
@@ -75,12 +76,26 @@ export default function ChatWrapper({
           </p>
           <div className="mx-auto mt-4 flex w-48 flex-col gap-2.5">
             {!isSubscribed && data.status !== "FAILED_UNKNOWN" && (
-              <LinkButton href="/pricing#pro-plan" variant="accent">
+              <LinkButton
+                variant="accent"
+                href="/pricing?utm_source=app&utm_medium=button&utm_campaign=chat#billing-period-toggle"
+                onClick={() =>
+                  sendGTMEvent({
+                    value: 1,
+                    event: "subscription_action",
+                    action: "pricing_click",
+                    button_name: "Upgrade to Pro Plan",
+                  })
+                }
+              >
                 <Zap className="size-4" />
                 Upgrade to Pro Plan
               </LinkButton>
             )}
-            <LinkButton href="/dashboard" variant="default">
+            <LinkButton
+              href="/dashboard"
+              variant="default"
+            >
               <ChevronLeft className="size-4" />
               Back to Dashboard
             </LinkButton>
@@ -104,7 +119,10 @@ export default function ChatWrapper({
               </p>
             </Loader>
           ) : isSheet ? (
-            <ScrollArea className="h-full" onWheel={(e) => e.stopPropagation()}>
+            <ScrollArea
+              className="h-full"
+              onWheel={(e) => e.stopPropagation()}
+            >
               <Messages fileId={fileId} />
             </ScrollArea>
           ) : (

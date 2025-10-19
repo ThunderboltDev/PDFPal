@@ -1,4 +1,4 @@
-export const isTestMode = process.env.CREEM_TEST_MODE === "isTestMode";
+export const isTestMode = process.env.CREEM_TEST_MODE === "true";
 
 export const CREEM_API_BASE = isTestMode
   ? "https://test-api.creem.io/v1"

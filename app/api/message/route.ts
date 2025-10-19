@@ -1,9 +1,10 @@
 import { InferenceClient } from "@huggingface/inference";
 import type { NextRequest } from "next/server";
+import z from "zod";
+
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pinecone } from "@/lib/pinecone";
-import { MessageValidator } from "./message-validation";
 
 if (!process.env.PINECONE_INDEX) {
   throw new Error("env variable PINECONE_INDEX not foud");
@@ -11,14 +12,19 @@ if (!process.env.PINECONE_INDEX) {
 
 const pineconeIndex = process.env.PINECONE_INDEX;
 
+const MessageValidator = z.object({
+  fileId: z.string(),
+  prompt: z.string(),
+});
+
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
 
-  if (!session?.user?.id) return new Response("Unauthorized", { status: 401 });
+  if (!session?.userId) return new Response("Unauthorized", { status: 401 });
 
-  const userId = session.user.id;
+  const userId = session.userId;
   const body = await req.json();
 
   const { fileId, prompt } = MessageValidator.parse(body);
@@ -41,13 +47,17 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  const isSubscribed =
+    session.user.currentPeriodEnd &&
+    new Date(session.user.currentPeriodEnd) > new Date();
+
   const namespace = pinecone
     .index(pineconeIndex, process.env.PINECONE_HOST_URL)
     .namespace(file.id);
 
   const searchResults = await namespace.searchRecords({
     query: {
-      topK: 3,
+      topK: isSubscribed ? 10 : 5,
       inputs: { text: prompt },
     },
     fields: ["text"],
@@ -62,7 +72,7 @@ export async function POST(req: NextRequest) {
         : "";
     })
     .filter(Boolean)
-    .slice(0, 3);
+    .slice(0, isSubscribed ? 5 : 3);
 
   const previousMessages = await db.message.findMany({
     where: {
@@ -72,7 +82,7 @@ export async function POST(req: NextRequest) {
     orderBy: {
       createdAt: "asc",
     },
-    take: 5,
+    take: isSubscribed ? 10 : 5,
   });
 
   const conversationHistory = previousMessages.map((message) => ({
@@ -88,15 +98,20 @@ export async function POST(req: NextRequest) {
 
   const systemMessage = [
     "/no_think",
+    isSubscribed
+      ? "You are a premium assistant with access to deeper reasoning, extended token context, and better PDF comprehension."
+      : "You are a standard assistant; stay concise and to the point.",
     "You are an assistant that answers questions about the user's uploaded PDF.",
     "Use the provided context when relevant and be concise. If context does not contain the answer, say you can't find it and offer to search more.",
     "Don't make up false information and keep the response short and concise.",
+    "Don't divert away from the PDF topic.",
     "Give a short, direct answer only. Your response should not be larger than 250 words.",
     "Provide your responses using Markdown formatting when applicable. Use headers, lists, code blocks, and links as needed.",
     contextMessage,
   ].join("\n");
 
   const client = new InferenceClient(process.env.HUGGINGFACEHUB_API_KEY);
+
   const stream = client.chatCompletionStream({
     provider: "hf-inference",
     model: "HuggingFaceTB/SmolLM3-3B",
@@ -111,9 +126,9 @@ export async function POST(req: NextRequest) {
         content: prompt,
       },
     ],
-    temperature: 0.7,
-    max_tokens: 512,
     stream: true,
+    temperature: 0.7,
+    max_tokens: isSubscribed ? 2048 : 256,
   });
 
   const readable = new ReadableStream({
