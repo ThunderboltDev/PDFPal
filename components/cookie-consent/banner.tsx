@@ -147,7 +147,7 @@ export default function CookieBanner() {
                     <Check />
                     Accept All
                   </Button>
-                  <CookiePreferences onClose={() => setIsVisible(false)}>
+                  <CookiePreferences onCloseAction={() => setIsVisible(false)}>
                     <Button
                       variant="accent"
                       className="w-full xs:w-auto rounded-full"

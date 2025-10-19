@@ -24,20 +24,20 @@ import { Switch } from "@/components/ui/switch";
 
 type CookiePreferencesProps = {
   children: ReactNode;
-  onClose: () => void;
+  onCloseAction?: () => void;
 };
 
 export default function CookiePreferences({
   children,
-  onClose,
+  onCloseAction: onClose,
 }: CookiePreferencesProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [consent, setConsent] = useState<ConsentState>(
-    getConsentFromStorage() ?? DEFAULT_CONSENT,
+    getConsentFromStorage() ?? DEFAULT_CONSENT
   );
 
   const closeDialog = () => {
-    onClose();
+    onClose?.();
     setIsOpen(false);
   };
 
@@ -63,7 +63,10 @@ export default function CookiePreferences({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
@@ -86,7 +89,10 @@ export default function CookiePreferences({
                   Required for basic website functionality and security
                 </p>
               </div>
-              <Switch checked={true} disabled />
+              <Switch
+                checked={true}
+                disabled
+              />
             </div>
           </div>
 
@@ -160,7 +166,10 @@ export default function CookiePreferences({
           >
             Accept All
           </Button>
-          <Button variant="primary" onClick={handleSavePreferences}>
+          <Button
+            variant="primary"
+            onClick={handleSavePreferences}
+          >
             Save Preferences
           </Button>
         </DialogFooter>
