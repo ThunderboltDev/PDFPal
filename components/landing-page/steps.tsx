@@ -48,7 +48,7 @@ export default function Steps() {
         whileInView={{ opacity: 1, filter: "blur(0px)", y: "0" }}
       >
         <h2 className="text-center">Start right now for free</h2>
-        <p className="mt-3 text-center text-muted-foreground">
+        <p className="mt-3 mx-auto text-center text-muted-foreground">
           It only takes a minute to get started!
         </p>
       </motion.div>
