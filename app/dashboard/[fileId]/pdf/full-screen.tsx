@@ -38,10 +38,7 @@ export default function PDFFullScreen({ fileUrl }: FullScreenProps) {
   });
 
   return (
-    <Dialog
-      onOpenChange={setIsOpen}
-      open={isOpen}
-    >
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
         <Button
           aria-label="Full screen"

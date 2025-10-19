@@ -22,7 +22,7 @@ export function createRateLimit(
   max: number,
   durationSeconds: number,
   routeName?: string,
-  message?: string
+  message?: string,
 ) {
   const limiter = new Ratelimit({
     redis,

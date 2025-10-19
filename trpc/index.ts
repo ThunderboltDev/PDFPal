@@ -7,12 +7,12 @@ import { userRouter } from "@/trpc/routers/user";
 import { router } from "@/trpc/trpc";
 
 export const appRouter = router({
-	auth: authRouter,
-	user: userRouter,
-	chat: chatRouter,
-	file: filesRouter,
-	contact: contactRouter,
-	subscription: subscriptionRouter,
+  auth: authRouter,
+  user: userRouter,
+  chat: chatRouter,
+  file: filesRouter,
+  contact: contactRouter,
+  subscription: subscriptionRouter,
 });
 
 export type AppRouter = typeof appRouter;

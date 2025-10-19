@@ -38,7 +38,7 @@ export default function Dashboard() {
             .sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
+                new Date(a.createdAt).getTime(),
             )
             .map((file) => (
               <li

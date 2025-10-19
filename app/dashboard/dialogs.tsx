@@ -36,7 +36,7 @@ const renameFileSchema = z.object({
     .max(25, "File name is too long")
     .refine(
       (str) => !/[/\\\n\r]/.test(str),
-      "File name cannot contain slashes or newlines"
+      "File name cannot contain slashes or newlines",
     )
     .transform((str) => str.trim()),
 });
@@ -144,10 +144,7 @@ export function RenameFileDialog({
                   </FormItem>
                 )}
               />
-              <Button
-                className="hidden"
-                type="submit"
-              >
+              <Button className="hidden" type="submit">
                 Submit
               </Button>
             </Form>

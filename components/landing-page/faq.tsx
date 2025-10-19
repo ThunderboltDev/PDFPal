@@ -15,7 +15,7 @@ const faqs = [
     question: "Do I need a credit card to start?",
     answer: (
       <>
-        <span className="font-semibold">Nope</span>! You can start for free{" "}
+        <span className="font-semibold">Nope</span>! You can start for free
         without entering any payment details. Just{" "}
         <Link href="/auth?utm_source=faq_section&utm_medium=link&utm_campaign=signup">
           create an account
@@ -56,9 +56,9 @@ const faqs = [
     answer: (
       <>
         In the <Link href="/pricing#free-plan">Free Plan</Link>, you get limited
-        number of PDFs to upload, smaller file size, page limits and unlimited{" "}
+        number of PDFs to upload, smaller file size, page limits and unlimited
         chats with Standard AI Model. While in the{" "}
-        <Link href="/pricing#pro-plan">Pro Plan</Link>, you get to experience{" "}
+        <Link href="/pricing#pro-plan">Pro Plan</Link>, you get to experience
         higher max file size, higher PDF upload limit and Advanced AI model!
         Visit <Link href="/pricing">Pricing</Link> for more info.
       </>
@@ -80,7 +80,7 @@ const faqs = [
     answer: (
       <>
         Your files are stored securely until you delete them by going to the{" "}
-        <Link href="/dashboard">Dashboard</Link>. You can view your uploaded{" "}
+        <Link href="/dashboard">Dashboard</Link>. You can view your uploaded
         files anywhere and anytime from the{" "}
         <Link href="/dashboard">Dashboard</Link>.
       </>
@@ -91,7 +91,7 @@ const faqs = [
     answer: (
       <>
         Yes, you can switch your selected plan anytime by going to the{" "}
-        <Link href="/billing">Billing Page</Link>. By default every user is on{" "}
+        <Link href="/billing">Billing Page</Link>. By default every user is on
         the <Link href="/pricing#free-plan">Free Plan</Link> and can upgrade to{" "}
         <Link href="/pricing#pro-plan">Pro Plan</Link> whenever they want.
       </>
@@ -115,16 +115,9 @@ export default function FAQ() {
         </p>
       </motion.div>
 
-      <Accordion
-        className="mt-10"
-        collapsible
-        type="single"
-      >
+      <Accordion className="mt-10" collapsible type="single">
         {faqs.map((faq, index) => (
-          <AccordionItem
-            key={faq.question}
-            value={`faq-${index}`}
-          >
+          <AccordionItem key={faq.question} value={`faq-${index}`}>
             <AccordionTrigger>{faq.question}</AccordionTrigger>
             <AccordionContent>{faq.answer}</AccordionContent>
           </AccordionItem>

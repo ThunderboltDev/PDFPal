@@ -81,10 +81,7 @@ const faqs = [
         You can contact support by going to the{" "}
         <Link href="/contact">Contact Page</Link>. Or you can reach out to use
         by emailing{" "}
-        <Link
-          href={`mailto:${config.socials.email}`}
-          target="_blank"
-        >
+        <Link href={`mailto:${config.socials.email}`} target="_blank">
           {config.socials.email}
         </Link>
       </>
@@ -101,20 +98,14 @@ export default function FAQ() {
     <div className="container-2xl mt-20">
       <h2 className="mb-4 md:text-center">Frequently Asked Questions</h2>
       <p className="md:text-center">
-        We&apos;ve answered some of the common questions about PDF Pal. If you{" "}
+        We&apos;ve answered some of the common questions about PDF Pal. If you
         still have questions, feel free to{" "}
         <Link href="/contact">contact us</Link>.
       </p>
       <main className="my-6">
-        <Accordion
-          collapsible
-          type="single"
-        >
+        <Accordion collapsible type="single">
           {faqs.map((faq, index) => (
-            <AccordionItem
-              key={faq.question}
-              value={`faq-${index}`}
-            >
+            <AccordionItem key={faq.question} value={`faq-${index}`}>
               <AccordionTrigger>{faq.question}</AccordionTrigger>
               <AccordionContent>{faq.answer}</AccordionContent>
             </AccordionItem>
@@ -124,10 +115,7 @@ export default function FAQ() {
       <p className="mb-12">
         Still can&apos;t find the answer you&apos;re looking for?{" "}
         <Link href="/contact">Contact us</Link> or email us at{" "}
-        <Link
-          href={`mailto:${config.socials.email}`}
-          target="_blank"
-        >
+        <Link href={`mailto:${config.socials.email}`} target="_blank">
           {config.socials.email}
         </Link>
       </p>

@@ -29,7 +29,7 @@ export default function ChatWrapper({
     {
       refetchInterval: (query) =>
         query.state.data?.status !== "PROCESSING" ? false : 500,
-    }
+    },
   );
 
   const plan = isSubscribed ? "pro" : "free";
@@ -75,18 +75,12 @@ export default function ChatWrapper({
           </p>
           <div className="mx-auto mt-4 flex w-48 flex-col gap-2.5">
             {!isSubscribed && data.status !== "FAILED_UNKNOWN" && (
-              <LinkButton
-                href="/pricing#pro-plan"
-                variant="accent"
-              >
+              <LinkButton href="/pricing#pro-plan" variant="accent">
                 <Zap className="size-4" />
                 Upgrade to Pro Plan
               </LinkButton>
             )}
-            <LinkButton
-              href="/dashboard"
-              variant="default"
-            >
+            <LinkButton href="/dashboard" variant="default">
               <ChevronLeft className="size-4" />
               Back to Dashboard
             </LinkButton>
@@ -110,10 +104,7 @@ export default function ChatWrapper({
               </p>
             </Loader>
           ) : isSheet ? (
-            <ScrollArea
-              className="h-full"
-              onWheel={(e) => e.stopPropagation()}
-            >
+            <ScrollArea className="h-full" onWheel={(e) => e.stopPropagation()}>
               <Messages fileId={fileId} />
             </ScrollArea>
           ) : (

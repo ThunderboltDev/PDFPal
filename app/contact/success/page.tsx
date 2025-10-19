@@ -22,17 +22,11 @@ export default function SuccessPage() {
         shortly.
       </p>
       <div className="flex gap-4">
-        <LinkButton
-          href="/dashboard"
-          variant="primary"
-        >
+        <LinkButton href="/dashboard" variant="primary">
           <LayoutDashboard />
           Go to Dashboard
         </LinkButton>
-        <LinkButton
-          href="/faq"
-          variant="accent"
-        >
+        <LinkButton href="/faq" variant="accent">
           <CircleQuestionMark />
           Browse FAQ
         </LinkButton>

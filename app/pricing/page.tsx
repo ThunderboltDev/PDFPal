@@ -33,10 +33,5 @@ export default async function PricingWrapper() {
   const isSubscribed =
     !!user?.currentPeriodEnd && user.currentPeriodEnd > new Date();
 
-  return (
-    <Pricing
-      isAuthenticated={!!session}
-      isSubscribed={isSubscribed}
-    />
-  );
+  return <Pricing isAuthenticated={!!session} isSubscribed={isSubscribed} />;
 }

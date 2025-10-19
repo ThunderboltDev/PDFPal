@@ -81,7 +81,7 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
                   increase this limit!
                 </>
               )}
-            </>
+            </>,
           );
         }
 
@@ -97,7 +97,7 @@ export default function UploadDropzone({ isSubscribed }: UploadDropzoneProps) {
                   increase file size limit!
                 </>
               )}
-            </>
+            </>,
           );
         }
 

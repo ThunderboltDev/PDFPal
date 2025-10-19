@@ -57,8 +57,8 @@ export default function ChatInput({ isLoading }: ChatInputProps) {
           isLoading
             ? "Loading"
             : isChatLoading
-            ? "Loading chat"
-            : "Send message"
+              ? "Loading chat"
+              : "Send message"
         }
         className={cn("absolute right-4.25 bottom-4.25 md:size-8", {
           "cursor-progress": isLoading || isChatLoading,
@@ -81,8 +81,8 @@ export default function ChatInput({ isLoading }: ChatInputProps) {
           {isLoading
             ? "Loading"
             : isChatLoading
-            ? "Loading chat"
-            : "Send message"}
+              ? "Loading chat"
+              : "Send message"}
         </span>
       </Button>
     </form>

@@ -91,7 +91,11 @@ export default function CookieBanner() {
             <motion.div
               className="relative bg-gradient-to-r from-background to-muted/50 backdrop-blur-sm border border-border/50 rounded-xl shadow-2xl p-6"
               whileHover={{ scale: 1.01 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
             >
               <motion.button
                 onClick={handleDeclineCookies}

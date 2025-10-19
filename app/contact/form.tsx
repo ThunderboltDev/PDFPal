@@ -111,7 +111,7 @@ export default function ContactPage({ session }: ContactProps) {
       <section>
         <h2>Contact Us</h2>
         <p>
-          Have questions or need support? We&apos;d love to hear from you. Email{" "}
+          Have questions or need support? We&apos;d love to hear from you. Email
           us at{" "}
           <Link href={`mailto:${config.socials.email}`}>
             {config.socials.email}

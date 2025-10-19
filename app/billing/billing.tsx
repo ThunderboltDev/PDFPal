@@ -95,21 +95,14 @@ export default function Billing() {
                 )}
               </>
             ) : (
-              <Skeleton
-                borderRadius={6}
-                height={36}
-                width={150}
-              />
+              <Skeleton borderRadius={6} height={36} width={150} />
             )}
           </div>
           <div className="flex flex-col items-start space-y-1 text-sm md:items-end">
             {subscription?.currentPeriodEnd ? (
               <span className="rounded-full text-muted-foreground text-xs">
                 Charged by{" "}
-                <Link
-                  href="https://creem.io"
-                  target="_blank"
-                >
+                <Link href="https://creem.io" target="_blank">
                   Creem
                 </Link>
                 {" • "}
@@ -134,21 +127,9 @@ export default function Billing() {
       <h3 className="mt-6 mb-4 md:mt-10">Transaction History</h3>
       {isLoading ? (
         <div>
-          <Skeleton
-            borderRadius={8}
-            height={50}
-            width={120}
-          />
-          <Skeleton
-            borderRadius={8}
-            height={50}
-            width={150}
-          />
-          <Skeleton
-            borderRadius={8}
-            height={50}
-            width={180}
-          />
+          <Skeleton borderRadius={8} height={50} width={120} />
+          <Skeleton borderRadius={8} height={50} width={150} />
+          <Skeleton borderRadius={8} height={50} width={180} />
         </div>
       ) : transactionHistory && transactionHistory.items.length > 0 ? (
         <div className="overflow-hidden rounded-lg border">
@@ -180,8 +161,8 @@ export default function Billing() {
                       tx.status === "succeeded"
                         ? "text-success"
                         : tx.status === "pending"
-                        ? "text-warning"
-                        : "text-danger"
+                          ? "text-warning"
+                          : "text-danger"
                     }`}
                   >
                     {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}

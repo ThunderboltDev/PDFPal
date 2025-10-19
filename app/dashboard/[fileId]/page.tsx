@@ -14,7 +14,7 @@ const getFile = cache(
         id: fileId,
         userId,
       },
-    })
+    }),
 );
 
 interface FileViewPageProps {
@@ -72,7 +72,7 @@ export default async function FileViewPage({ params }: FileViewPageProps) {
 
   if (!session?.userId) {
     return redirect(
-      `/auth?callbackUrl=${encodeURIComponent(`/dashboard/${fileId}`)}`
+      `/auth?callbackUrl=${encodeURIComponent(`/dashboard/${fileId}`)}`,
     );
   }
 
@@ -92,10 +92,5 @@ export default async function FileViewPage({ params }: FileViewPageProps) {
   const isSubscribed =
     !!user?.currentPeriodEnd && user.currentPeriodEnd > new Date();
 
-  return (
-    <FileView
-      file={file}
-      isSubscribed={isSubscribed}
-    />
-  );
+  return <FileView file={file} isSubscribed={isSubscribed} />;
 }

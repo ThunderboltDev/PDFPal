@@ -46,7 +46,10 @@ export const ourFileRouter = {
 
       const limits = isSubscribed
         ? { maxFileSize: config.plans.pro.maxFileSize, maxFileCount: 1 }
-        : { maxFileSize: config.plans.free.maxFileSize, maxFileCount: 1 };
+        : {
+            maxFileSize: config.plans.free.maxFileSize,
+            maxFileCount: 1,
+          };
 
       return {
         userId: session.userId,

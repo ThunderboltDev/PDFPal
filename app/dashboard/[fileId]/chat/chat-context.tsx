@@ -95,7 +95,7 @@ export default function ChatContextProvider({
 
       return {
         previousMessages: previousMessages?.pages.flatMap(
-          (page) => page.messages ?? []
+          (page) => page.messages ?? [],
         ),
       };
     },
@@ -129,7 +129,7 @@ export default function ChatContextProvider({
             };
 
           const isResponseCreated = old.pages.some((page) =>
-            page.messages.some((message) => message.id === "ai-response")
+            page.messages.some((message) => message.id === "ai-response"),
           );
 
           const updatedPages = old.pages.map((page) => {
@@ -144,7 +144,10 @@ export default function ChatContextProvider({
               if (isResponseCreated) {
                 updatedMessages = page.messages.map((message) => {
                   if (message.id === "ai-response") {
-                    return { ...message, text: response };
+                    return {
+                      ...message,
+                      text: response,
+                    };
                   }
                   return message;
                 });
@@ -180,7 +183,10 @@ export default function ChatContextProvider({
       setMessage(backupMessage.current);
       utils.chat.getFileMessages.setData(
         { fileId },
-        { messages: context?.previousMessages ?? [], nextCursor: undefined }
+        {
+          messages: context?.previousMessages ?? [],
+          nextCursor: undefined,
+        },
       );
     },
 

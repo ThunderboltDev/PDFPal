@@ -27,23 +27,12 @@ export default function FileView({ file, isSubscribed }: FileViewProps) {
   return (
     <div>
       <div className="hidden h-screen pt-14 md:flex">
-        <ResizablePanelGroup
-          className="h-full"
-          direction="horizontal"
-        >
-          <ResizablePanel
-            className="h-full"
-            defaultSize={60}
-            minSize={25}
-          >
+        <ResizablePanelGroup className="h-full" direction="horizontal">
+          <ResizablePanel className="h-full" defaultSize={60} minSize={25}>
             <PDFRendererWrapper fileUrl={file.url} />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel
-            className="h-full"
-            defaultSize={40}
-            minSize={25}
-          >
+          <ResizablePanel className="h-full" defaultSize={40} minSize={25}>
             <ChatWrapper
               fileId={file.id}
               isSheet={false}
@@ -74,10 +63,7 @@ export default function FileView({ file, isSubscribed }: FileViewProps) {
               <MessageCircleMore />
             </Button>
           </SheetTrigger>
-          <SheetContent
-            className="!overflow-y-auto h-screen p-0"
-            side="bottom"
-          >
+          <SheetContent className="!overflow-y-auto h-screen p-0" side="bottom">
             <SheetTitle className="sr-only">Chat</SheetTitle>
             <div className="h-full">
               <ChatWrapper

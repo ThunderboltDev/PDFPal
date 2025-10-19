@@ -76,7 +76,7 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
       },
       {
         error: "Invalid page number",
-      }
+      },
     ),
   });
 
@@ -156,37 +156,21 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
     });
   };
 
-  useHotkeys(
-    ["pagedown", "space"],
-    () => {
-      handleNextPage();
-    },
-    [handleNextPage]
-  );
+  useHotkeys(["pagedown", "space"], () => {
+    handleNextPage();
+  }, [handleNextPage]);
 
-  useHotkeys(
-    ["pageup", "shift+space"],
-    () => {
-      handlePrevPage();
-    },
-    [handlePrevPage]
-  );
+  useHotkeys(["pageup", "shift+space"], () => {
+    handlePrevPage();
+  }, [handlePrevPage]);
 
-  useHotkeys(
-    "home",
-    () => {
-      handlePageNavigate(1);
-    },
-    []
-  );
+  useHotkeys("home", () => {
+    handlePageNavigate(1);
+  }, []);
 
-  useHotkeys(
-    "end",
-    () => {
-      handlePageNavigate(numberOfPages);
-    },
-    [numberOfPages]
-  );
+  useHotkeys("end", () => {
+    handlePageNavigate(numberOfPages);
+  }, [numberOfPages]);
 
   useHotkeys("enter", () => {
     pageInputRef.current?.focus();
@@ -276,11 +260,7 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
         <div className="flex flex-row gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Zoom"
-                className="gap-1.5"
-                variant="ghost"
-              >
+              <Button aria-label="Zoom" className="gap-1.5" variant="ghost">
                 <ZoomIn className="size-4" />
                 {(scale * 100).toFixed(0)}%<span className="sr-only">Zoom</span>
                 <ChevronDown className="size-4" />
@@ -352,16 +332,10 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
                   </caption>
                   <thead className="text-muted-foreground text-base md:text-sm">
                     <tr>
-                      <th
-                        scope="col"
-                        className="py-2 pr-4"
-                      >
+                      <th scope="col" className="py-2 pr-4">
                         Action
                       </th>
-                      <th
-                        scope="col"
-                        className="py-2"
-                      >
+                      <th scope="col" className="py-2">
                         Shortcut
                       </th>
                     </tr>
@@ -451,10 +425,7 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
         </div>
       </div>
 
-      <div
-        className="h-full w-full flex-1"
-        ref={resizeContainerRef}
-      >
+      <div className="h-full w-full flex-1" ref={resizeContainerRef}>
         <div className="relative h-full">
           <SimpleBar
             className="h-[calc(100vh-14*8px)]"

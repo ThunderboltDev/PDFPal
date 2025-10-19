@@ -74,11 +74,7 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html
-      className="scheme-light"
-      lang="en"
-      suppressHydrationWarning
-    >
+    <html className="scheme-light" lang="en" suppressHydrationWarning>
       <head>
         <meta
           name="google-site-verification"

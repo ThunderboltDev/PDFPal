@@ -57,14 +57,22 @@ export default function Steps() {
         {steps.map((step, index) => (
           <motion.li
             className="md:flex-1"
-            initial={{ opacity: 0, filter: "blur(10px)", x: "-100%" }}
+            initial={{
+              opacity: 0,
+              filter: "blur(10px)",
+              x: "-100%",
+            }}
             key={step.title}
             transition={{
               duration: 0.5,
               ease: "linear",
             }}
             viewport={{ once: true }}
-            whileInView={{ opacity: 1, filter: "blur(0px)", x: "0" }}
+            whileInView={{
+              opacity: 1,
+              filter: "blur(0px)",
+              x: "0",
+            }}
           >
             <div className="flex flex-col space-y-2 border-border border-l-4 py-2 pl-4 hover:border-primary/80 md:border-t-2 md:border-l-0 md:pt-4 md:pb-0 md:pl-0">
               <span className="font-medium text-primary text-sm">

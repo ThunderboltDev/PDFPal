@@ -89,10 +89,10 @@ export const filesRouter = router({
           .max(25, "File name is too long")
           .refine(
             (str) => !/[/\\\n\r]/.test(str),
-            "File name cannot contain slashes or newlines"
+            "File name cannot contain slashes or newlines",
           )
           .transform((str) => str.trim()),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
@@ -109,7 +109,10 @@ export const filesRouter = router({
       });
 
       if (!file)
-        throw new TRPCError({ code: "NOT_FOUND", message: "File not found." });
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "File not found.",
+        });
 
       await db.file.update({
         where: { id, userId },
@@ -152,7 +155,7 @@ export const filesRouter = router({
 
         const index = pinecone.index(
           pineconeIndex,
-          process.env.PINECONE_HOST_URL
+          process.env.PINECONE_HOST_URL,
         );
 
         await index.deleteNamespace(file.id);
