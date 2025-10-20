@@ -17,7 +17,7 @@ function verifyCreemSignature(payload: string, signature: string) {
 
   return crypto.timingSafeEqual(
     Buffer.from(expected, "hex"),
-    Buffer.from(signature, "hex")
+    Buffer.from(signature, "hex"),
   );
 }
 
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       },
       {
         status: 400,
-      }
+      },
     );
   }
 
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       },
       {
         status: 404,
-      }
+      },
     );
   }
 
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
             customerId: object.customer.id,
             subscriptionId: object.subscription.id,
             currentPeriodEnd: new Date(
-              object.subscription.current_period_end_date
+              object.subscription.current_period_end_date,
             ),
           },
         });
@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
             customerId: object.customer.id,
             subscriptionId: object.subscription.id,
             currentPeriodEnd: new Date(
-              object.subscription.current_period_end_date
+              object.subscription.current_period_end_date,
             ),
           },
         });
@@ -163,7 +163,7 @@ export async function POST(req: NextRequest) {
         message: "Internal error during event handling",
         error: String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 

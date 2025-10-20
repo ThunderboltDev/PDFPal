@@ -2,12 +2,12 @@
 
 import { sendGTMEvent } from "@next/third-parties/google";
 import { Loader2, ReceiptText, Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 
 interface UpgradeButtonProps {
   className?: string;
@@ -51,7 +51,7 @@ export function UpgradeButton({
       });
 
       router.push(
-        "/pricing?utm_source=app&utm_medium=button&utm_campaign=upgrade-button#billing-period-toggle"
+        "/pricing?utm_source=app&utm_medium=button&utm_campaign=upgrade-button#billing-period-toggle",
       );
     }
   };

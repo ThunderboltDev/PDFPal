@@ -1,7 +1,7 @@
 "use client";
 
+import { sendGTMEvent } from "@next/third-parties/google";
 import { ChevronLeft, XCircle, Zap } from "lucide-react";
-
 import { trpc } from "@/app/_trpc/client";
 import { LinkButton } from "@/components/ui/button";
 import Loader from "@/components/ui/loader";
@@ -10,7 +10,6 @@ import config from "@/config";
 import ChatContextProvider from "./chat-context";
 import ChatInput from "./chat-input";
 import Messages from "./messages";
-import { sendGTMEvent } from "@next/third-parties/google";
 
 const plans = config.plans;
 
@@ -30,7 +29,7 @@ export default function ChatWrapper({
     {
       refetchInterval: (query) =>
         query.state.data?.status !== "PROCESSING" ? false : 500,
-    }
+    },
   );
 
   const plan = isSubscribed ? "pro" : "free";
@@ -92,10 +91,7 @@ export default function ChatWrapper({
                 Upgrade to Pro Plan
               </LinkButton>
             )}
-            <LinkButton
-              href="/dashboard"
-              variant="default"
-            >
+            <LinkButton href="/dashboard" variant="default">
               <ChevronLeft className="size-4" />
               Back to Dashboard
             </LinkButton>
@@ -119,10 +115,7 @@ export default function ChatWrapper({
               </p>
             </Loader>
           ) : isSheet ? (
-            <ScrollArea
-              className="h-full"
-              onWheel={(e) => e.stopPropagation()}
-            >
+            <ScrollArea className="h-full" onWheel={(e) => e.stopPropagation()}>
               <Messages fileId={fileId} />
             </ScrollArea>
           ) : (

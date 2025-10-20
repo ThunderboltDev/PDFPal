@@ -122,11 +122,7 @@ export default function Billing() {
                 )}
               </>
             ) : (
-              <Skeleton
-                borderRadius={6}
-                height={36}
-                width={150}
-              />
+              <Skeleton borderRadius={6} height={36} width={150} />
             )}
           </div>
           <div className="flex flex-col items-start space-y-1 text-sm md:items-end md:text-right">
@@ -135,10 +131,7 @@ export default function Billing() {
                 {subscription.currentPeriodEnd ? (
                   <span className="rounded-full text-muted-foreground text-xs text-nowrap">
                     Charged by{" "}
-                    <Link
-                      href="https://creem.io"
-                      target="_blank"
-                    >
+                    <Link href="https://creem.io" target="_blank">
                       Creem
                     </Link>
                     {" • "}
@@ -160,14 +153,8 @@ export default function Billing() {
               </>
             ) : (
               <div className="flex flex-col gap-1">
-                <Skeleton
-                  inline
-                  width={300}
-                />
-                <Skeleton
-                  inline
-                  width={230}
-                />
+                <Skeleton inline width={300} />
+                <Skeleton inline width={230} />
               </div>
             )}
           </div>

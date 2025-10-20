@@ -22,7 +22,7 @@ export const subscriptionRouter = router({
           .optional()
           .default(config.plans.pro.productId.monthly),
         discountCode: z.string().optional().default(""),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;

@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGTMEvent } from "@next/third-parties/google";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import config from "@/config";
@@ -9,7 +10,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { sendGTMEvent } from "@next/third-parties/google";
 
 const faqs = [
   {
@@ -235,16 +235,9 @@ export default function FAQ() {
         </p>
       </motion.div>
 
-      <Accordion
-        className="mt-10"
-        collapsible
-        type="single"
-      >
+      <Accordion className="mt-10" collapsible type="single">
         {faqs.map((faq, index) => (
-          <AccordionItem
-            key={faq.question}
-            value={`faq-${index}`}
-          >
+          <AccordionItem key={faq.question} value={`faq-${index}`}>
             <AccordionTrigger>{faq.question}</AccordionTrigger>
             <AccordionContent>{faq.answer}</AccordionContent>
           </AccordionItem>
