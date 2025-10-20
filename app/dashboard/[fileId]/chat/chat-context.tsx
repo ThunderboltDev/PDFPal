@@ -95,7 +95,7 @@ export default function ChatContextProvider({
 
       return {
         previousMessages: previousMessages?.pages.flatMap(
-          (page) => page.messages ?? [],
+          (page) => page.messages ?? []
         ),
       };
     },
@@ -129,7 +129,7 @@ export default function ChatContextProvider({
             };
 
           const isResponseCreated = old.pages.some((page) =>
-            page.messages.some((message) => message.id === "ai-response"),
+            page.messages.some((message) => message.id === "ai-response")
           );
 
           const updatedPages = old.pages.map((page) => {
@@ -180,13 +180,14 @@ export default function ChatContextProvider({
     },
 
     onError: (_error, _var, context) => {
+      toast.error(_error.message);
       setMessage(backupMessage.current);
       utils.chat.getFileMessages.setData(
         { fileId },
         {
           messages: context?.previousMessages ?? [],
           nextCursor: undefined,
-        },
+        }
       );
     },
 

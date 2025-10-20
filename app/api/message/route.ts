@@ -7,27 +7,97 @@ import { db } from "@/lib/db";
 import { pinecone } from "@/lib/pinecone";
 
 if (!process.env.PINECONE_INDEX) {
-  throw new Error("env variable PINECONE_INDEX not foud");
+  throw new Error("env variable PINECONE_INDEX not found");
 }
 
 const pineconeIndex = process.env.PINECONE_INDEX;
+const inferenceClient = new InferenceClient(process.env.HUGGINGFACEHUB_API_KEY);
+
+const subscriptionTiers = {
+  free: {
+    maxTokens: 512,
+    maxSearchResults: 5,
+    maxContextFragments: 3,
+    maxConversationHistory: 5,
+  },
+  pro: {
+    maxTokens: 2048,
+    maxSearchResults: 10,
+    maxContextFragments: 5,
+    maxConversationHistory: 15,
+  },
+};
 
 const MessageValidator = z.object({
   fileId: z.string(),
   prompt: z.string(),
 });
 
+export async function streamMessage({
+  text,
+  fileId,
+  userId,
+}: {
+  text: string;
+  fileId: string;
+  userId: string;
+}) {
+  const readableStream = new ReadableStream({
+    async start(controller) {
+      try {
+        const encoder = new TextEncoder();
+        const words = text.split(" ");
+
+        for await (const word of words) {
+          controller.enqueue(encoder.encode(`${word} `));
+          await new Promise((res) => setTimeout(res, 50));
+        }
+
+        try {
+          await db.message.create({
+            data: {
+              text,
+              fileId,
+              userId,
+              isUserMessage: false,
+            },
+          });
+        } catch (error) {
+          console.error("saving response error:", error);
+        }
+
+        controller.close();
+      } catch (error) {
+        console.error("streamAndSaveMessage error:", error);
+        controller.error(error);
+      }
+    },
+  });
+
+  return new Response(readableStream, {
+    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  });
+}
+
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
 
-  if (!session?.userId) return new Response("Unauthorized", { status: 401 });
+  if (!session?.userId)
+    return new Response("You are unauthorized.", { status: 401 });
 
   const userId = session.userId;
   const body = await req.json();
 
   const { fileId, prompt } = MessageValidator.parse(body);
+
+  if (prompt.length > 500) {
+    return new Response(
+      "Question too long. Please keep it under 500 characters.",
+      { status: 400 }
+    );
+  }
 
   const file = await db.file.findFirst({
     where: {
@@ -36,7 +106,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  if (!file) return new Response("Not found", { status: 404 });
+  if (!file) return new Response("File not found.", { status: 404 });
 
   await db.message.create({
     data: {
@@ -51,28 +121,50 @@ export async function POST(req: NextRequest) {
     session.user.currentPeriodEnd &&
     new Date(session.user.currentPeriodEnd) > new Date();
 
-  const namespace = pinecone
+  const tierSettings = subscriptionTiers[isSubscribed ? "pro" : "free"];
+
+  const pineconeNamespace = pinecone
     .index(pineconeIndex, process.env.PINECONE_HOST_URL)
     .namespace(file.id);
 
-  const searchResults = await namespace.searchRecords({
+  const searchResults = await pineconeNamespace.searchRecords({
     query: {
-      topK: isSubscribed ? 10 : 5,
+      topK: tierSettings.maxSearchResults,
       inputs: { text: prompt },
     },
     fields: ["text"],
   });
 
-  const rawMatches = searchResults.result.hits ?? [];
+  const searchHits = searchResults.result.hits ?? [];
 
-  const contexts: string[] = rawMatches
+  const contextFragments: string[] = searchHits
     .map((match) => {
       return Object.hasOwn(match.fields, "text")
         ? (match.fields as { text: string }).text
         : "";
     })
     .filter(Boolean)
-    .slice(0, isSubscribed ? 5 : 3);
+    .slice(0, tierSettings.maxContextFragments);
+
+  if (contextFragments.length === 0) {
+    const noContextMessage =
+      "The information found in your PDF doesn't seem relevant enough to answer this question accurately. Please try rephrasing or ask about specific content in your document.";
+
+    await db.message.create({
+      data: {
+        fileId,
+        userId,
+        text: noContextMessage,
+        isUserMessage: false,
+      },
+    });
+
+    return streamMessage({
+      text: noContextMessage,
+      fileId,
+      userId,
+    });
+  }
 
   const previousMessages = await db.message.findMany({
     where: {
@@ -82,7 +174,7 @@ export async function POST(req: NextRequest) {
     orderBy: {
       createdAt: "asc",
     },
-    take: isSubscribed ? 10 : 5,
+    take: tierSettings.maxConversationHistory,
   });
 
   const conversationHistory = previousMessages.map((message) => ({
@@ -90,29 +182,29 @@ export async function POST(req: NextRequest) {
     content: message.text,
   }));
 
-  const contextMessage = contexts.length
-    ? `Use the following context from the PDF to answer the user's question:\n\n${contexts
+  const contextInstruction = contextFragments.length
+    ? `Use the following context from the PDF to answer the user's question:\n\n${contextFragments
         .map((context, index) => `Context ${index + 1}:\n${context}`)
         .join("\n\n")}`
-    : "No relevant context found in the PDF. Answer based only on the conversation.";
+    : "No relevant context found in the PDF.";
 
   const systemMessage = [
     "/no_think",
     isSubscribed
-      ? "You are a premium assistant with access to deeper reasoning, extended token context, and better PDF comprehension."
-      : "You are a standard assistant; stay concise and to the point.",
-    "You are an assistant that answers questions about the user's uploaded PDF.",
-    "Use the provided context when relevant and be concise. If context does not contain the answer, say you can't find it and offer to search more.",
-    "Don't make up false information and keep the response short and concise.",
-    "Don't divert away from the PDF topic.",
-    "Give a short, direct answer only. Your response should not be larger than 250 words.",
-    "Provide your responses using Markdown formatting when applicable. Use headers, lists, code blocks, and links as needed.",
-    contextMessage,
+      ? "You are a premium assistant with deeper reasoning and extended PDF comprehension."
+      : "You are a standard assistant; stay brief and factual.",
+    "You MUST ONLY answer questions directly related to the user's uploaded PDF.",
+    "If the user's question is not clearly about the PDF or cannot be answered from the provided context, reply exactly with:",
+    `"I can only answer questions about the uploaded PDF."`,
+    "Do not attempt to interpret, guess, or be creative in such cases.",
+    "When context is relevant, give a clear, factual answer using the context below.",
+    "If the answer isn't in the context, say you can't find it and suggest a more specific question.",
+    "Do not hallucinate or invent details.",
+    "Try to keep your responses under 250 words and use Markdown formatting when helpful.",
+    contextInstruction,
   ].join("\n");
 
-  const client = new InferenceClient(process.env.HUGGINGFACEHUB_API_KEY);
-
-  const stream = client.chatCompletionStream({
+  const responseStream = inferenceClient.chatCompletionStream({
     provider: "hf-inference",
     model: "HuggingFaceTB/SmolLM3-3B",
     messages: [
@@ -128,19 +220,19 @@ export async function POST(req: NextRequest) {
     ],
     stream: true,
     temperature: 0.7,
-    max_tokens: isSubscribed ? 2048 : 256,
+    max_tokens: tierSettings.maxTokens,
   });
 
-  const readable = new ReadableStream({
+  const readableStream = new ReadableStream({
     async start(controller) {
       let response = "";
       try {
-        for await (const chunk of stream) {
+        for await (const chunk of responseStream) {
           if (chunk.choices && chunk.choices.length > 0) {
-            const str = chunk.choices[0].delta.content;
-            if (str) {
-              response += str;
-              controller.enqueue(new TextEncoder().encode(str));
+            const content = chunk.choices[0].delta.content;
+            if (content) {
+              response += content;
+              controller.enqueue(new TextEncoder().encode(content));
             }
           }
         }
@@ -154,23 +246,19 @@ export async function POST(req: NextRequest) {
               isUserMessage: false,
             },
           });
-        } catch (err) {
-          console.error("saving response error:", err);
+        } catch (error) {
+          console.error("saving response error:", error);
         }
 
         controller.close();
-      } catch (err) {
-        console.error("streaming error:", err);
-        controller.error(err);
+      } catch (error) {
+        console.error("streaming error:", error);
+        controller.error(error);
       }
-    },
-
-    cancel(reason) {
-      console.error("stream cancelled:", reason);
     },
   });
 
-  return new Response(readable, {
+  return new Response(readableStream, {
     headers: { "Content-Type": "text/plain; charset=utf-8" },
   });
 }
