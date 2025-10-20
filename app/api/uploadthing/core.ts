@@ -21,9 +21,6 @@ axiosRetry(customAxios, {
   retries: 3,
 });
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
 export const ourFileRouter = {
   pdfUploader: f({
     pdf: {},
