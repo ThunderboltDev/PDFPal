@@ -14,8 +14,8 @@ if (!process.env.PINECONE_INDEX) {
 const pineconeIndex = process.env.PINECONE_INDEX;
 const plans = config.plans;
 
-const f = createUploadthing();
 const customAxios = axios.create();
+const f = createUploadthing();
 
 axiosRetry(customAxios, {
   retries: 3,
