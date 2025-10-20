@@ -33,7 +33,7 @@ const MessageValidator = z.object({
   prompt: z.string(),
 });
 
-export async function streamMessage({
+async function streamMessage({
   text,
   fileId,
   userId,
