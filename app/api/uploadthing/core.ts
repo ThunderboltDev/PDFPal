@@ -1,5 +1,4 @@
 import axios from "axios";
-import axiosRetry from "axios-retry";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 import config from "@/config";
@@ -14,12 +13,7 @@ if (!process.env.PINECONE_INDEX) {
 const pineconeIndex = process.env.PINECONE_INDEX;
 const plans = config.plans;
 
-const customAxios = axios.create();
 const f = createUploadthing();
-
-axiosRetry(customAxios, {
-  retries: 3,
-});
 
 export const ourFileRouter = {
   pdfUploader: f({
