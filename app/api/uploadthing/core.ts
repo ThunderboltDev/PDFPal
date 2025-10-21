@@ -79,10 +79,11 @@ export const ourFileRouter = {
           responseType: "arraybuffer",
           timeout: 15 * 60 * 1000,
         });
-        console.log("axios fetch successful:", axios);
+        console.log("axios fetch successful");
 
         console.log("About to import mupdf...");
-        const mupdf = await import("mupdf");
+        const mupdf = (await import("mupdf")).default;
+        console.log("MuPDF default  import result:", mupdf);
         console.log("MuPDF import result:", Object.keys(mupdf));
 
         const document = mupdf.Document.openDocument(data, "application/pdf");
