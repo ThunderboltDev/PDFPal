@@ -51,7 +51,7 @@ export function UpgradeButton({
       });
 
       router.push(
-        "/pricing?utm_source=app&utm_medium=button&utm_campaign=upgrade-button#billing-period-toggle",
+        "/pricing?utm_source=app&utm_medium=button&utm_campaign=upgrade-button#billing-period-toggle"
       );
     }
   };

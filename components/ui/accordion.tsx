@@ -20,7 +20,7 @@ function AccordionItem({
     <AccordionPrimitive.Item
       className={cn(
         "container-2xl border-muted-foreground border-b last:border-b-0",
-        className,
+        className
       )}
       data-slot="accordion-item"
       {...props}
@@ -38,7 +38,7 @@ function AccordionTrigger({
       <AccordionPrimitive.Trigger
         className={cn(
           "flex flex-1 items-center justify-between gap-4 rounded-xs p-3 text-left font-medium text-lg outline-none transition-all focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
-          className,
+          className
         )}
         data-slot="accordion-trigger"
         {...props}

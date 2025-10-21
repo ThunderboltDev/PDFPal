@@ -47,7 +47,7 @@ function TooltipContent({
           "data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:animate-out",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
           "z-50",
-          className,
+          className
         )}
         data-slot="tooltip-content"
         sideOffset={sideOffset}

@@ -29,7 +29,7 @@ export default function Message({
             "order-2 bg-primary": isUserMessage,
             "order-1 bg-accent": !isUserMessage,
             invisible: isNextMessageSamePerson,
-          },
+          }
         )}
       >
         {isUserMessage ? (
@@ -44,7 +44,7 @@ export default function Message({
           {
             "order-1 items-end": isUserMessage,
             "order-2 items-start": !isUserMessage,
-          },
+          }
         )}
       >
         <div
@@ -55,7 +55,7 @@ export default function Message({
               "bg-secondary text-secondary-foreground": !isUserMessage,
               "rounded-br-none": !isNextMessageSamePerson && isUserMessage,
               "rounded-bl-none": !(isNextMessageSamePerson || isUserMessage),
-            },
+            }
           )}
         >
           {typeof message.text === "string" ? (

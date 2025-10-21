@@ -20,7 +20,7 @@ export default function Providers({ children }: PropsWithChildren) {
           maxItems: 1,
         }),
       ],
-    }),
+    })
   );
 
   return (

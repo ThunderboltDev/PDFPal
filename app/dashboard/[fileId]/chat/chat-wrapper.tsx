@@ -29,7 +29,7 @@ export default function ChatWrapper({
     {
       refetchInterval: (query) =>
         query.state.data?.status !== "PROCESSING" ? false : 500,
-    },
+    }
   );
 
   const plan = isSubscribed ? "pro" : "free";

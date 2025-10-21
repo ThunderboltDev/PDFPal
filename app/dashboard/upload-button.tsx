@@ -57,11 +57,7 @@ export default function UploadButton({
       }}
     >
       <DialogTrigger asChild>
-        <Button
-          variant="primary"
-          disabled={isLoading}
-          onClick={handleOpen}
-        >
+        <Button variant="primary" disabled={isLoading} onClick={handleOpen}>
           <Upload /> Upload PDF
         </Button>
       </DialogTrigger>

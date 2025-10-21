@@ -11,7 +11,7 @@ export const chatRouter = router({
         limit: z.number().min(1).max(25).default(15),
         cursor: z.string().nullish(),
         fileId: z.string(),
-      }),
+      })
     )
     .query(async ({ ctx, input }) => {
       const { fileId, cursor, limit } = input;

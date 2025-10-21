@@ -10,7 +10,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
         "aria-invalid:border-danger aria-invalid:ring-danger/25",
         "field-sizing-content flex min-h-17 overflow-x-hidden",
-        className,
+        className
       )}
       data-slot="textarea"
       {...props}

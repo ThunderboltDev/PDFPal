@@ -26,7 +26,7 @@ type FormFieldContextValue<
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue,
+  {} as FormFieldContextValue
 );
 
 const FormField = <
@@ -70,7 +70,7 @@ type FormItemContextValue = {
 };
 
 const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue,
+  {} as FormItemContextValue
 );
 
 function FormItem({ className, ...props }: React.ComponentProps<"div">) {
@@ -97,7 +97,7 @@ function FormLabel({
     <Label
       className={cn(
         "text-base data-[error=true]:text-danger md:text-sm",
-        className,
+        className
       )}
       data-error={!!error}
       data-slot="form-label"
@@ -149,7 +149,7 @@ function FormError({ className, ...props }: React.ComponentProps<"p">) {
     <span
       className={cn(
         "mt-0.75 text-left text-danger text-sm md:text-xs",
-        className,
+        className
       )}
       data-slot="form-error"
       id={formMessageId}
@@ -170,7 +170,7 @@ function FormSubmitError({
     <div
       className={cn(
         "rounded-sm bg-danger/15 px-3 py-2 text-left text-danger text-sm",
-        className,
+        className
       )}
       {...props}
     >

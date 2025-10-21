@@ -14,7 +14,7 @@ const getFile = cache(
         id: fileId,
         userId,
       },
-    }),
+    })
 );
 
 interface FileViewPageProps {
@@ -72,7 +72,7 @@ export default async function FileViewPage({ params }: FileViewPageProps) {
 
   if (!session?.userId) {
     return redirect(
-      `/auth?callbackUrl=${encodeURIComponent(`/dashboard/${fileId}`)}`,
+      `/auth?callbackUrl=${encodeURIComponent(`/dashboard/${fileId}`)}`
     );
   }
 

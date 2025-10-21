@@ -14,7 +14,7 @@ export default function OverlayLoader({
     <div
       className={cn(
         "fixed top-0 left-0 z-1000 flex h-full min-w-full cursor-progress flex-col items-center justify-center gap-4 bg-black/25 text-center backdrop-blur-[2px]",
-        isLoading ? "opacity-100" : "-z-100 opacity-0",
+        isLoading ? "opacity-100" : "-z-100 opacity-0"
       )}
     >
       <Loader2 className="size-10 animate-spin text-primary" />

@@ -76,7 +76,7 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
       },
       {
         error: "Invalid page number",
-      },
+      }
     ),
   });
 

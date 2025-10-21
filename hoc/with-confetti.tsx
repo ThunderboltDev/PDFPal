@@ -26,7 +26,7 @@ const CANVAS_STYLE: React.CSSProperties = {
 };
 
 function withConfetti<T extends object>(
-  WrappedComponent: ComponentType<T & WithConfettiProps>,
+  WrappedComponent: ComponentType<T & WithConfettiProps>
 ) {
   const ConfettiComponent: FC<T> = (props) => {
     const confettiRef = useRef<
@@ -43,7 +43,7 @@ function withConfetti<T extends object>(
         ticks: 10_000,
         origin: { x: 0.5, y: 1 },
       }),
-      [],
+      []
     );
 
     const triggerConfetti = useCallback(() => {

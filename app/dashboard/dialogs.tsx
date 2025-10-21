@@ -146,10 +146,7 @@ export function RenameFileDialog({
                   </FormItem>
                 )}
               />
-              <Button
-                className="hidden"
-                type="submit"
-              >
+              <Button className="hidden" type="submit">
                 Submit
               </Button>
             </Form>

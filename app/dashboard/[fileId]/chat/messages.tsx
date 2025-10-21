@@ -28,7 +28,7 @@ export default function Messages({ fileId }: MessagesProps) {
       {
         getNextPageParam: (lastPage) => lastPage?.nextCursor,
         placeholderData: keepPreviousData,
-      },
+      }
     );
 
   const { ref: intersectionRef, entry } = useIntersection({
@@ -64,7 +64,7 @@ export default function Messages({ fileId }: MessagesProps) {
         "mb-2 flex h-full flex-1 flex-col-reverse gap-4 overflow-y-auto p-3 scrollbar-2",
         {
           "cursor-pointer": isLoading,
-        },
+        }
       )}
       ref={containerRef}
     >
@@ -93,7 +93,7 @@ export default function Messages({ fileId }: MessagesProps) {
               text: (
                 <Skeleton
                   count={Math.floor(
-                    Math.random() * (index % 2 === 1 ? 2 : 4) + 1,
+                    Math.random() * (index % 2 === 1 ? 2 : 4) + 1
                   )}
                   variant={index % 2 === 1 ? "muted" : "default"}
                   width={(containerRef.current?.clientWidth ?? 100) * 0.65}

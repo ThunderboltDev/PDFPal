@@ -41,7 +41,7 @@ function Skeleton({
       containerClassName={cn(
         "!contents !h-0 !flex-1 !cursor-progress",
         variantConfig.className,
-        className,
+        className
       )}
       duration={2}
       highlightColor={variantConfig.highlightColor}

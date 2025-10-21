@@ -100,7 +100,7 @@ function AuthActionButton({
         {
           "text-danger hover:bg-danger/5": isAuthenticated,
         },
-        className,
+        className
       )}
       href={
         isAuthenticated
@@ -194,7 +194,7 @@ export default function Navbar() {
                 className={cn(
                   pathname === link.href
                     ? "text-accent hover:bg-accent/5"
-                    : "text-secondary-foreground hover:bg-muted/50 hover:text-foreground",
+                    : "text-secondary-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
                 href={link.href}
                 size="sm"
@@ -214,7 +214,7 @@ export default function Navbar() {
                 className={cn(
                   pathname === link.href
                     ? "text-accent hover:bg-accent/5"
-                    : "text-secondary-foreground hover:bg-muted/50 hover:text-foreground",
+                    : "text-secondary-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
                 href={link.href}
                 size="sm"
@@ -298,7 +298,7 @@ export default function Navbar() {
                             "w-full justify-start text-base md:text-[15px]",
                             pathname === link.href
                               ? "text-accent hover:bg-accent/5"
-                              : "text-secondary-foreground hover:text-foreground",
+                              : "text-secondary-foreground hover:text-foreground"
                           )}
                           href={link.href}
                           size="default"
@@ -321,7 +321,7 @@ export default function Navbar() {
               </div>
             )}
           </AnimatePresence>,
-          document.body,
+          document.body
         )}
     </nav>
   );

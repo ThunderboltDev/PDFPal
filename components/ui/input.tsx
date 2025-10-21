@@ -10,7 +10,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
         "aria-invalid:border-danger aria-invalid:text-danger aria-invalid:ring-danger/25 aria-invalid:placeholder:text-danger/60",
         "disabled:cursor-not-allowed",
-        className,
+        className
       )}
       data-slot="input"
       type={type}

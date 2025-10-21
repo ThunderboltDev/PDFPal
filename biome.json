@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "formatter": {
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "lineWidth": 80
   },
   "linter": {
     "rules": {
@@ -13,6 +14,11 @@
       "correctness": {
         "useUniqueElementIds": "off"
       }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "trailingCommas": "es5"
     }
   },
   "files": {

@@ -15,33 +15,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { UpgradeButton } from "@/components/upgrade-button";
 import { cn } from "@/lib/utils";
 
-/*
-
-cancel - my impl
-
-pro - active
-date 19 oct 2025
-renews on 18/11/2025
-
-after canceling
-
-pro - cancelled
-date 19 oct 2025
-cancels on 18/11/2025
-
-
-
-creem impl
-
-*/
-
 export default function Billing() {
   const { data: subscription } =
     trpc.subscription.getUserSubscriptionPlan.useQuery();
 
   const { data: transactionHistory, isLoading } =
     trpc.subscription.getTransactionHistory.useQuery();
-  console.log(transactionHistory);
+
   return (
     <main className="container-3xl mt-20">
       <h2>Billing</h2>

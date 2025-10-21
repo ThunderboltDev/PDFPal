@@ -87,7 +87,7 @@ interface PlansProps {
 
 export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
-    "monthly",
+    "monthly"
   );
 
   return (
@@ -111,7 +111,7 @@ export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
                 "relative flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-1.5 font-medium text-sm transition-colors md:px-6 md:text-base",
                 billingPeriod === period
                   ? "text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground/80",
+                  : "text-muted-foreground hover:text-foreground/80"
               )}
               key={period}
               onClick={() => setBillingPeriod(period)}
@@ -252,7 +252,7 @@ export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
                 </div>
               </div>
             </motion.div>
-          ),
+          )
         )}
       </main>
     </div>

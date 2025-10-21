@@ -17,8 +17,8 @@ export const contactRouter = router({
         3,
         60 * 60,
         "send-message",
-        "You can only submit this form 3 times per day!",
-      ),
+        "You can only submit this form 3 times per day!"
+      )
     )
     .input(
       z.object({
@@ -27,7 +27,7 @@ export const contactRouter = router({
         userId: z.string().nullable(),
         message: z.string().min(10).max(1000),
         captchaToken: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       const verifyResponse = await axios.post(
@@ -43,7 +43,7 @@ export const contactRouter = router({
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-        },
+        }
       );
 
       if (!verifyResponse.data.success) {
@@ -65,7 +65,7 @@ export const contactRouter = router({
                <p><strong>User ID</strong>: ${input.userId}</p>
                <p><strong>Email:</strong> ${input.email}</p>
                <p><strong>Message:</strong><br/>${purify.sanitize(
-                 marked.parse(input.message) as string,
+                 marked.parse(input.message) as string
                )}</p>`,
       });
 

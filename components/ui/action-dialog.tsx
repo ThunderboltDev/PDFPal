@@ -50,7 +50,7 @@ export default function ActionDialog({
       toast.error("Something went horribly wrong!");
       console.error(
         "Something went wrong while executing action dialog onConfirm:",
-        error,
+        error
       );
     } finally {
       setOpen(false);

@@ -165,18 +165,8 @@ export default function Account({ session: currentSession }: AccountProps) {
           })
         ) : (
           <>
-            <Skeleton
-              inline
-              width={120}
-              height={24}
-              borderRadius={5}
-            />
-            <Skeleton
-              inline
-              width={160}
-              height={24}
-              borderRadius={5}
-            />
+            <Skeleton inline width={120} height={24} borderRadius={5} />
+            <Skeleton inline width={160} height={24} borderRadius={5} />
           </>
         )}
       </div>
@@ -217,11 +207,7 @@ export default function Account({ session: currentSession }: AccountProps) {
           {subscriptionPlan ? (
             <UpgradeButton isSubscribed={subscriptionPlan.isSubscribed} />
           ) : (
-            <Skeleton
-              borderRadius={6}
-              height={36}
-              width={150}
-            />
+            <Skeleton borderRadius={6} height={36} width={150} />
           )}
         </div>
       </div>
@@ -238,20 +224,12 @@ export default function Account({ session: currentSession }: AccountProps) {
                 : plans.free.maxFiles}
             </span>
           ) : (
-            <Skeleton
-              className="inline"
-              width={50}
-            />
+            <Skeleton className="inline" width={50} />
           )}
         </p>
         <p>
           <span className="font-medium">Total Messages:</span>{" "}
-          {totalUsage?.messages ?? (
-            <Skeleton
-              className="inline"
-              width={35}
-            />
-          )}
+          {totalUsage?.messages ?? <Skeleton className="inline" width={35} />}
         </p>
       </div>
       <h6 className="mt-8">Active Devices</h6>

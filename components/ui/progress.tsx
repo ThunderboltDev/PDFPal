@@ -47,7 +47,7 @@ function Progress({
       className={cn(
         backgroundMap[indicatorColor],
         "relative h-2 w-full overflow-hidden rounded-full",
-        className,
+        className
       )}
       data-slot="progress"
       {...props}
@@ -56,7 +56,7 @@ function Progress({
         className={cn(
           gradientMap[indicatorColor],
           "h-full w-full flex-1 rounded-full transition-all",
-          "animation-duration-[1.5s] animate-bg-position-x bg-size-[300%_100%]",
+          "animation-duration-[1.5s] animate-bg-position-x bg-size-[300%_100%]"
         )}
         data-slot="progress-indicator"
         style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
