@@ -12,13 +12,13 @@ export default function Hero() {
       <motion.div
         className="container-6xl flex h-view flex-col items-center justify-center text-center"
         initial={{ opacity: 0, filter: "blur(5px)", y: "33vh" }}
+        whileInView={{ opacity: 1, filter: "blur(0px)", y: "-40px" }}
         transition={{
           delay: 0.5,
           duration: 0.75,
           ease: "easeIn",
         }}
         viewport={{ once: true }}
-        whileInView={{ opacity: 1, filter: "blur(0px)", y: "-40px" }}
       >
         <h1 className="max-w-4xl">
           Chat with your{" "}
