@@ -1,7 +1,8 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
+import "pdf-parse/worker";
+import { PDFParse } from "pdf-parse";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-
 import config from "@/config";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -72,10 +73,12 @@ export const ourFileRouter = {
           timeout: 15 * 60 * 1000,
         });
 
-        const { Document } = await import("mupdf");
+        const parser = new PDFParse({
+          data: new Uint8Array(data),
+        });
 
-        const document = Document.openDocument(data, "application/pdf");
-        const numberOfPages = document.countPages();
+        const { total: numberOfPages, pages } = await parser.getText();
+        await parser.destroy();
 
         const plan = isSubscribed ? "pro" : "free";
 
@@ -105,14 +108,9 @@ export const ourFileRouter = {
           return;
         }
 
-        const pages = [];
-
-        for (let i = 0; i < numberOfPages; i++)
-          pages.push(document.loadPage(i).toStructuredText().asText());
-
-        const upsertRequest = pages.map((page, index) => ({
-          id: `${createdFile.id}-${index}`,
-          text: page,
+        const upsertRequest = pages.map((page) => ({
+          id: `${createdFile.id}-${page.num}`,
+          text: page.text,
         }));
 
         const namespace = pinecone
