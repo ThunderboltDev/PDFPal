@@ -38,7 +38,7 @@ export default function Dashboard() {
             .sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime(),
+                new Date(a.createdAt).getTime()
             )
             .map((file) => (
               <li
@@ -60,7 +60,7 @@ export default function Dashboard() {
                   {file.uploadStatus === "SUCCESS" ? (
                     <div className="flex size-10 shrink-0 rounded-full bg-gradient-to-br from-cyan-500 to-accent" />
                   ) : file.uploadStatus === "PROCESSING" ? (
-                    <div className="animation-duration-[3s] flex size-10 shrink-0 animate-spin rounded-full border-4 border-muted border-dashed" />
+                    <div className="flex size-10 shrink-0 rounded-full bg-gradient-to-br from-cyan-500 to-accent animate-pulse" />
                   ) : (
                     <AlertCircle className="flex size-10 shrink-0 rounded-full bg-danger/15 text-danger/80" />
                   )}
@@ -70,7 +70,7 @@ export default function Dashboard() {
                     </h5>
                   </div>
                 </Link>
-                <div className="grid h-10 grid-cols-3 gap-6 px-3 py-1 text-muted-foreground text-xs">
+                <div className="grid h-10 grid-cols-3 gap-2 px-3 py-1 text-muted-foreground text-xs">
                   <div className="flex items-center gap-1.5">
                     <Plus className="size-4" />
                     {format(file.createdAt, "dd MMM yyyy")}
@@ -81,12 +81,12 @@ export default function Dashboard() {
                         <MessageSquare className="size-4" /> {file.messageCount}
                       </>
                     ) : file.uploadStatus === "PROCESSING" ? (
-                      <span className="flex flex-row items-center justify-end gap-1.5 text-info/75">
+                      <span className="flex flex-row items-center justify-end gap-1.5 text-info/80">
                         <Loader2 className="size-4 animate-spin" />
                         Processing...
                       </span>
                     ) : (
-                      <span className="flex flex-row items-center justify-end gap-1.5 text-danger/75">
+                      <span className="flex flex-row items-center justify-end gap-1.5 text-danger/80">
                         <AlertTriangle className="size-4" />
                         Failed
                       </span>
@@ -100,7 +100,7 @@ export default function Dashboard() {
                     />
                     <DeleteFileDialog
                       subscriptionPlan={subscriptionPlan?.name}
-                      disabled={file.uploadStatus === "PROCESSING"}
+                      disabled={file.uploadStatus !== "SUCCESS"}
                       file={file}
                     />
                   </div>
