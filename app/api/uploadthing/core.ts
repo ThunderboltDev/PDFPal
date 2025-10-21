@@ -15,7 +15,6 @@ if (!process.env.PINECONE_INDEX) {
 export const runtime = "nodejs";
 
 const pineconeIndex = process.env.PINECONE_INDEX;
-const plans = config.plans;
 
 const f = createUploadthing();
 const customAxios = axios.create();
@@ -39,6 +38,11 @@ export const ourFileRouter = {
         },
         select: {
           currentPeriodEnd: true,
+          _count: {
+            select: {
+              File: true,
+            },
+          },
         },
       });
 
@@ -47,18 +51,31 @@ export const ourFileRouter = {
       const isSubscribed =
         user.currentPeriodEnd && user.currentPeriodEnd > new Date();
 
-      const limits = isSubscribed
-        ? { maxFileSize: config.plans.pro.maxFileSize, maxFileCount: 1 }
-        : { maxFileSize: config.plans.free.maxFileSize, maxFileCount: 1 };
+      const plan = config.plans[isSubscribed ? "pro" : "free"];
+
+      const fileConfig = {
+        maxPages: plan.maxPages,
+        maxFiles: plan.maxFiles,
+        maxFileSize: plan.maxFileSize,
+        maxFileSizeInBytes: plan.maxFileSizeInBytes,
+      };
+
+      if (user._count.File >= fileConfig.maxFiles) {
+        throw new Error(
+          isSubscribed
+            ? "You've reached your upload limit for this plan."
+            : "You've reached your free upload limit. Upgrade your plan to upload more files."
+        );
+      }
 
       return {
         userId: session.userId,
-        fileConfig: limits,
-        isSubscribed,
+        fileConfig,
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      const { userId, isSubscribed } = metadata;
+      const { userId, fileConfig } = metadata;
+
       const createdFile = await db.file.create({
         data: {
           key: file.key,
@@ -79,9 +96,7 @@ export const ourFileRouter = {
           new Uint8Array(data)
         );
 
-        const plan = isSubscribed ? "pro" : "free";
-
-        if (numberOfPages > config.plans[plan].maxPages) {
+        if (numberOfPages > fileConfig.maxPages) {
           await db.file.update({
             where: {
               id: createdFile.id,
@@ -94,7 +109,7 @@ export const ourFileRouter = {
           return;
         }
 
-        if (file.size > plans[plan].maxFileSizeInBytes) {
+        if (file.size > fileConfig.maxFileSizeInBytes) {
           await db.file.update({
             where: {
               id: createdFile.id,

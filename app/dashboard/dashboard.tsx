@@ -29,6 +29,9 @@ export default function Dashboard() {
         <UploadButton
           isLoading={!subscriptionPlan}
           isSubscribed={!!subscriptionPlan?.isSubscribed}
+          hasLimitReached={
+            (files?.length ?? 0) >= (subscriptionPlan?.maxFiles ?? 0)
+          }
         />
       </div>
       <Separator />
@@ -100,7 +103,7 @@ export default function Dashboard() {
                     />
                     <DeleteFileDialog
                       subscriptionPlan={subscriptionPlan?.name}
-                      disabled={file.uploadStatus !== "SUCCESS"}
+                      disabled={file.uploadStatus === "PROCESSING"}
                       file={file}
                     />
                   </div>
