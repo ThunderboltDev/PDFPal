@@ -1,8 +1,8 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import "pdf-parse/worker";
-import { PDFParse } from "pdf-parse";
+import { extractText } from "unpdf";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
+
 import config from "@/config";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -11,6 +11,8 @@ import { pinecone } from "@/lib/pinecone";
 if (!process.env.PINECONE_INDEX) {
   throw new Error("env variable PINECONE_INDEX not found");
 }
+
+export const runtime = "nodejs";
 
 const pineconeIndex = process.env.PINECONE_INDEX;
 const plans = config.plans;
@@ -73,12 +75,9 @@ export const ourFileRouter = {
           timeout: 15 * 60 * 1000,
         });
 
-        const parser = new PDFParse({
-          data: new Uint8Array(data),
-        });
-
-        const { total: numberOfPages, pages } = await parser.getText();
-        await parser.destroy();
+        const { totalPages: numberOfPages, text: pages } = await extractText(
+          new Uint8Array(data)
+        );
 
         const plan = isSubscribed ? "pro" : "free";
 
@@ -108,9 +107,9 @@ export const ourFileRouter = {
           return;
         }
 
-        const upsertRequest = pages.map((page) => ({
-          id: `${createdFile.id}-${page.num}`,
-          text: page.text,
+        const upsertRequest = pages.map((text, index) => ({
+          id: `${createdFile.id}-${index}`,
+          text: text,
         }));
 
         const namespace = pinecone
