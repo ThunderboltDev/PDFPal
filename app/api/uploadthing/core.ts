@@ -1,6 +1,3 @@
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
@@ -82,11 +79,10 @@ export const ourFileRouter = {
         console.log("axios fetch successful");
 
         console.log("About to import mupdf...");
-        const mupdf = (await import("mupdf")).default;
-        console.log("MuPDF default  import result:", mupdf);
-        console.log("MuPDF import result:", Object.keys(mupdf));
+        const { Document } = await import("mupdf");
+        console.log("mupdf imported successful");
 
-        const document = mupdf.Document.openDocument(data, "application/pdf");
+        const document = Document.openDocument(data, "application/pdf");
         const numberOfPages = document.countPages();
 
         const plan = isSubscribed ? "pro" : "free";
@@ -127,15 +123,11 @@ export const ourFileRouter = {
           text: page,
         }));
 
-        console.log("Getting pinecone namespace");
         const namespace = pinecone
           .index(pineconeIndex, process.env.PINECONE_HOST_URL)
           .namespace(createdFile.id);
-        console.log("Got pinecone namespace");
 
-        console.log("Upserting pinecone records");
         await namespace.upsertRecords(upsertRequest);
-        console.log("Upserting pinecoe records successful");
 
         await db.file.update({
           data: {
