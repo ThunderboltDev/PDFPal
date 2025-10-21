@@ -1,4 +1,8 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 import config from "@/config";
@@ -15,6 +19,12 @@ const plans = config.plans;
 
 const f = createUploadthing();
 
+const customAxios = axios.create();
+
+axiosRetry(customAxios, {
+  retries: 3,
+});
+
 export const ourFileRouter = {
   pdfUploader: f({
     pdf: {},
@@ -22,7 +32,7 @@ export const ourFileRouter = {
     .middleware(async () => {
       const session = await auth();
 
-      if (!session) throw new Error("Unauthorized");
+      if (!session?.userId) throw new Error("Unauthorized");
 
       const user = await db.user.findUnique({
         where: {
@@ -64,14 +74,18 @@ export const ourFileRouter = {
       });
 
       try {
-        const { data } = await axios.get(file.ufsUrl, {
+        console.log("Fetching from axios");
+        const { data } = await customAxios.get(file.ufsUrl, {
           responseType: "arraybuffer",
           timeout: 15 * 60 * 1000,
         });
+        console.log("axios fetch successful:", axios);
 
-        const { Document } = await import("mupdf");
+        console.log("About to import mupdf...");
+        const mupdf = await import("mupdf");
+        console.log("MuPDF import result:", Object.keys(mupdf));
 
-        const document = Document.openDocument(data, "application/pdf");
+        const document = mupdf.Document.openDocument(data, "application/pdf");
         const numberOfPages = document.countPages();
 
         const plan = isSubscribed ? "pro" : "free";
@@ -112,11 +126,15 @@ export const ourFileRouter = {
           text: page,
         }));
 
+        console.log("Getting pinecone namespace");
         const namespace = pinecone
           .index(pineconeIndex, process.env.PINECONE_HOST_URL)
           .namespace(createdFile.id);
+        console.log("Got pinecone namespace");
 
+        console.log("Upserting pinecone records");
         await namespace.upsertRecords(upsertRequest);
+        console.log("Upserting pinecoe records successful");
 
         await db.file.update({
           data: {
