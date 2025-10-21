@@ -91,7 +91,8 @@ export function RenameFileDialog({
       button={{
         size: "sm",
         variant: "ghost",
-        className: "size-8 hover:bg-info/5 text-info/75 hover:text-info",
+        className:
+          "size-8 hover:bg-info/5 text-info/80 hover:text-info disabled:bg-transparent",
         children: (
           <>
             <Pencil className="size-4" />
@@ -197,7 +198,8 @@ export function DeleteFileDialog({
       button={{
         size: "sm",
         variant: "ghost",
-        className: "size-8 hover:bg-danger/5 text-danger/75 hover:text-danger",
+        className:
+          "size-8 hover:bg-danger/5 text-danger/80 hover:text-danger disabled:bg-transparent",
         children: (
           <>
             <Trash className="size-4" />
