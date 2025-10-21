@@ -1,5 +1,6 @@
 "use client";
 
+import { Check, Save, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -77,12 +78,12 @@ export default function CookiePreferences({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-6 mt-6">
+        <div className="flex flex-col gap-6">
           <div className="space-y-3">
             <h3 className="font-medium text-sm text-muted-foreground">
-              Essential (Required)
+              Required
             </h3>
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center justify-between gap-2">
               <div>
                 <p className="font-medium">Essential Cookies</p>
                 <p className="text-sm text-muted-foreground">
@@ -101,7 +102,7 @@ export default function CookiePreferences({
               Optional
             </h3>
 
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center justify-between gap-2">
               <div>
                 <p className="font-medium">Analytics</p>
                 <p className="text-sm text-muted-foreground">
@@ -116,7 +117,7 @@ export default function CookiePreferences({
               />
             </div>
 
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center justify-between gap-2">
               <div>
                 <p className="font-medium">Marketing</p>
                 <p className="text-sm text-muted-foreground">
@@ -131,7 +132,7 @@ export default function CookiePreferences({
               />
             </div>
 
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center justify-between gap-2">
               <div>
                 <p className="font-medium">Personalization</p>
                 <p className="text-sm text-muted-foreground">
@@ -151,12 +152,13 @@ export default function CookiePreferences({
           </div>
         </div>
 
-        <DialogFooter className="flex flex-col xs:flex-row gap-3">
+        <DialogFooter className="grid grid-cols-2 grid-rows-2 xs:flex xs:flex-row xs:gap-3">
           <Button
             variant="ghost"
             className="text-danger hover:bg-danger/5"
             onClick={handleRejectAll}
           >
+            <X />
             Reject All
           </Button>
           <Button
@@ -164,12 +166,15 @@ export default function CookiePreferences({
             className="text-success hover:bg-success/5"
             onClick={handleAcceptAll}
           >
+            <Check />
             Accept All
           </Button>
           <Button
             variant="primary"
+            className="col-span-2"
             onClick={handleSavePreferences}
           >
+            <Save />
             Save Preferences
           </Button>
         </DialogFooter>
