@@ -15,7 +15,6 @@ const pineconeIndex = process.env.PINECONE_INDEX;
 const plans = config.plans;
 
 const f = createUploadthing();
-
 const customAxios = axios.create();
 
 axiosRetry(customAxios, {
@@ -29,7 +28,7 @@ export const ourFileRouter = {
     .middleware(async () => {
       const session = await auth();
 
-      if (!session?.userId) throw new Error("Unauthorized");
+      if (!session) throw new Error("Unauthorized");
 
       const user = await db.user.findUnique({
         where: {
@@ -47,10 +46,7 @@ export const ourFileRouter = {
 
       const limits = isSubscribed
         ? { maxFileSize: config.plans.pro.maxFileSize, maxFileCount: 1 }
-        : {
-            maxFileSize: config.plans.free.maxFileSize,
-            maxFileCount: 1,
-          };
+        : { maxFileSize: config.plans.free.maxFileSize, maxFileCount: 1 };
 
       return {
         userId: session.userId,
@@ -71,16 +67,12 @@ export const ourFileRouter = {
       });
 
       try {
-        console.log("Fetching from axios");
-        const { data } = await customAxios.get(file.ufsUrl, {
+        const { data } = await axios.get(file.ufsUrl, {
           responseType: "arraybuffer",
           timeout: 15 * 60 * 1000,
         });
-        console.log("axios fetch successful");
 
-        console.log("About to import mupdf...");
         const { Document } = await import("mupdf");
-        console.log("mupdf imported successful");
 
         const document = Document.openDocument(data, "application/pdf");
         const numberOfPages = document.countPages();
