@@ -33,7 +33,7 @@ export default function CookiePreferences({
 }: CookiePreferencesProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [consent, setConsent] = useState<ConsentState>(
-    getConsentFromStorage() ?? DEFAULT_CONSENT,
+    getConsentFromStorage() ?? DEFAULT_CONSENT
   );
 
   const closeDialog = () => {
@@ -63,7 +63,10 @@ export default function CookiePreferences({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
@@ -79,14 +82,17 @@ export default function CookiePreferences({
             <h3 className="font-medium text-sm text-muted-foreground">
               Essential (Required)
             </h3>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-row items-center gap-2">
               <div>
                 <p className="font-medium">Essential Cookies</p>
                 <p className="text-sm text-muted-foreground">
                   Required for basic website functionality and security
                 </p>
               </div>
-              <Switch checked={true} disabled />
+              <Switch
+                checked={true}
+                disabled
+              />
             </div>
           </div>
 
@@ -95,7 +101,7 @@ export default function CookiePreferences({
               Optional
             </h3>
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-row items-center gap-2">
               <div>
                 <p className="font-medium">Analytics</p>
                 <p className="text-sm text-muted-foreground">
@@ -110,7 +116,7 @@ export default function CookiePreferences({
               />
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-row items-center gap-2">
               <div>
                 <p className="font-medium">Marketing</p>
                 <p className="text-sm text-muted-foreground">
@@ -125,7 +131,7 @@ export default function CookiePreferences({
               />
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-row items-center gap-2">
               <div>
                 <p className="font-medium">Personalization</p>
                 <p className="text-sm text-muted-foreground">
@@ -145,7 +151,7 @@ export default function CookiePreferences({
           </div>
         </div>
 
-        <DialogFooter className="flex gap-3">
+        <DialogFooter className="flex flex-col xs:flex-row gap-3">
           <Button
             variant="ghost"
             className="text-danger hover:bg-danger/5"
@@ -160,7 +166,10 @@ export default function CookiePreferences({
           >
             Accept All
           </Button>
-          <Button variant="primary" onClick={handleSavePreferences}>
+          <Button
+            variant="primary"
+            onClick={handleSavePreferences}
+          >
             Save Preferences
           </Button>
         </DialogFooter>
