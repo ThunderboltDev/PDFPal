@@ -8,16 +8,15 @@ const url = "https://pdf-pal-pro.vercel.app";
 
 const config = {
   name: "PDF Pal",
-  id: "saas",
   description:
-    "A web platform that lets you to interact with your PDFs using AI. Summarize, chat or get valuable insights instantly!",
+    "An AI powered web platform that helps you analyze and understand your PDFs instantly. Chat, summarize and get valuable insights effortlessly!",
   url,
   creator: "Thunderbolt",
   themeColor: "#402080",
   gtmId: "GTM-MJ8WM9MT",
   socials: {
     github: "https://github.com/ThunderboltDev",
-    discord: "https://discord.com/",
+    discord: "https://discord.com/users/855342398115414037",
     email: "pdfpal0@gmail.com",
   },
   favicon: "/favicon.ico",

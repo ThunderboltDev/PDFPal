@@ -158,7 +158,7 @@ export default function Footer() {
             © {currentYear} {config.name}. All rights reserved.
           </p>
           <p className="text-muted-foreground text-xs">
-            Made with ❤️ for better document analysis
+            Built with ❤️ to help you understand your PDFs smarter and faster.
           </p>
         </div>
       </div>
