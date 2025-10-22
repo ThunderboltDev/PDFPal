@@ -1,7 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import axios from "axios";
-import DOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
 import { marked } from "marked";
 import nodemailer from "nodemailer";
 import z from "zod";
@@ -54,7 +52,11 @@ export const contactRouter = router({
       }
 
       const transporter = nodemailer.createTransport(process.env.EMAIL_SERVER);
+
+      const { JSDOM } = await import("jsdom");
       const window = new JSDOM("").window;
+
+      const DOMPurify = (await import("dompurify")).default;
       const purify = DOMPurify(window);
 
       await transporter.sendMail({
