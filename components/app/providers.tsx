@@ -1,6 +1,6 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { MotionConfig } from "framer-motion";
 import { SessionProvider } from "next-auth/react";
@@ -26,9 +26,7 @@ export default function Providers({ children }: PropsWithChildren) {
   return (
     <SessionProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <MotionConfig reducedMotion="user">{children}</MotionConfig>
-        </QueryClientProvider>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
       </trpc.Provider>
     </SessionProvider>
   );

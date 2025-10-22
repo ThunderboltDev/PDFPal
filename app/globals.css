@@ -180,176 +180,174 @@
   }
 }
 
-@layer utilities {
-  @keyframes bg-position-x {
-    0%,
-    100% {
-      background-position: 100% 100%;
-    }
-
-    50% {
-      background-position: 0% 100%;
-    }
+@keyframes bg-position-x {
+  0%,
+  100% {
+    background-position: 100% 100%;
   }
 
-  @keyframes bg-position-y {
-    0%,
-    100% {
-      background-position: 100% 100%;
-    }
+  50% {
+    background-position: 0% 100%;
+  }
+}
 
-    50% {
-      background-position: 100% 0%;
-    }
+@keyframes bg-position-y {
+  0%,
+  100% {
+    background-position: 100% 100%;
   }
 
-  @utility animate-bg-position-x {
-    animation: bg-position-x var(--tw-animation-duration, 6s) linear infinite;
+  50% {
+    background-position: 100% 0%;
+  }
+}
+
+@utility animate-bg-position-x {
+  animation: bg-position-x var(--tw-animation-duration, 6s) linear infinite;
+}
+
+@utility animate-bg-position-y {
+  animation: bg-position-y var(--tw-animation-duration, 6s) linear infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@utility animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes rotate-angle {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
+  }
+}
+
+@utility scrollbar-* {
+  &::-webkit-scrollbar {
+    @apply bg-black/10;
+    width: calc(--value(number) * var(--spacing));
+    height: calc(--value(number) * var(--spacing));
   }
 
-  @utility animate-bg-position-y {
-    animation: bg-position-y var(--tw-animation-duration, 6s) linear infinite;
+  &::-webkit-scrollbar-thumb {
+    @apply bg-primary/75 rounded-full;
   }
 
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
+  &::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/85;
+  }
+}
+
+@utility h-view {
+  height: calc(100vh - 5rem);
+  max-height: calc(100vh - 5rem);
+}
+
+@utility border-gradient-* {
+  @apply relative z-10 overflow-visible;
+
+  @property --angle {
+    initial-value: 0deg;
+    syntax: "<angle>";
+    inherits: false;
   }
 
-  @utility animate-float {
-    animation: float 4s ease-in-out infinite;
-  }
+  &::before,
+  &::after {
+    content: "";
 
-  @keyframes rotate-angle {
-    0% {
-      --angle: 0deg;
-    }
-    100% {
-      --angle: 360deg;
-    }
-  }
+    @apply absolute inset-1/2 -z-10;
+    @apply pointer-events-none rounded-[inherit];
+    @apply -translate-x-1/2 -translate-y-1/2;
 
-  @utility scrollbar-* {
-    &::-webkit-scrollbar {
-      @apply bg-black/10;
-      width: calc(--value(number) * var(--spacing));
-      height: calc(--value(number) * var(--spacing));
-    }
+    animation: rotate-angle 5s ease-in-out infinite;
 
-    &::-webkit-scrollbar-thumb {
-      @apply bg-primary/75 rounded-full;
-    }
+    width: calc(100% + --value(integer) * 1px);
+    height: calc(100% + --value(integer) * 1px);
 
-    &::-webkit-scrollbar-thumb:hover {
-      @apply bg-primary/85;
-    }
-  }
-
-  @utility h-view {
-    height: calc(100vh - 5rem);
-    max-height: calc(100vh - 5rem);
-  }
-
-  @utility border-gradient-* {
-    @apply relative z-10 overflow-visible;
-
-    @property --angle {
-      initial-value: 0deg;
-      syntax: "<angle>";
-      inherits: false;
-    }
-
-    &::before,
-    &::after {
-      content: "";
-
-      @apply absolute inset-1/2 -z-10;
-      @apply pointer-events-none rounded-[inherit];
-      @apply -translate-x-1/2 -translate-y-1/2;
-
-      animation: rotate-angle 5s ease-in-out infinite;
-
-      width: calc(100% + --value(integer) * 1px);
-      height: calc(100% + --value(integer) * 1px);
-
-      background-image: conic-gradient(
-        from var(--angle),
-        var(--color-primary),
-        var(--color-accent),
-        var(--color-primary)
-      );
-    }
-
-    &::after {
-      @apply blur-md;
-    }
-  }
-
-  @utility bg-shiny-* {
-    background-image: linear-gradient(
-      to right,
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *),
-      color-mix(in oklch, --value(--color- *) 50%, white),
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *),
-      --value(--color- *)
+    background-image: conic-gradient(
+      from var(--angle),
+      var(--color-primary),
+      var(--color-accent),
+      var(--color-primary)
     );
   }
 
-  @utility shine {
-    @apply relative;
+  &::after {
+    @apply blur-md;
+  }
+}
 
-    &::before {
-      content: "";
+@utility bg-shiny-* {
+  background-image: linear-gradient(
+    to right,
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *),
+    color-mix(in oklch, --value(--color- *) 50%, white),
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *),
+    --value(--color- *)
+  );
+}
 
-      @apply absolute top-0 left-[10%];
-      @apply w-4 h-full z-10 pointer-events-none;
-      @apply bg-white/10 -skew-4 rounded-none;
-      @apply transition-all duration-300 ease-out;
-    }
+@utility shine {
+  @apply relative;
 
-    &:hover::before {
-      @apply left-[75%] w-6;
-    }
+  &::before {
+    content: "";
+
+    @apply absolute top-0 left-[10%];
+    @apply w-4 h-full z-10 pointer-events-none;
+    @apply bg-white/10 -skew-4 rounded-none;
+    @apply transition-all duration-300 ease-out;
   }
 
-  @utility bevel {
-    @apply relative overflow-hidden;
+  &:hover::before {
+    @apply left-[75%] w-6;
+  }
+}
 
-    &::after {
-      content: "";
+@utility bevel {
+  @apply relative overflow-hidden;
 
-      @apply absolute inset-0;
-      @apply size-full z-10 pointer-events-none;
-      @apply bg-gradient-to-b opacity-25;
-      @apply from-transparent to-white;
-      @apply transition-opacity duration-300 ease-out;
-    }
+  &::after {
+    content: "";
 
-    &:hover::after {
-      @apply opacity-30;
-    }
+    @apply absolute inset-0;
+    @apply size-full z-10 pointer-events-none;
+    @apply bg-gradient-to-b opacity-25;
+    @apply from-transparent to-white;
+    @apply transition-opacity duration-300 ease-out;
   }
 
-  @utility container-* {
-    @apply mx-auto w-[calc(100vw-1.8rem)] xs:w-[calc(100vw-3rem)] md:w-[calc(100vw-4rem)];
-    max-width: --value(--container- *, integer);
+  &:hover::after {
+    @apply opacity-30;
   }
+}
 
-  @utility all-unset {
-    all: unset;
-  }
+@utility container-* {
+  @apply mx-auto w-[calc(100vw-1.8rem)] xs:w-[calc(100vw-3rem)] md:w-[calc(100vw-4rem)];
+  max-width: --value(--container- *, integer);
+}
+
+@utility all-unset {
+  all: unset;
 }
