@@ -1,4 +1,3 @@
-import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import type { PropsWithChildren } from "react";
@@ -80,7 +79,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           name="google-site-verification"
           content="c7IzeYfMHu6s2EryNuQs5O8PrvHGzAkIhz1pT9jG_Dc"
         />
-        <GoogleTagManager gtmId={config.gtmId} />
       </head>
       <body
         className={cn("min-h-screen font-sans antialiased", inter.className)}
