@@ -12,6 +12,12 @@
     "lint": "pnpm exec biome lint --write",
     "check": "pnpm exec biome check --write"
   },
+  "browserslist": [
+    "defaults and supports es6-module",
+    "not dead",
+    "not op_mini all",
+    "not IE 11"
+  ],
   "dependencies": {
     "@abstractapi/javascript-ip-geolocation": "^1.0.1",
     "@auth/core": "^0.41.0",
