@@ -66,7 +66,7 @@ export default function Features() {
       </motion.div>
       <ul className="grid grid-cols-1 gap-8 py-10 xs:mx-2 sm:mx-4 md:grid-cols-2 md:gap-6">
         {features.map((feature) => (
-          <motion.div
+          <motion.li
             className="relative z-1"
             initial={{
               opacity: 0,
@@ -85,7 +85,7 @@ export default function Features() {
               y: "0%",
             }}
           >
-            <li className="hover:-translate-y-1 relative z-1 flex flex-col items-center space-y-2 rounded-md bg-secondary p-4 shadow-lg transition-all duration-300 ease-in hover:shadow-xl">
+            <div className="hover:-translate-y-1 relative z-1 flex flex-col items-center space-y-2 rounded-md bg-secondary p-4 shadow-lg transition-all duration-300 ease-in hover:shadow-xl">
               <motion.div
                 transition={feature.transition}
                 whileHover={feature.whileHover}
@@ -100,8 +100,8 @@ export default function Features() {
               <p className="text-center text-secondary-foreground">
                 {feature.description}
               </p>
-            </li>
-          </motion.div>
+            </div>
+          </motion.li>
         ))}
       </ul>
     </div>

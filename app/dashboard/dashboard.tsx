@@ -112,7 +112,7 @@ export default function Dashboard() {
             ))}
         </ul>
       ) : isLoading ? (
-        <ul className="mt-8 mb-12 ml-0 grid grid-cols-1 gap-6 px-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 mb-12 ml-0 grid grid-cols-1 gap-6 px-4 md:grid-cols-2 lg:grid-cols-3">
           <Skeleton
             borderRadius={10}
             className="col-span-1 rounded-lg"
@@ -120,7 +120,7 @@ export default function Dashboard() {
             height={105}
             inline
           />
-        </ul>
+        </div>
       ) : (
         <div className="mt-16 flex flex-col items-center gap-2">
           <Ghost className="size-32 text-zinc-900" />

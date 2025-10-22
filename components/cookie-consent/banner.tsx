@@ -120,8 +120,13 @@ export default function CookieBanner() {
                   </motion.div>
 
                   <div className="flex-1 min-w-0">
-                    <h5 className="mb-1 text-base">We value your privacy</h5>
-                    <p className="text-muted-foreground text-sm">
+                    <h5 id="cookie-banner-title" className="mb-1 text-base">
+                      We value your privacy
+                    </h5>
+                    <p
+                      id="cookie-banner-description"
+                      className="text-muted-foreground text-sm"
+                    >
                       We use cookies to enhance your browsing experience,
                       provide personalized content, and analyze our traffic. By
                       clicking "Accept All", you consent to our use of{" "}
