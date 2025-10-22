@@ -1,7 +1,7 @@
 "use client";
 
 import { GoogleTagManager } from "@next/third-parties/google";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { MotionConfig } from "framer-motion";
 import { SessionProvider } from "next-auth/react";
@@ -28,10 +28,12 @@ export default function Providers({ children }: PropsWithChildren) {
   return (
     <SessionProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <MotionConfig reducedMotion="user">
-          <GoogleTagManager gtmId={config.gtmId} />
-          {children}
-        </MotionConfig>
+        <QueryClientProvider client={queryClient}>
+          <MotionConfig reducedMotion="user">
+            <GoogleTagManager gtmId={config.gtmId} />
+            {children}
+          </MotionConfig>
+        </QueryClientProvider>
       </trpc.Provider>
     </SessionProvider>
   );
