@@ -63,7 +63,7 @@ export default function FileView({ file, isSubscribed }: FileViewProps) {
               <MessageCircleMore />
             </Button>
           </SheetTrigger>
-          <SheetContent className="!overflow-y-auto h-screen p-0" side="bottom">
+          <SheetContent className="!overflow-y-auto h-full p-0" side="bottom">
             <SheetTitle className="sr-only">Chat</SheetTitle>
             <div className="h-full">
               <ChatWrapper

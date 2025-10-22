@@ -73,7 +73,7 @@ export default function Dashboard() {
                     </h5>
                   </div>
                 </Link>
-                <div className="grid h-10 grid-cols-3 gap-2 px-3 py-1 text-muted-foreground text-xs">
+                <div className="h-10 flex flex-row justify-between gap-2 px-3 py-1 text-muted-foreground text-xs">
                   <div className="flex items-center gap-1.5">
                     <Plus className="size-4" />
                     {format(file.createdAt, "dd MMM yyyy")}
