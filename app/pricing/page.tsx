@@ -21,6 +21,10 @@ export const metadata: Metadata = {
 export default async function PricingWrapper() {
   const session = await auth();
 
+  if (!session) {
+    return <Pricing isAuthenticated={false} isSubscribed={false} />;
+  }
+
   const user = await db.user.findUnique({
     where: {
       id: session?.userId,
