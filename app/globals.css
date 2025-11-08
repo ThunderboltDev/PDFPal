@@ -235,17 +235,17 @@
 
 @utility scrollbar-* {
   &::-webkit-scrollbar {
-    @apply bg-black/10;
+    @apply bg-border/25;
     width: calc(--value(number) * var(--spacing));
     height: calc(--value(number) * var(--spacing));
   }
 
   &::-webkit-scrollbar-thumb {
-    @apply bg-primary/75 rounded-full;
+    @apply bg-border/75 rounded-full;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary/85;
+    @apply bg-border/85;
   }
 }
 
