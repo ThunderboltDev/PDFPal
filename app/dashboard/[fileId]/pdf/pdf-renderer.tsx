@@ -156,37 +156,21 @@ export default function PDFRenderer({ fileUrl }: PDFRendererProps) {
     });
   };
 
-  useHotkeys(
-    ["pagedown", "space"],
-    () => {
-      handleNextPage();
-    },
-    [handleNextPage]
-  );
+  useHotkeys(["pagedown", "space"], () => {
+    handleNextPage();
+  }, [handleNextPage]);
 
-  useHotkeys(
-    ["pageup", "shift+space"],
-    () => {
-      handlePrevPage();
-    },
-    [handlePrevPage]
-  );
+  useHotkeys(["pageup", "shift+space"], () => {
+    handlePrevPage();
+  }, [handlePrevPage]);
 
-  useHotkeys(
-    "home",
-    () => {
-      handlePageNavigate(1);
-    },
-    []
-  );
+  useHotkeys("home", () => {
+    handlePageNavigate(1);
+  }, []);
 
-  useHotkeys(
-    "end",
-    () => {
-      handlePageNavigate(numberOfPages);
-    },
-    [numberOfPages]
-  );
+  useHotkeys("end", () => {
+    handlePageNavigate(numberOfPages);
+  }, [numberOfPages]);
 
   useHotkeys("enter", () => {
     pageInputRef.current?.focus();
