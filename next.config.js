@@ -1,6 +1,12 @@
 const nextConfig = {
   crossOrigin: "anonymous",
   productionBrowserSourceMaps: true,
+  turbopack: {
+    resolveAlias: {
+      canvas: "canvas",
+      encoding: "encoding",
+    },
+  },
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
