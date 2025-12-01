@@ -4,7 +4,7 @@ export const CREEM_API_BASE = isTestMode
   ? "https://test-api.creem.io/v1"
   : "https://api.creem.io/v1";
 
-const url = "https://pdf-pal-pro.vercel.app";
+const url = "https://pdfpal.thunderboltdev.site";
 
 const config = {
   name: "PDF Pal",

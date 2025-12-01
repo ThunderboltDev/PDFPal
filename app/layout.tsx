@@ -74,16 +74,6 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html className="scheme-light" lang="en" suppressHydrationWarning>
-      <head>
-        <meta
-          name="google-site-verification"
-          content="c7IzeYfMHu6s2EryNuQs5O8PrvHGzAkIhz1pT9jG_Dc"
-        />
-        <meta
-          name="resound-verification"
-          content="a7189e9a-4266-4e32-39e0-87ac43b6bc32"
-        />
-      </head>
       <body
         className={cn("min-h-screen font-sans antialiased", inter.className)}
       >
