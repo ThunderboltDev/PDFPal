@@ -5,12 +5,9 @@ import { useEffect } from "react";
 
 export default function Logout() {
   useEffect(() => {
-    const logout = async () =>
-      await signOut({
-        callbackUrl: "/auth",
-      });
-
-    logout();
+    signOut({
+      callbackUrl: "/auth",
+    });
   });
 
   return (

@@ -159,13 +159,7 @@ export default function Navbar() {
     setIsOpen((prev) => !prev);
   });
 
-  const excludedPaths = [
-    "/auth",
-    "/auth-callback",
-    "/check-email",
-    "/logout",
-    "/thank-you",
-  ];
+  const excludedPaths = ["/auth", "/check-email", "/logout", "/thank-you"];
 
   if (excludedPaths.includes(pathname)) return null;
 

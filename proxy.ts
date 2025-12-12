@@ -1,69 +1,49 @@
 import { NextResponse } from "next/server";
 
-const AUTH_ROUTES = ["/auth", "/auth-callback", "/check-email"];
+const AUTH_ROUTES = ["/auth", "/check-email"] as readonly string[];
 
-const PRIVATE_ROUTES = ["/dashboard", "/account", "/billing"];
+const PRIVATE_ROUTES = [
+  "/dashboard",
+  "/account",
+  "/billing",
+] as readonly string[];
 
-const sessionCookieRegex = /\b(?:__Secure-)?authjs\.session-token=/;
+const sessionCookieRegex = /(?:^|;\s*)(?:__Secure-)?authjs\.session-token=/;
 
-export default function proxy(req: Request & { nextUrl: URL }) {
-  const { pathname, searchParams } = req.nextUrl;
+export default async function proxy(req: Request & { nextUrl: URL }) {
+  const { pathname, searchParams, origin } = req.nextUrl;
 
-  if (pathname === "/logout") {
-    const res = NextResponse.redirect(new URL("/", req.url));
-    res.cookies.set("__Secure-authjs.session-token", "", {
-      path: "/",
-      expires: new Date(0),
-    });
-    res.cookies.set("authjs.session-token", "", {
-      path: "/",
-      expires: new Date(0),
-    });
-    return res;
+  if (
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/_next/static") ||
+    pathname.startsWith("/_next/image")
+  ) {
+    return NextResponse.next();
   }
 
-  const cookieHeader = req.headers.get("cookie") || "";
+  const cookieHeader = req.headers.get("cookie") ?? "";
   const isAuthenticated = sessionCookieRegex.test(cookieHeader);
-
-  const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
   const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
     pathname.startsWith(route)
   );
 
-  const isInternalRoute =
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/_next/static") ||
-    pathname.startsWith("/_next/image");
+  if (!isAuthenticated && isPrivateRoute) {
+    const redirectUrl = new URL("/auth", req.url);
+    redirectUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
 
-  if (isInternalRoute) {
+  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
+
+  if (!isAuthenticated && isAuthRoute) {
     return NextResponse.next();
   }
 
-  if (!isAuthenticated) {
-    if (isAuthRoute) {
-      const res = NextResponse.next();
-      res.cookies.delete("authjs.session-token");
-      res.cookies.delete("__Secure-authjs.session-token");
-      return res;
-    }
-
-    if (isPrivateRoute) {
-      const redirectUrl = new URL("/auth", req.url);
-      redirectUrl.searchParams.set("origin", pathname);
-      return NextResponse.redirect(redirectUrl);
-    }
-  }
-
-  if (isAuthRoute && isAuthenticated) {
-    const origin = searchParams.get("origin");
-
-    if (!origin || AUTH_ROUTES.includes(origin)) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    } else {
-      return NextResponse.redirect(new URL(origin, req.url));
-    }
+  if (isAuthenticated && isAuthRoute) {
+    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+    return NextResponse.redirect(new URL(callbackUrl, origin));
   }
 
   const res = NextResponse.next();

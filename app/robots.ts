@@ -7,10 +7,10 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: ["/"],
       disallow: [
+        "/api/*",
+        "/auth",
         "/check-email",
-        "/auth-callback",
         "/dashboard/*",
-        "/api",
         "/server",
         "/static",
         "/_next",
