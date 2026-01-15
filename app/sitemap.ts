@@ -9,21 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changefreq: "monthly",
     },
     {
-      path: "dashboard",
-      priority: 1.0,
-      changefreq: "monthly",
-    },
-    {
-      path: "account",
-      priority: 0.85,
-      changefreq: "monthly",
-    },
-    {
-      path: "auth",
-      priority: 0.6,
-      changefreq: "monthly",
-    },
-    {
       path: "pricing",
       priority: 0.6,
       changefreq: "monthly",
@@ -36,16 +21,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       path: "contact",
       priority: 0.3,
-      changefreq: "monthly",
-    },
-    {
-      path: "billing",
-      priority: 0.3,
-      changefreq: "monthly",
-    },
-    {
-      path: "logout",
-      priority: 0.2,
       changefreq: "monthly",
     },
     {
