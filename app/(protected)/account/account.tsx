@@ -5,17 +5,18 @@ import { format } from "date-fns";
 import { Loader2, LogOut, Mail, Trash, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import type { Session } from "next-auth";
 import { toast } from "sonner";
 import { UAParser } from "ua-parser-js";
 import { trpc } from "@/app/_trpc/client";
 import ActionDialog from "@/components/ui/action-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import Loader from "@/components/ui/loader";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UpgradeButton } from "@/components/upgrade-button";
-import config from "@/config";
+import { config } from "@/config";
+import { useSession } from "@/lib/auth/client";
 
 const plans = config.plans;
 
@@ -34,13 +35,11 @@ const providers = {
   },
 } as const;
 
-interface AccountProps {
-  session: Session | null;
-}
-
-export default function Account({ session: currentSession }: AccountProps) {
+export default function Account() {
   const router = useRouter();
   const utils = trpc.useUtils();
+
+  const { data: currentSession, isPending } = useSession();
 
   const { data: sessions } = trpc.user.getUserSessions.useQuery();
   const { data: totalUsage } = trpc.user.getTotalUsage.useQuery();
@@ -97,6 +96,8 @@ export default function Account({ session: currentSession }: AccountProps) {
       },
     });
 
+  if (isPending || !currentSession) return <Loader />;
+
   return (
     <div className="container-2xl mt-20">
       <h2>Account</h2>
@@ -137,11 +138,11 @@ export default function Account({ session: currentSession }: AccountProps) {
       <div className="mt-2 flex flex-col gap-2">
         {userWithAccounts ? (
           userWithAccounts.accounts.map((account) => {
-            const provider = account.provider as keyof typeof providers;
+            const provider = account.providerId as keyof typeof providers;
             const providerName = providers[provider].name;
             return (
               <div
-                key={account.provider}
+                key={account.providerId}
                 className="flex flex-row gap-2 items-center"
               >
                 {provider === "nodemailer" ? (
@@ -241,8 +242,9 @@ export default function Account({ session: currentSession }: AccountProps) {
             const deviceName = `${parser.getOS().name ?? "???"} ${
               parser.getOS().version ?? "- X.X.X"
             }`;
-            const isCurrent =
-              session.sessionToken === currentSession?.sessionToken;
+
+            const isCurrent = session.token === currentSession.session.token;
+
             return (
               <div
                 className="flex flex-row items-center justify-between"
@@ -310,7 +312,7 @@ export default function Account({ session: currentSession }: AccountProps) {
                       }}
                       onConfirm={async () => {
                         await deleteSession({
-                          sessionToken: session.sessionToken,
+                          sessionToken: session.token,
                         });
                       }}
                     />

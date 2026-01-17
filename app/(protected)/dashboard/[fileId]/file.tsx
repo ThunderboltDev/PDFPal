@@ -14,12 +14,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import type { File } from "@/prisma/generated/prisma-client";
-import ChatWrapper from "./chat/chat-wrapper";
-import PDFRendererWrapper from "./pdf/pdf-renderer-wrapper";
+import type { files } from "@/db/schema";
 
 interface FileViewProps {
-  file: File;
+  file: typeof files.$inferSelect;
   isSubscribed: boolean;
 }
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { format } from "date-fns";
-import Link from "next/link";
 import { trpc } from "@/app/_trpc/client";
 import CancelSubscriptionButton from "@/components/cancel-subscription";
 import {
@@ -110,10 +109,7 @@ export default function Billing() {
               <>
                 {subscription.currentPeriodEnd ? (
                   <span className="rounded-full text-muted-foreground text-xs text-nowrap">
-                    Charged by{" "}
-                    <Link href="https://creem.io" target="_blank">
-                      Creem
-                    </Link>
+                    Charged by <span className="font-medium">PDF Pal</span>
                     {" • "}
                     <span className="rounded-full text-muted-foreground text-xs">
                       {subscription.isCanceled
@@ -143,7 +139,7 @@ export default function Billing() {
       <h3 className="mt-8 mb-4 md:mt-10">Transaction History</h3>
       {isLoading ? (
         <Skeleton height={200} />
-      ) : transactionHistory && transactionHistory.items.length > 0 ? (
+      ) : transactionHistory && transactionHistory.length > 0 ? (
         <div className="overflow-hidden rounded-lg border border-border shadow-lg">
           <table className="w-full text-sm">
             <thead className="bg-secondary text-muted-foreground">
@@ -155,30 +151,35 @@ export default function Billing() {
               </tr>
             </thead>
             <tbody>
-              {transactionHistory.items.map((tx) => (
+              {transactionHistory.map((tx) => (
                 <tr
                   className="border-t border-border odd:bg-muted even:bg-secondary"
-                  key={tx.id}
+                  key={tx.subscription_id}
                 >
                   <td className="px-4 py-2">
-                    {format(new Date(tx.createdAt), "dd MMM yyyy")}
+                    {format(new Date(tx.created_at), "dd MMM yyyy")}
                   </td>
                   <td className="px-4 py-2">
-                    Pro Plan {tx.amount === 999 ? "(Monthly)" : "(Yearly)"}
+                    Pro Plan{" "}
+                    {tx.payment_method_type === "Month"
+                      ? "(Monthly)"
+                      : "(Yearly)"}
                   </td>
                   <td className="px-4 py-2 font-medium">
-                    {tx.amountPaid !== undefined
-                      ? `$${(tx.amountPaid / 100).toFixed(2)}`
+                    {tx.total_amount !== undefined
+                      ? `$${(tx.total_amount / 100).toFixed(2)}`
                       : "-"}
                   </td>
                   <td
                     className={`px-4 py-2 ${
-                      tx.status === "paid"
+                      tx?.status && tx.status === "succeeded"
                         ? "text-success/90"
                         : "text-danger/80"
                     }`}
                   >
-                    {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
+                    {tx.status &&
+                      tx?.status?.charAt(0).toUpperCase() +
+                        tx?.status?.slice(1)}
                   </td>
                 </tr>
               ))}

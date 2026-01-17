@@ -1,11 +1,13 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
+import { count, eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { extractText } from "unpdf";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-
-import config from "@/config";
+import { config } from "@/config";
+import { db } from "@/db";
+import { filesTable, usersTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { pinecone } from "@/lib/pinecone";
 
 if (!process.env.PINECONE_INDEX) {
@@ -28,25 +30,27 @@ export const ourFileRouter = {
     pdf: {},
   })
     .middleware(async () => {
-      const session = await auth();
+      const session = await auth.api.getSession({
+        headers: await headers(),
+      });
 
       if (!session) throw new Error("Unauthorized");
 
-      const user = await db.user.findUnique({
-        where: {
-          id: session.userId,
-        },
-        select: {
+      const user = await db.query.user.findFirst({
+        where: eq(usersTable.id, session.user.id),
+        columns: {
           currentPeriodEnd: true,
-          _count: {
-            select: {
-              File: true,
-            },
-          },
         },
       });
 
       if (!user) throw new Error("User not found");
+
+      const [filesCount] = await db
+        .select({ count: count() })
+        .from(filesTable)
+        .where(eq(filesTable.userId, session.user.id));
+
+      const fileCount = filesCount?.count ?? 0;
 
       const isSubscribed =
         user.currentPeriodEnd && user.currentPeriodEnd > new Date();
@@ -60,31 +64,32 @@ export const ourFileRouter = {
         maxFileSizeInBytes: plan.maxFileSizeInBytes,
       };
 
-      if (user._count.File >= fileConfig.maxFiles) {
+      if (fileCount >= fileConfig.maxFiles) {
         throw new Error(
-          isSubscribed
-            ? "You've reached your upload limit for this plan."
-            : "You've reached your free upload limit. Upgrade your plan to upload more files."
+          isSubscribed ?
+            "You've reached your upload limit for this plan."
+          : "You've reached your free upload limit. Upgrade your plan to upload more files."
         );
       }
 
       return {
-        userId: session.userId,
+        userId: session.user.id,
         fileConfig,
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       const { userId, fileConfig } = metadata;
 
-      const createdFile = await db.file.create({
-        data: {
+      const [createdFile] = await db
+        .insert(filesTable)
+        .values({
           key: file.key,
           name: file.name,
           userId,
           url: file.ufsUrl,
           uploadStatus: "PROCESSING",
-        },
-      });
+        })
+        .returning();
 
       try {
         const { data } = await axios.get(file.ufsUrl, {
@@ -97,27 +102,23 @@ export const ourFileRouter = {
         );
 
         if (numberOfPages > fileConfig.maxPages) {
-          await db.file.update({
-            where: {
-              id: createdFile.id,
-            },
-            data: {
+          await db
+            .update(filesTable)
+            .set({
               uploadStatus: "FAILED_TOO_MANY_PAGES",
-            },
-          });
+            })
+            .where(eq(filesTable.id, createdFile.id));
 
           return;
         }
 
         if (file.size > fileConfig.maxFileSizeInBytes) {
-          await db.file.update({
-            where: {
-              id: createdFile.id,
-            },
-            data: {
+          await db
+            .update(filesTable)
+            .set({
               uploadStatus: "FAILED_TOO_LARGE",
-            },
-          });
+            })
+            .where(eq(filesTable.id, createdFile.id));
 
           return;
         }
@@ -133,26 +134,20 @@ export const ourFileRouter = {
 
         await namespace.upsertRecords(upsertRequest);
 
-        await db.file.update({
-          data: {
+        await db
+          .update(filesTable)
+          .set({
             uploadStatus: "SUCCESS",
-          },
-          where: {
-            id: createdFile.id,
-            userId,
-          },
-        });
+          })
+          .where(eq(filesTable.id, createdFile.id));
       } catch (error) {
         console.error(error);
-        await db.file.update({
-          data: {
+        await db
+          .update(filesTable)
+          .set({
             uploadStatus: "FAILED_UNKNOWN",
-          },
-          where: {
-            id: createdFile.id,
-            userId,
-          },
-        });
+          })
+          .where(eq(filesTable.id, createdFile.id));
       }
     }),
 } satisfies FileRouter;

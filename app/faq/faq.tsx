@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import config from "@/config";
+import { config } from "@/config";
 
 const plans = config.plans;
 

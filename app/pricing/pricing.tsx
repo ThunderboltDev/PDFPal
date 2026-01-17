@@ -9,7 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import config from "@/config";
+import { config } from "@/config";
 import { cn } from "@/lib/utils";
 import { UpgradeButton } from "./upgrade-button";
 
@@ -83,9 +83,14 @@ const pricingItems = [
 interface PlansProps {
   isAuthenticated: boolean;
   isSubscribed: boolean;
+  userId: string | null;
 }
 
-export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
+export default function Pricing({
+  isAuthenticated,
+  isSubscribed,
+  userId,
+}: PlansProps) {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
     "monthly"
   );
@@ -237,6 +242,7 @@ export default function Pricing({ isAuthenticated, isSubscribed }: PlansProps) {
                       <UpgradeButton
                         className="min-w-full rounded-full"
                         isSubscribed={isSubscribed}
+                        userId={userId}
                       />
                     )
                   ) : (

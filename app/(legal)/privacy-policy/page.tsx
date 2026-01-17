@@ -1,4 +1,4 @@
-import config from "config";
+import { config } from "config";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description:
     "We respect your privacy. Learn how we collect, use and store your personal information when you use our website.",
   keywords: ["PDF Pal privacy", "PDF Pal policy", "PDF Pal privacy policy"],
+  alternates: {
+    canonical: "/privacy-policy",
+  },
 };
 
 export default function PrivacyPolicy() {

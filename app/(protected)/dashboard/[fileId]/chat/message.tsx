@@ -1,8 +1,8 @@
 "use client";
 
 import { Bot, User } from "lucide-react";
+import type { ExtendedMessage } from "@/lib/types/message";
 import { cn } from "@/lib/utils";
-import type { ExtendedMessage } from "@/types/message";
 
 import MessageMarkdown from "./message-md";
 

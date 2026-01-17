@@ -7,10 +7,12 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
+import withConfetti, {
+  type WithConfettiProps,
+} from "@/components/hoc/with-confetti";
 import { LinkButton } from "@/components/ui/button";
 import Loader from "@/components/ui/loader";
-import config from "@/config";
-import withConfetti, { type WithConfettiProps } from "@/hoc/with-confetti";
+import { config } from "@/config";
 
 function ThankYouContent({ triggerConfetti }: WithConfettiProps) {
   const searchParams = useSearchParams();

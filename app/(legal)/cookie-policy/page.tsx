@@ -1,4 +1,4 @@
-import config from "config";
+import { config } from "config";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description:
     "Learn how PDF Pal use cookies to enhance your experience, manage sessions and improve website performance. Understand what cookies are set, their purpose and how you can manage them!",
   keywords: ["PDF Pal cookies", "PDF Pal cookie policy", "PDF Pal policy"],
+  alternates: {
+    canonical: "/cookie-policy",
+  },
 };
 
 export default function CookiePolicy() {

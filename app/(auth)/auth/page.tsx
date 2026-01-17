@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Loader from "@/components/ui/loader";
@@ -24,11 +25,14 @@ export const metadata: Metadata = {
 };
 
 export default async function AuthWrapper({ params }: AuthWrapperProps) {
-  const session = await auth();
-  const { callbackUrl } = await params;
+  const headersList = await headers();
+
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
   if (session) {
-    redirect(callbackUrl ?? "/dashboard");
+    redirect((await params).callbackUrl ?? "/dashboard");
   }
 
   return (

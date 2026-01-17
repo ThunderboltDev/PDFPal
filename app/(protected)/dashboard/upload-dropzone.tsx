@@ -9,7 +9,7 @@ import { type ReactNode, useId, useState } from "react";
 import Dropzone from "react-dropzone";
 import { trpc } from "@/app/_trpc/client";
 import { Progress } from "@/components/ui/progress";
-import config from "@/config";
+import { config } from "@/config";
 import { useUploadThing } from "@/lib/uploadthing";
 
 interface UploadDropzoneProps {

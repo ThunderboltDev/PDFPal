@@ -1,7 +1,9 @@
 import { TRPCError } from "@trpc/server";
+import { and, count, eq, inArray } from "drizzle-orm";
 import z from "zod";
 import { utapi } from "@/app/server/uploadthing";
-import { db } from "@/lib/db";
+import { db } from "@/db";
+import { filesTable, messagesTable } from "@/db/schema";
 import { pinecone } from "@/lib/pinecone";
 import { createRateLimit, privateProcedure, router } from "@/trpc/trpc";
 
@@ -17,28 +19,35 @@ export const filesRouter = router({
     .input(z.void())
     .query(async ({ ctx }) => {
       const { userId } = ctx;
-      const files = await db.file.findMany({
-        where: {
-          userId,
-        },
+      const userFiles = await db.query.file.findMany({
+        where: eq(filesTable.userId, userId),
       });
 
-      const messageCounts = files.length
-        ? await db.message.groupBy({
-            by: ["fileId"],
-            where: { fileId: { in: files.map((f) => f.id) } },
-            _count: { id: true },
-          })
+      const messageCounts =
+        userFiles.length ?
+          await db
+            .select({
+              fileId: messagesTable.fileId,
+              count: count(messagesTable.id),
+            })
+            .from(messagesTable)
+            .where(
+              inArray(
+                messagesTable.fileId,
+                userFiles.map((f) => f.id)
+              )
+            )
+            .groupBy(messagesTable.fileId)
         : [];
 
       const countsMap: Record<string, number> = {};
 
       messageCounts.forEach((messageCount) => {
         const fileId = messageCount.fileId;
-        if (fileId) countsMap[fileId] = messageCount._count.id;
+        if (fileId) countsMap[fileId] = messageCount.count;
       });
 
-      return files.map((file) => ({
+      return userFiles.map((file) => ({
         ...file,
         messageCount: countsMap[file.id] ?? 0,
       }));
@@ -48,11 +57,11 @@ export const filesRouter = router({
     .use(createRateLimit(1, 10, "get-file-upload-status"))
     .input(z.object({ fileId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const file = await db.file.findFirst({
-        where: {
-          id: input.fileId,
-          userId: ctx.userId,
-        },
+      const file = await db.query.file.findFirst({
+        where: and(
+          eq(filesTable.id, input.fileId),
+          eq(filesTable.userId, ctx.userId)
+        ),
       });
 
       if (!file) return { status: "PROCESSING" as const };
@@ -66,11 +75,11 @@ export const filesRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
 
-      const file = await db.file.findFirst({
-        where: {
-          key: input.key,
-          userId,
-        },
+      const file = await db.query.file.findFirst({
+        where: and(
+          eq(filesTable.key, input.key),
+          eq(filesTable.userId, userId)
+        ),
       });
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
@@ -98,12 +107,9 @@ export const filesRouter = router({
       const { userId } = ctx;
       const { id, newName } = input;
 
-      const file = await db.file.findFirst({
-        where: {
-          id,
-          userId,
-        },
-        select: {
+      const file = await db.query.file.findFirst({
+        where: and(eq(filesTable.id, id), eq(filesTable.userId, userId)),
+        columns: {
           key: true,
         },
       });
@@ -114,10 +120,10 @@ export const filesRouter = router({
           message: "File not found.",
         });
 
-      await db.file.update({
-        where: { id, userId },
-        data: { name: newName },
-      });
+      await db
+        .update(filesTable)
+        .set({ name: newName })
+        .where(and(eq(filesTable.id, id), eq(filesTable.userId, userId)));
 
       await utapi.renameFiles({
         fileKey: file.key,
@@ -134,21 +140,15 @@ export const filesRouter = router({
       const { userId } = ctx;
       const { id } = input;
 
-      const file = await db.file.findFirst({
-        where: {
-          id,
-          userId,
-        },
+      const file = await db.query.file.findFirst({
+        where: and(eq(filesTable.id, id), eq(filesTable.userId, userId)),
       });
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
 
-      await db.file.delete({
-        where: {
-          id,
-          userId,
-        },
-      });
+      await db
+        .delete(filesTable)
+        .where(and(eq(filesTable.id, id), eq(filesTable.userId, userId)));
 
       try {
         await utapi.deleteFiles(file.key);

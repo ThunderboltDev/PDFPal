@@ -1,9 +1,11 @@
 import { InferenceClient } from "@huggingface/inference";
+import { and, asc, eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
 import z from "zod";
-
+import { db } from "@/db";
+import { filesTable, messagesTable, usersTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { pinecone } from "@/lib/pinecone";
 
 if (!process.env.PINECONE_INDEX) {
@@ -54,13 +56,11 @@ async function streamMessage({
         }
 
         try {
-          await db.message.create({
-            data: {
-              text,
-              fileId,
-              userId,
-              isUserMessage: false,
-            },
+          await db.insert(messagesTable).values({
+            text,
+            fileId,
+            userId,
+            isUserMessage: false,
           });
         } catch (error) {
           console.error("saving response error:", error);
@@ -82,12 +82,14 @@ async function streamMessage({
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!session?.userId)
+  if (!session?.user?.id)
     return new Response("You are unauthorized.", { status: 401 });
 
-  const userId = session.userId;
+  const userId = session.user.id;
   const body = await req.json();
 
   const { fileId, prompt } = MessageValidator.parse(body);
@@ -99,27 +101,28 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const file = await db.file.findFirst({
-    where: {
-      id: fileId,
-      userId,
-    },
+  const file = await db.query.files.findFirst({
+    where: and(eq(filesTable.id, fileId), eq(filesTable.userId, userId)),
   });
 
   if (!file) return new Response("File not found.", { status: 404 });
 
-  await db.message.create({
-    data: {
-      text: prompt,
-      isUserMessage: true,
-      userId,
-      fileId,
+  await db.insert(messagesTable).values({
+    text: prompt,
+    isUserMessage: true,
+    userId,
+    fileId,
+  });
+
+  const user = await db.query.users.findFirst({
+    where: eq(usersTable.id, userId),
+    columns: {
+      currentPeriodEnd: true,
     },
   });
 
   const isSubscribed =
-    session.user.currentPeriodEnd &&
-    new Date(session.user.currentPeriodEnd) > new Date();
+    user?.currentPeriodEnd && new Date(user.currentPeriodEnd) > new Date();
 
   const tierSettings = subscriptionTiers[isSubscribed ? "pro" : "free"];
 
@@ -150,13 +153,11 @@ export async function POST(req: NextRequest) {
     const noContextMessage =
       "The information found in your PDF doesn't seem relevant enough to answer this question accurately. Please try rephrasing or ask about specific content in your document.";
 
-    await db.message.create({
-      data: {
-        fileId,
-        userId,
-        text: noContextMessage,
-        isUserMessage: false,
-      },
+    await db.insert(messagesTable).values({
+      fileId,
+      userId,
+      text: noContextMessage,
+      isUserMessage: false,
     });
 
     return streamMessage({
@@ -166,15 +167,13 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const previousMessages = await db.message.findMany({
-    where: {
-      fileId,
-      userId,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-    take: tierSettings.maxConversationHistory,
+  const previousMessages = await db.query.messages.findMany({
+    where: and(
+      eq(messagesTable.fileId, fileId),
+      eq(messagesTable.userId, userId)
+    ),
+    orderBy: asc(messagesTable.createdAt),
+    limit: tierSettings.maxConversationHistory,
   });
 
   const conversationHistory = previousMessages.map((message) => ({
@@ -238,13 +237,11 @@ export async function POST(req: NextRequest) {
         }
 
         try {
-          await db.message.create({
-            data: {
-              fileId,
-              userId,
-              text: response,
-              isUserMessage: false,
-            },
+          await db.insert(messagesTable).values({
+            fileId,
+            userId,
+            text: response,
+            isUserMessage: false,
           });
         } catch (error) {
           console.error("saving response error:", error);

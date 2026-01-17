@@ -6,7 +6,6 @@ import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -22,6 +21,7 @@ import {
   FormSubmitError,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { signIn } from "@/lib/auth/client";
 
 const errorMessages: Record<string, string> = {
   Configuration: "There was a problem with the server.",
@@ -83,7 +83,10 @@ export default function Auth() {
     });
 
     try {
-      await signIn(provider, { redirectTo: callbackUrl });
+      await signIn.social({
+        provider,
+        callbackURL: callbackUrl,
+      });
     } catch (error) {
       sendGTMEvent({
         event: "auth",
@@ -112,9 +115,9 @@ export default function Auth() {
     });
 
     try {
-      const result = await signIn("nodemailer", {
-        redirect: false,
+      const result = await signIn.magicLink({
         email,
+        callbackURL: callbackUrl,
       });
 
       if (result?.error) {

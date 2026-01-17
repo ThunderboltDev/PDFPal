@@ -1,19 +1,18 @@
+import { and, eq } from "drizzle-orm";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
-
+import { db } from "@/db";
+import { filesTable, usersTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 
 import FileView from "./file";
 
 const getFile = cache(
   async (fileId: string, userId: string) =>
-    await db.file.findFirst({
-      where: {
-        id: fileId,
-        userId,
-      },
+    await db.query.files.findFirst({
+      where: and(eq(filesTable.id, fileId), eq(filesTable.userId, userId)),
     })
 );
 
@@ -24,7 +23,9 @@ interface FileViewPageProps {
 export async function generateMetadata({
   params,
 }: FileViewPageProps): Promise<Metadata> {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const { fileId } = await params;
 
   if (!session?.user?.email) {
@@ -38,7 +39,7 @@ export async function generateMetadata({
     };
   }
 
-  const file = await getFile(fileId, session.userId);
+  const file = await getFile(fileId, session.user.id);
 
   if (!file) {
     return {
@@ -67,24 +68,24 @@ export async function generateMetadata({
 }
 
 export default async function FileViewPage({ params }: FileViewPageProps) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const { fileId } = await params;
 
-  if (!session?.userId) {
+  if (!session?.user?.id) {
     return redirect(
       `/auth?callbackUrl=${encodeURIComponent(`/dashboard/${fileId}`)}`
     );
   }
 
-  const file = await getFile(fileId, session.userId);
+  const file = await getFile(fileId, session.user.id);
 
   if (!file) notFound();
 
-  const user = await db.user.findUnique({
-    where: {
-      id: session.userId,
-    },
-    select: {
+  const user = await db.query.users.findFirst({
+    where: eq(usersTable.id, session.user.id),
+    columns: {
       currentPeriodEnd: true,
     },
   });

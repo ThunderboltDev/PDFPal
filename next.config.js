@@ -1,6 +1,6 @@
 const nextConfig = {
   crossOrigin: "anonymous",
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
   turbopack: {
     resolveAlias: {
       canvas: "canvas",

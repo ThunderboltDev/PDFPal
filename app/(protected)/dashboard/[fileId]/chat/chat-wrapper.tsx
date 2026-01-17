@@ -6,10 +6,10 @@ import { trpc } from "@/app/_trpc/client";
 import { LinkButton } from "@/components/ui/button";
 import Loader from "@/components/ui/loader";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import config from "@/config";
+import { config } from "@/config";
 import ChatContextProvider from "./chat-context";
 import ChatInput from "./chat-input";
-import Messages from "./messages";
+import Messages from "../../../../dashboard/[fileId]/chat/messages";
 
 const plans = config.plans;
 

@@ -16,13 +16,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import config from "@/config";
+import { config } from "@/config";
+import { useSession } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -145,7 +145,14 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const pathname = usePathname();
-  const { status } = useSession();
+
+  const { data: session, isPending } = useSession();
+
+  const status: SessionStatus = isPending
+    ? "loading"
+    : session
+      ? "authenticated"
+      : "unauthenticated";
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: close the navbar when navigating
   useEffect(() => {

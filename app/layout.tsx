@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import type { PropsWithChildren } from "react";
+import type { Organization, WebSite } from "schema-dts";
 import Footer from "@/components/app/footer";
 import Navbar from "@/components/app/navbar";
 import Providers from "@/components/app/providers";
 import CookieBanner from "@/components/cookie-consent/banner";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Toaster } from "@/components/ui/sonner";
-import config from "@/config";
+import { config } from "@/config";
 import { cn } from "@/lib/utils";
 
 import "./globals.css";
@@ -63,6 +65,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -78,6 +87,30 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         className={cn("min-h-screen font-sans antialiased", inter.className)}
       >
         <Providers>
+          <JsonLd<Organization>
+            data={{
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: config.name,
+              url: config.url,
+              logo: `${config.url}${config.logo.url}`,
+              sameAs: [config.socials.github, config.socials.discord],
+              contactPoint: {
+                "@type": "ContactPoint",
+                email: config.socials.email,
+                contactType: "customer support",
+              },
+            }}
+          />
+          <JsonLd<WebSite>
+            data={{
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: config.name,
+              url: config.url,
+              description: config.description,
+            }}
+          />
           <Toaster />
           <Navbar />
           {children}

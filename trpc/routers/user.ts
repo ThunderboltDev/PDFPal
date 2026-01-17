@@ -1,5 +1,12 @@
+import { and, count, eq } from "drizzle-orm";
 import z from "zod";
-import { db } from "@/lib/db";
+import { db } from "@/db";
+import {
+  filesTable,
+  messagesTable,
+  sessionsTable,
+  usersTable,
+} from "@/db/schema";
 import { createRateLimit, privateProcedure, router } from "@/trpc/trpc";
 
 export const userRouter = router({
@@ -8,10 +15,10 @@ export const userRouter = router({
     .query(async ({ ctx }) => {
       const { userId } = ctx;
 
-      const sessions = await db.session.findMany({
-        where: { userId },
-        select: {
-          sessionToken: true,
+      const userSessions = await db.query.session.findMany({
+        where: eq(sessionsTable.userId, userId),
+        columns: {
+          token: true,
           lastActivity: true,
           userAgent: true,
           country: true,
@@ -19,21 +26,23 @@ export const userRouter = router({
         },
       });
 
-      return sessions;
+      return userSessions;
     }),
 
   deleteUserSession: privateProcedure
     .use(createRateLimit(3, 5 * 60, "delete-user-session"))
     .input(z.object({ sessionToken: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { count } = await db.session.deleteMany({
-        where: {
-          sessionToken: input.sessionToken,
-          userId: ctx.userId,
-        },
-      });
+      const result = await db
+        .delete(sessionsTable)
+        .where(
+          and(
+            eq(sessionsTable.token, input.sessionToken),
+            eq(sessionsTable.userId, ctx.userId)
+          )
+        );
 
-      return { success: true, count };
+      return { success: true, count: result.count };
     }),
 
   getUserWithAccounts: privateProcedure
@@ -41,17 +50,19 @@ export const userRouter = router({
     .query(async ({ ctx }) => {
       const { userId } = ctx;
 
-      return await db.user.findUnique({
-        where: { id: userId },
-        select: {
+      return await db.query.user.findFirst({
+        where: eq(usersTable.id, userId),
+        columns: {
           id: true,
           name: true,
           email: true,
           image: true,
           subscriptionId: true,
+        },
+        with: {
           accounts: {
-            select: {
-              provider: true,
+            columns: {
+              providerId: true,
               createdAt: true,
             },
           },
@@ -64,23 +75,19 @@ export const userRouter = router({
     .query(async ({ ctx }) => {
       const { userId } = ctx;
 
-      const totalUsage = await db.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
-          _count: {
-            select: {
-              File: true,
-              Message: true,
-            },
-          },
-        },
-      });
+      const [messagesCount] = await db
+        .select({ count: count() })
+        .from(messagesTable)
+        .where(eq(messagesTable.userId, userId));
+
+      const [filesCount] = await db
+        .select({ count: count() })
+        .from(filesTable)
+        .where(eq(filesTable.userId, userId));
 
       return {
-        messages: totalUsage?._count.Message ?? 0,
-        files: totalUsage?._count.File ?? 0,
+        messages: messagesCount?.count ?? 0,
+        files: filesCount?.count ?? 0,
       };
     }),
 
@@ -89,9 +96,7 @@ export const userRouter = router({
     .mutation(async ({ ctx }) => {
       const { userId } = ctx;
 
-      await db.user.delete({
-        where: { id: userId },
-      });
+      await db.delete(usersTable).where(eq(usersTable.id, userId));
 
       return { success: true };
     }),

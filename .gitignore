@@ -19,7 +19,7 @@
 
 # production
 /build
-/prisma/generated/
+/db/drizzle/
 
 # misc
 .DS_Store

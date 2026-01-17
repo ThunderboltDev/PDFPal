@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import config from "@/config";
+import { config } from "@/config";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [

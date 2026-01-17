@@ -1,16 +1,20 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import type { Session } from "next-auth";
+import { eq } from "drizzle-orm";
 import superjson from "superjson";
-import { db } from "@/lib/db";
-import type { User } from "@/prisma/generated/prisma-client";
+import { db } from "@/db";
+import { usersTable } from "@/db/schema";
+import type { Session, User } from "@/lib/types/db";
 
 const redis = Redis.fromEnv();
 
 const t = initTRPC
   .context<{
-    session: Session | null;
+    session: {
+      session: Session;
+      user: User;
+    } | null;
     user?: User;
     req?: Request;
   }>()
@@ -56,10 +60,8 @@ export const isAuthenticated = t.middleware(async ({ ctx, next }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const user = await db.user.findUnique({
-    where: {
-      id: ctx.session.user?.id,
-    },
+  const user = await db.query.user.findFirst({
+    where: eq(usersTable.id, ctx.session.user.id),
   });
 
   if (!user) {
@@ -69,7 +71,8 @@ export const isAuthenticated = t.middleware(async ({ ctx, next }) => {
   return next({
     ctx: {
       ...ctx,
-      userId: user?.id,
+      userId: user.id,
+      user,
     },
   });
 });

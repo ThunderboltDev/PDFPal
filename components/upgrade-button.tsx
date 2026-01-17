@@ -3,10 +3,10 @@
 import { sendGTMEvent } from "@next/third-parties/google";
 import { Loader2, ReceiptText, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
+import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
-import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
 
 interface UpgradeButtonProps {
@@ -19,29 +19,31 @@ export function UpgradeButton({
   className = "",
 }: UpgradeButtonProps) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { mutate: getBillingPortalUrl, isPending } =
-    trpc.subscription.getBillingPortalUrl.useMutation({
-      onSuccess: ({ portalUrl }) => {
-        sendGTMEvent({
-          value: 1,
-          event: "subscription_action",
-          action: "manage_subscription",
-          button_name: "Manage Subscription",
-        });
+  const handleBillingPortal = async () => {
+    setIsLoading(true);
 
-        if (portalUrl) window.location.href = portalUrl;
-        else toast.error("Something went wrong!");
-      },
-      onError: ({ message }) => {
-        toast.error(message);
-      },
-    });
+    try {
+      const { data, error } = await authClient.dodopayments.customer.portal({});
+
+      if (data) {
+        router.push(data.url);
+      } else {
+        toast.error("Failed to cancel subscription");
+        console.error(error);
+      }
+    } catch (error) {
+      console.error("Error canceling subscription:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleClick = (e: FormEvent) => {
     e.preventDefault();
     if (isSubscribed) {
-      getBillingPortalUrl();
+      handleBillingPortal();
     } else {
       sendGTMEvent({
         value: 1,
@@ -58,13 +60,13 @@ export function UpgradeButton({
 
   return (
     <Button
-      aria-busy={isPending}
+      aria-busy={isLoading}
       className={cn("group", className)}
-      disabled={isPending}
+      disabled={isLoading}
       onClick={handleClick}
       variant="primary"
     >
-      {isPending ? (
+      {isLoading ? (
         <>
           <Loader2 className="size-4 animate-spin" />
           Redirecting...

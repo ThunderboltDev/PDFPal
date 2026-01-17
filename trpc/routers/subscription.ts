@@ -1,167 +1,21 @@
-import { TRPCError } from "@trpc/server";
-import z from "zod";
-import config from "@/config";
-import { creem, extractCustomerId } from "@/lib/creem";
-import { db } from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { config } from "@/config";
+import { db } from "@/db";
+import { usersTable } from "@/db/schema";
+import { auth, dodoPayments } from "@/lib/auth";
 import { createRateLimit, privateProcedure, router } from "@/trpc/trpc";
 
-if (!process.env.CREEM_API_KEY) {
-  throw new Error("Missing CREEM_API_KEY in environment variables");
-}
-
 const plans = config.plans;
-const creemApiKey = process.env.CREEM_API_KEY;
 
 export const subscriptionRouter = router({
-  createCheckoutSession: privateProcedure
-    .use(createRateLimit(1, 2 * 60, "create-checkout-session"))
-    .input(
-      z.object({
-        productId: z
-          .string()
-          .optional()
-          .default(config.plans.pro.productId.monthly),
-        discountCode: z.string().optional().default(""),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-
-      const user = await db.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
-          email: true,
-          subscriptionId: true,
-        },
-      });
-
-      if (!user) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "User not found!",
-        });
-      }
-
-      const returnUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/thank-you`;
-
-      const { checkoutUrl } = await creem.createCheckout({
-        createCheckoutRequest: {
-          customer: {
-            email: user.email,
-          },
-          metadata: {
-            userId,
-          },
-          discountCode: input.discountCode,
-          productId: input.productId,
-          successUrl: returnUrl,
-        },
-        xApiKey: creemApiKey,
-      });
-
-      return {
-        checkoutUrl,
-      };
-    }),
-
-  getBillingPortalUrl: privateProcedure
-    .use(createRateLimit(1, 2 * 60, "get-billing-portal-url"))
-    .mutation(async ({ ctx }) => {
-      const { userId } = ctx;
-
-      const user = await db.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
-          email: true,
-          customerId: true,
-        },
-      });
-
-      if (!user) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "User not found!",
-        });
-      }
-
-      if (!user.customerId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "No active subscription found!",
-        });
-      }
-
-      try {
-        const { customerPortalLink } = await creem.generateCustomerLinks({
-          createCustomerPortalLinkRequestEntity: {
-            customerId: user.customerId,
-          },
-          xApiKey: creemApiKey,
-        });
-
-        return {
-          portalUrl: customerPortalLink,
-        };
-      } catch {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong!",
-        });
-      }
-    }),
-
-  cancelSubscription: privateProcedure
-    .use(createRateLimit(1, 60, "cancel-subscription"))
-    .mutation(async ({ ctx }) => {
-      const { userId } = ctx;
-
-      const user = await db.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
-          subscriptionId: true,
-        },
-      });
-
-      if (!user?.subscriptionId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User does not have an active subscription",
-        });
-      }
-
-      try {
-        await creem.cancelSubscription({
-          id: user?.subscriptionId,
-          xApiKey: creemApiKey,
-        });
-      } catch {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong!",
-        });
-      }
-
-      return {
-        success: true,
-      };
-    }),
-
   getUserSubscriptionPlan: privateProcedure
     .use(createRateLimit(3, 60, "get-user-subscription-plan"))
     .query(async ({ ctx }) => {
       const { userId } = ctx;
 
-      const user = await db.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
+      const user = await db.query.user.findFirst({
+        where: eq(usersTable.id, userId),
+        columns: {
           customerId: true,
           subscriptionId: true,
           currentPeriodEnd: true,
@@ -187,22 +41,17 @@ export const subscriptionRouter = router({
       }
 
       try {
-        const subscription = await creem.retrieveSubscription({
-          subscriptionId: user.subscriptionId,
-          xApiKey: creemApiKey,
-        });
+        const subscriptions = await auth.api.dodoSubscriptions();
+        const subscription = subscriptions.items[0];
 
         return {
           ...plans.pro,
           status: subscription.status,
-          customerId: extractCustomerId(subscription),
+          customerId: subscription.customer.customer_id,
           subscriptionId: user.subscriptionId,
-          isCanceled: subscription.status === "canceled",
+          isCanceled: subscription.status === "cancelled",
           isSubscribed: true,
-          billingPeriod:
-            typeof subscription.product !== "string"
-              ? subscription.product.billingPeriod
-              : "unknown",
+          billingPeriod: "monthly",
           currentPeriodEnd: user.currentPeriodEnd,
         };
       } catch {
@@ -220,41 +69,37 @@ export const subscriptionRouter = router({
     }),
 
   getTransactionHistory: privateProcedure
-    .use(createRateLimit(2, 60, "get-transaction-history"))
+    .use(createRateLimit(3, 60, "get-transaction-history"))
     .query(async ({ ctx }) => {
       const { userId } = ctx;
 
-      const user = await db.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
+      const user = await db.query.user.findFirst({
+        where: eq(usersTable.id, userId),
+        columns: {
           customerId: true,
+          subscriptionId: true,
+          currentPeriodEnd: true,
         },
       });
 
-      if (!user?.customerId) {
-        return {
-          items: [],
-          pagination: {},
-        };
+      if (
+        !user?.subscriptionId ||
+        !user.customerId ||
+        !user.currentPeriodEnd ||
+        user.currentPeriodEnd < new Date()
+      ) {
+        return [];
       }
 
       try {
-        const transactionHistory = await creem.searchTransactions({
-          customerId: user.customerId,
-          pageNumber: 1,
-          xApiKey: creemApiKey,
+        const subscription = await dodoPayments.payments.list({
+          page_size: 10,
+          customer_id: user.customerId,
         });
 
-        return {
-          ...transactionHistory,
-        };
+        return subscription.items;
       } catch {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong!",
-        });
+        return [];
       }
     }),
 });

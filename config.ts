@@ -1,12 +1,9 @@
-export const isTestMode = process.env.CREEM_TEST_MODE === "true";
+export const isDev = process.env.NODE_ENV === "development";
 
-export const CREEM_API_BASE = isTestMode
-  ? "https://test-api.creem.io/v1"
-  : "https://api.creem.io/v1";
+export const url =
+  isDev ? "http://localhost:3000" : "https://pdfpal.thunderboltdev.site";
 
-const url = "https://pdfpal.thunderboltdev.site";
-
-const config = {
+export const config = {
   name: "PDF Pal",
   description:
     "An AI powered web platform that helps you analyze and understand your PDFs instantly. Chat, summarize and get valuable insights effortlessly!",
@@ -48,6 +45,10 @@ const config = {
     "AI PDF analyzer",
     "AI PDF workspace",
     "AI PDF summariser",
+    "chat with documents",
+    "analyze PDF AI",
+    "PDF intelligence",
+    "document insights",
   ],
   plans: {
     free: {
@@ -76,12 +77,10 @@ const config = {
         yearly: 99.99,
       },
       productId: {
-        monthly: isTestMode
-          ? "prod_4ZtlEyxvUyIIMxSraQ7ZcT"
-          : "prod_39PGhjrtoKxvMiRjyfkfct",
-        yearly: isTestMode
-          ? "prod_7G9AC88XkORnOM3vNiS3m4"
-          : "prod_2ucrc2OavaNR9bRPpbKcd3",
+        monthly:
+          isDev ? "pdt_0NWT8J5GlbOF0F4hv6zaZ" : "pdt_0NWT7uXTDvNlkt9faXhxk",
+        yearly:
+          isDev ? "pdt_0NWT8RhHFSyoZAI9NY3NH" : "pdt_0NWT7zVpBTFiroJhvIq6L",
       },
       maxFileSize: "16MB",
       maxFileSizeInBytes: 4 * 1024 * 1024,
@@ -90,5 +89,3 @@ const config = {
     },
   },
 } as const;
-
-export default config;

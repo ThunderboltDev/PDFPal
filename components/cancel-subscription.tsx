@@ -1,10 +1,9 @@
 "use client";
 
-import { sendGTMEvent } from "@next/third-parties/google";
 import { format } from "date-fns";
 import { BanknoteX, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/app/_trpc/client";
+import { authClient } from "@/lib/auth/client";
 import ActionDialog from "./ui/action-dialog";
 
 interface CancelSubscriptionButtonProps {
@@ -14,21 +13,20 @@ interface CancelSubscriptionButtonProps {
 export default function CancelSubscriptionButton({
   currentPeriodEnd,
 }: CancelSubscriptionButtonProps) {
-  const { mutateAsync: cancelSubscription } =
-    trpc.subscription.cancelSubscription.useMutation({
-      onSuccess: () => {
-        sendGTMEvent({
-          value: 1,
-          event: "subscription_action",
-          action: "cancel_subscription",
-          button_name: "Cancel Subscription",
-        });
-        toast.success("Subscription canceled");
-      },
-      onError: ({ message }) => {
-        toast.error(message);
-      },
-    });
+  const handleCancelSubscription = async () => {
+    try {
+      const { data, error } = await authClient.dodopayments.customer.portal({});
+
+      if (data) {
+        window.location.href = data.url;
+      } else {
+        toast.error("Failed to cancel subscription");
+        console.error(error);
+      }
+    } catch (error) {
+      console.error("Error canceling subscription:", error);
+    }
+  };
 
   return (
     <ActionDialog
@@ -60,7 +58,7 @@ export default function CancelSubscriptionButton({
         ),
       }}
       onConfirm={async () => {
-        await cancelSubscription();
+        await handleCancelSubscription();
       }}
     />
   );

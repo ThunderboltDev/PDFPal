@@ -1,60 +1,80 @@
 "use client";
 
-import { sendGTMEvent } from "@next/third-parties/google";
 import { Loader2, ReceiptText, Zap } from "lucide-react";
-import type { FormEvent } from "react";
+import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
-import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
+import { config } from "@/config";
+import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
 
 interface UpgradeButtonProps {
   className?: string;
+  billingCycle?: "monthly" | "yearly";
   isSubscribed: boolean;
+  userId: string | null;
 }
 
 export function UpgradeButton({
   isSubscribed,
+  billingCycle = "monthly",
   className = "",
+  userId,
 }: UpgradeButtonProps) {
-  const { mutate: createCheckoutSession, isPending: isCheckoutPending } =
-    trpc.subscription.createCheckoutSession.useMutation({
-      onSuccess: ({ checkoutUrl }) => {
-        sendGTMEvent({
-          value: 1,
-          event: "subscription_action",
-          action: "upgrade",
-          button_name: "Upgrade to Pro",
-        });
-        if (checkoutUrl) window.location.href = checkoutUrl;
-        else toast.error("Something went wrong!");
-      },
-      onError: ({ message }) => {
-        toast.error(message);
-      },
-    });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { mutate: getBillingPortalUrl, isPending: isBillingPending } =
-    trpc.subscription.getBillingPortalUrl.useMutation({
-      onSuccess: ({ portalUrl }) => {
-        sendGTMEvent({
-          value: 1,
-          event: "subscription_action",
-          action: "manage_subscription",
-          button_name: "Manage Subscription",
-        });
-        if (portalUrl) window.location.href = portalUrl;
-        else toast.error("Something went wrong!");
-      },
-      onError: ({ message }) => {
-        toast.error(message);
-      },
-    });
+  const handleCheckout = async (slug: "pro-monthly" | "pro-yearly") => {
+    if (!userId) return;
+
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await authClient.dodopayments.checkoutSession({
+        slug,
+        referenceId: userId,
+        product_cart: [
+          {
+            quantity: 1,
+            product_id: config.plans.pro.productId[billingCycle],
+          },
+        ],
+      });
+      if (data) {
+        window.location.href = data.url;
+      } else {
+        toast.error("Failed to create checkout session");
+        console.error("Checkout error:", error);
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBillingPortal = async () => {
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await authClient.dodopayments.customer.portal();
+      if (data) {
+        window.location.href = data.url;
+      } else {
+        toast.error("Failed to create checkout session");
+        console.error("Checkout error:", error);
+      }
+    } catch (error) {
+      console.error("Error accessing portal:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleClick = (e: FormEvent) => {
     e.preventDefault();
-    if (isSubscribed) getBillingPortalUrl();
-    else createCheckoutSession({});
+    if (isSubscribed && userId) handleBillingPortal();
+    else
+      handleCheckout(billingCycle === "monthly" ? "pro-monthly" : "pro-yearly");
   };
 
   return (
@@ -62,10 +82,10 @@ export function UpgradeButton({
       variant="primary"
       onClick={handleClick}
       className={cn("group", className)}
-      aria-busy={isCheckoutPending || isBillingPending}
-      disabled={isCheckoutPending || isBillingPending}
+      aria-busy={isLoading}
+      disabled={isLoading}
     >
-      {isCheckoutPending || isBillingPending ? (
+      {isLoading ? (
         <>
           <Loader2 className="size-4 animate-spin" />
           Redirecting...

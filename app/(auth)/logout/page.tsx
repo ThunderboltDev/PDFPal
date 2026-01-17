@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
-
-import Loader from "@/components/ui/loader";
 import { auth } from "@/lib/auth";
-import Logout from "./logout";
 
 export const metadata: Metadata = {
   title: "Logout",
@@ -17,16 +14,16 @@ export const metadata: Metadata = {
   ],
 };
 
-export default async function LogoutWrapper() {
-  const session = await auth();
+interface LogoutProps {
+  params: Promise<{ callbackUrl?: string }>;
+}
 
-  if (!session) {
-    redirect("/auth");
-  }
+export default async function LogoutWrapper({ params }: LogoutProps) {
+  await auth.api.signOut({
+    headers: await headers(),
+  });
 
-  return (
-    <Suspense fallback={<Loader />}>
-      <Logout />
-    </Suspense>
-  );
+  redirect(`/auth?callbackUrl=${(await params).callbackUrl ?? "/dashboard"}`);
+
+  return null;
 }

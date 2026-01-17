@@ -3,7 +3,7 @@
 import { sendGTMEvent } from "@next/third-parties/google";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import config from "@/config";
+import { config } from "@/config";
 import {
   Accordion,
   AccordionContent,

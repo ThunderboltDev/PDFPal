@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import config from "@/config";
+import { config } from "@/config";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     "PDF Pal terms and conditions",
     "PDF Pal terms of service",
   ],
+  alternates: {
+    canonical: "/terms-of-service",
+  },
 };
 
 export default function TermsOfService() {
@@ -81,8 +84,8 @@ export default function TermsOfService() {
         <p>
           Payments for Pro subscriptions are processed through our third-party
           payment provider (
-          <Link href="https://creem.io" target="_blank">
-            Creem
+          <Link href="https://dodopayments.com" target="_blank">
+            Dodo Payments
           </Link>
           ). By subscribing, you authorize us to charge the selected payment
           method for the subscription fee on a recurring basis.

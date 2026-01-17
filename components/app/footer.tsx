@@ -7,7 +7,7 @@ import { FaDiscord, FaGithub } from "react-icons/fa";
 import CookiePreferences from "@/components/cookie-consent/preferences";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import config from "@/config";
+import { config } from "@/config";
 
 const currentYear = new Date().getFullYear();
 

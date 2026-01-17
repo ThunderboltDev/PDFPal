@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { url } from "@/config";
 
 const AUTH_ROUTES = ["/auth", "/check-email"] as readonly string[];
 
@@ -8,22 +9,22 @@ const PRIVATE_ROUTES = [
   "/billing",
 ] as readonly string[];
 
-const sessionCookieRegex = /(?:^|;\s*)(?:__Secure-)?authjs\.session-token=/;
+export default async function proxy(req: Request) {
+  const { pathname } = new URL(req.url);
 
-export default async function proxy(req: Request & { nextUrl: URL }) {
-  const { pathname, searchParams, origin } = req.nextUrl;
+  const response = await fetch(`${url}/api/auth/get-session`, {
+    headers: {
+      cookie: req.headers.get("cookie") || "",
+    },
+  });
 
-  if (
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/_next/static") ||
-    pathname.startsWith("/_next/image")
-  ) {
-    return NextResponse.next();
-  }
+  const session = await response.json();
 
-  const cookieHeader = req.headers.get("cookie") ?? "";
-  const isAuthenticated = sessionCookieRegex.test(cookieHeader);
+  const isAuthenticated = !!(
+    session &&
+    Object.hasOwn(session, "user") &&
+    session.user
+  );
 
   const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
     pathname.startsWith(route)
@@ -31,7 +32,7 @@ export default async function proxy(req: Request & { nextUrl: URL }) {
 
   if (!isAuthenticated && isPrivateRoute) {
     const redirectUrl = new URL("/auth", req.url);
-    redirectUrl.searchParams.set("callbackUrl", pathname);
+    redirectUrl.searchParams.set("callbackUrl", req.url);
     return NextResponse.redirect(redirectUrl);
   }
 
@@ -42,8 +43,9 @@ export default async function proxy(req: Request & { nextUrl: URL }) {
   }
 
   if (isAuthenticated && isAuthRoute) {
-    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-    return NextResponse.redirect(new URL(callbackUrl, origin));
+    const callbackUrl =
+      new URL(req.url).searchParams.get("callbackUrl") || "/dashboard";
+    return NextResponse.redirect(new URL(callbackUrl, req.url));
   }
 
   const res = NextResponse.next();

@@ -3,7 +3,7 @@ import axios from "axios";
 import { marked } from "marked";
 import nodemailer from "nodemailer";
 import z from "zod";
-import config from "@/config";
+import { config } from "@/config";
 import { createRateLimit, publicProcedure, router } from "@/trpc/trpc";
 
 export const runtime = "node";

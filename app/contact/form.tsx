@@ -6,7 +6,6 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import { Loader2, Send } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { Session } from "next-auth";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -23,7 +22,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import config from "@/config";
+import { config } from "@/config";
+import type { auth } from "@/lib/auth";
 
 if (!process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY) {
   throw new Error("env variable NEXT_PUBLIC_HCAPTCHA_SITE_KEY not found");
@@ -46,7 +46,7 @@ const contactFormSchema = z.object({
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 interface ContactProps {
-  session: Session | null;
+  session: typeof auth.$Infer.Session | null;
 }
 
 export default function ContactPage({ session }: ContactProps) {
@@ -61,7 +61,7 @@ export default function ContactPage({ session }: ContactProps) {
           value: 1,
           event: "contact_form_action",
           action: "submission_successful",
-          user_id: session?.userId,
+          user_id: session?.user.id,
         });
         captchaRef.current?.resetCaptcha();
         toast.success("Message sent successfully!");
@@ -73,7 +73,7 @@ export default function ContactPage({ session }: ContactProps) {
           event: "contact_form_action",
           action: "submission_failed",
           error: message,
-          user_id: session?.userId,
+          user_id: session?.user.id,
         });
         toast.error(message);
       },
@@ -99,7 +99,7 @@ export default function ContactPage({ session }: ContactProps) {
       await sendMessage({
         ...values,
         captchaToken,
-        userId: session?.userId ?? null,
+        userId: session?.user.id ?? null,
       });
     } catch (error) {
       console.error("Error while sending message: ", error);
