@@ -23,9 +23,8 @@ export const filesRouter = router({
         where: eq(filesTable.userId, userId),
       });
 
-      const messageCounts =
-        userFiles.length ?
-          await db
+      const messageCounts = userFiles.length
+        ? await db
             .select({
               fileId: messagesTable.fileId,
               count: count(messagesTable.id),

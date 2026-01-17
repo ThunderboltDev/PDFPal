@@ -1,7 +1,8 @@
 export const isDev = process.env.NODE_ENV === "development";
 
-export const url =
-  isDev ? "http://localhost:3000" : "https://pdfpal.thunderboltdev.site";
+export const url = isDev
+  ? "http://localhost:3000"
+  : "https://pdfpal.thunderboltdev.site";
 
 export const config = {
   name: "PDF Pal",
@@ -77,10 +78,12 @@ export const config = {
         yearly: 99.99,
       },
       productId: {
-        monthly:
-          isDev ? "pdt_0NWT8J5GlbOF0F4hv6zaZ" : "pdt_0NWT7uXTDvNlkt9faXhxk",
-        yearly:
-          isDev ? "pdt_0NWT8RhHFSyoZAI9NY3NH" : "pdt_0NWT7zVpBTFiroJhvIq6L",
+        monthly: isDev
+          ? "pdt_0NWT8J5GlbOF0F4hv6zaZ"
+          : "pdt_0NWT7uXTDvNlkt9faXhxk",
+        yearly: isDev
+          ? "pdt_0NWT8RhHFSyoZAI9NY3NH"
+          : "pdt_0NWT7zVpBTFiroJhvIq6L",
       },
       maxFileSize: "16MB",
       maxFileSizeInBytes: 4 * 1024 * 1024,

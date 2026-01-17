@@ -1,11 +1,11 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import type { Session, User } from "better-auth";
 import { eq } from "drizzle-orm";
 import superjson from "superjson";
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
-import type { Session, User } from "@/lib/types/db";
 
 const redis = Redis.fromEnv();
 

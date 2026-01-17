@@ -11,7 +11,7 @@ import FileView from "./file";
 
 const getFile = cache(
   async (fileId: string, userId: string) =>
-    await db.query.files.findFirst({
+    await db.query.file.findFirst({
       where: and(eq(filesTable.id, fileId), eq(filesTable.userId, userId)),
     })
 );
@@ -71,6 +71,7 @@ export default async function FileViewPage({ params }: FileViewPageProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   const { fileId } = await params;
 
   if (!session?.user?.id) {
@@ -83,7 +84,7 @@ export default async function FileViewPage({ params }: FileViewPageProps) {
 
   if (!file) notFound();
 
-  const user = await db.query.users.findFirst({
+  const user = await db.query.user.findFirst({
     where: eq(usersTable.id, session.user.id),
     columns: {
       currentPeriodEnd: true,

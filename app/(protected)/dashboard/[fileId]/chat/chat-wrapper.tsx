@@ -3,13 +3,13 @@
 import { sendGTMEvent } from "@next/third-parties/google";
 import { ChevronLeft, XCircle, Zap } from "lucide-react";
 import { trpc } from "@/app/_trpc/client";
+import ChatContextProvider from "@/app/(protected)/dashboard/[fileId]/chat/chat-context";
+import ChatInput from "@/app/(protected)/dashboard/[fileId]/chat/chat-input";
+import Messages from "@/app/(protected)/dashboard/[fileId]/chat/messages";
 import { LinkButton } from "@/components/ui/button";
 import Loader from "@/components/ui/loader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { config } from "@/config";
-import ChatContextProvider from "./chat-context";
-import ChatInput from "./chat-input";
-import Messages from "../../../../dashboard/[fileId]/chat/messages";
 
 const plans = config.plans;
 

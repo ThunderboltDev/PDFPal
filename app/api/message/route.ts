@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const file = await db.query.files.findFirst({
+  const file = await db.query.file.findFirst({
     where: and(eq(filesTable.id, fileId), eq(filesTable.userId, userId)),
   });
 
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     fileId,
   });
 
-  const user = await db.query.users.findFirst({
+  const user = await db.query.user.findFirst({
     where: eq(usersTable.id, userId),
     columns: {
       currentPeriodEnd: true,
@@ -142,8 +142,8 @@ export async function POST(req: NextRequest) {
 
   const contextFragments: string[] = searchHits
     .map((match) => {
-      return Object.hasOwn(match.fields, "text")
-        ? (match.fields as { text: string }).text
+      return Object.hasOwn(match.fields, "text") ?
+          (match.fields as { text: string }).text
         : "";
     })
     .filter(Boolean)
@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const previousMessages = await db.query.messages.findMany({
+  const previousMessages = await db.query.message.findMany({
     where: and(
       eq(messagesTable.fileId, fileId),
       eq(messagesTable.userId, userId)
@@ -181,17 +181,18 @@ export async function POST(req: NextRequest) {
     content: message.text,
   }));
 
-  const contextInstruction = contextFragments.length
-    ? `Use the following context from the PDF to answer the user's question:\n\n${contextFragments
+  const contextInstruction =
+    contextFragments.length ?
+      `Use the following context from the PDF to answer the user's question:\n\n${contextFragments
         .map((context, index) => `Context ${index + 1}:\n${context}`)
         .join("\n\n")}`
     : "No relevant context found in the PDF.";
 
   const systemMessage = [
     "/no_think",
-    isSubscribed
-      ? "You are a premium assistant with deeper reasoning and extended PDF comprehension."
-      : "You are a standard assistant; stay brief and factual.",
+    isSubscribed ?
+      "You are a premium assistant with deeper reasoning and extended PDF comprehension."
+    : "You are a standard assistant; stay brief and factual.",
     "You MUST ONLY answer questions directly related to the user's uploaded PDF.",
     "If the user's question is not clearly about the PDF or cannot be answered from the provided context, reply exactly with:",
     `"I can only answer questions about the uploaded PDF."`,

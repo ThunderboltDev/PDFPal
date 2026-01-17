@@ -66,9 +66,9 @@ export const ourFileRouter = {
 
       if (fileCount >= fileConfig.maxFiles) {
         throw new Error(
-          isSubscribed ?
-            "You've reached your upload limit for this plan."
-          : "You've reached your free upload limit. Upgrade your plan to upload more files."
+          isSubscribed
+            ? "You've reached your upload limit for this plan."
+            : "You've reached your free upload limit. Upgrade your plan to upload more files."
         );
       }
 

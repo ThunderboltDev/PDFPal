@@ -2,6 +2,8 @@
 
 import { sendGTMEvent } from "@next/third-parties/google";
 import { MessageCircleMore } from "lucide-react";
+import ChatWrapper from "@/app/(protected)/dashboard/[fileId]/chat/chat-wrapper";
+import PDFRendererWrapper from "@/app/(protected)/dashboard/[fileId]/pdf/pdf-renderer-wrapper";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
@@ -14,10 +16,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import type { files } from "@/db/schema";
+import type { File } from "@/lib/types/db";
 
 interface FileViewProps {
-  file: typeof files.$inferSelect;
+  file: File;
   isSubscribed: boolean;
 }
 
