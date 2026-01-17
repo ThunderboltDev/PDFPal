@@ -32,9 +32,9 @@ export const contactRouter = router({
         "https://hcaptcha.com/siteverify",
         {
           secret:
-            process.env.NEXT_PUBLIC_ENV === "development"
-              ? "0x0000000000000000000000000000000000000000"
-              : process.env.HCAPTCHA_SECRET,
+            process.env.NEXT_PUBLIC_ENV === "development" ?
+              "0x0000000000000000000000000000000000000000"
+            : process.env.HCAPTCHA_SECRET,
           response: input.captchaToken,
         },
         {
@@ -51,7 +51,7 @@ export const contactRouter = router({
         });
       }
 
-      const transporter = nodemailer.createTransport(process.env.EMAIL_SERVER);
+      const transporter = nodemailer.createTransport("pdfpal0@gmail.com");
 
       const { JSDOM } = await import("jsdom");
       const window = new JSDOM("").window;
