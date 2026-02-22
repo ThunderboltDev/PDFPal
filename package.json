@@ -74,7 +74,7 @@
     "jsdom": "^27.0.1",
     "lucide-react": "^0.542.0",
     "marked": "^16.4.0",
-    "next": "^16.0.10",
+    "next": "^16.1.5",
     "next-sitemap": "^4.2.3",
     "nodemailer": "^6.10.1",
     "parse5": "^8.0.0",
