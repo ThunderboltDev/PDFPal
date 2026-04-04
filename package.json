@@ -67,7 +67,7 @@
     "cross-env": "^10.1.0",
     "date-fns": "^4.1.0",
     "dodopayments": "^2.14.3",
-    "dompurify": "^3.2.7",
+    "dompurify": "^3.3.2",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "framer-motion": "^12.23.12",
