@@ -69,7 +69,7 @@
     "dodopayments": "^2.14.3",
     "dompurify": "^3.2.7",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.23.12",
     "jsdom": "^27.0.1",
     "lucide-react": "^0.542.0",
